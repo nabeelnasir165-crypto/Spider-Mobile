@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { User, Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, Check } from 'lucide-react';
+import { User, Mail, Phone, Lock, Eye, EyeOff, AlertCircle, Loader2, Check } from 'lucide-react';
 import AuthCard from '../components/AuthCard';
+import SetupBanner from '../components/SetupBanner';
 import { FieldIcon, GoogleIcon } from './Login';
 import { useAuth } from '../contexts/AuthContext';
+
+// Lightweight UK mobile validation: optional +44 / 0 prefix, then 10 digits
+// Accepts spaces and dashes for typing comfort.
+const PHONE_RE = /^(?:\+44|0)\s?\d(?:[\s-]?\d){9}$/;
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -11,6 +16,7 @@ export default function Signup() {
 
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
@@ -20,15 +26,27 @@ export default function Signup() {
   const submit = async (e) => {
     e.preventDefault();
     setError('');
+
+    if (!PHONE_RE.test(phone)) {
+      setError('Enter a valid UK mobile number (e.g. 07700 900 111).');
+      return;
+    }
     if (password.length < 8) {
       setError('Password must be at least 8 characters.');
       return;
     }
+
     setBusy(true);
-    const { data, error } = await signUp({ email, password, fullName });
+    const { data, error } = await signUp({
+      email,
+      password,
+      fullName,
+      phone: normalisePhone(phone),
+    });
     setBusy(false);
+
     if (error) {
-      setError(error.message);
+      setError(friendlyAuthError(error.message));
       return;
     }
     if (data?.user && !data.session) {
@@ -59,7 +77,7 @@ export default function Signup() {
           <div>
             <p className="font-semibold text-emerald-900">Account created</p>
             <p className="text-sm text-emerald-700 mt-1">
-              Didn&rsquo;t get the email? Check your spam folder, or wait a minute and request another one from the login page.
+              Didn&rsquo;t get the email? Check your spam folder, or request another from the login page.
             </p>
           </div>
         </div>
@@ -71,9 +89,11 @@ export default function Signup() {
     <AuthCard
       eyebrow="Get started"
       title="Create your account"
-      subtitle="Book repairs, get instant updates and keep all your warranty records in one place."
+      subtitle="Book repairs, get instant status updates by SMS, and keep your warranty records in one place."
       altLink={{ label: 'Already have an account?', cta: 'Sign in', to: '/login' }}
     >
+      <SetupBanner />
+
       <button onClick={google} className="w-full h-11 rounded-full border border-ink-200 bg-white hover:bg-ink-50 text-sm font-medium text-ink-900 inline-flex items-center justify-center gap-2.5 transition">
         <GoogleIcon/> Continue with Google
       </button>
@@ -83,8 +103,32 @@ export default function Signup() {
       </div>
 
       <form onSubmit={submit} className="space-y-4" noValidate>
-        <FieldIcon icon={User} type="text" autoComplete="name" placeholder="Full name" value={fullName} onChange={(e) => setFullName(e.target.value)} required />
-        <FieldIcon icon={Mail} type="email" autoComplete="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <FieldIcon
+          icon={User}
+          type="text"
+          autoComplete="name"
+          placeholder="Full name (optional)"
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+        />
+        <FieldIcon
+          icon={Mail}
+          type="email"
+          autoComplete="email"
+          placeholder="Email address"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+        <FieldIcon
+          icon={Phone}
+          type="tel"
+          autoComplete="tel"
+          placeholder="Mobile number (07700 900 111)"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          required
+        />
         <FieldIcon
           icon={Lock}
           type={showPw ? 'text' : 'password'}
@@ -119,4 +163,35 @@ export default function Signup() {
       </form>
     </AuthCard>
   );
+}
+
+function normalisePhone(p) {
+  const stripped = p.replace(/[\s-]/g, '');
+  if (stripped.startsWith('+44')) return stripped;
+  if (stripped.startsWith('0')) return '+44' + stripped.slice(1);
+  return stripped;
+}
+
+export function friendlyAuthError(msg) {
+  if (!msg) return 'Something went wrong. Please try again.';
+  const s = msg.toLowerCase();
+  if (s.includes('invalid login') || s.includes('invalid credentials')) {
+    return "Wrong email or password. If you haven't created an account yet, sign up first.";
+  }
+  if (s.includes('email not confirmed')) {
+    return 'Your email isn\'t confirmed yet — please check your inbox for the confirmation link.';
+  }
+  if (s.includes('user already registered')) {
+    return 'An account with that email already exists. Try signing in instead.';
+  }
+  if (s.includes('password should be') || s.includes('password')) {
+    return msg;
+  }
+  if (s.includes('rate limit')) {
+    return 'Too many attempts. Please wait a minute and try again.';
+  }
+  if (s.includes('fetch') || s.includes('network')) {
+    return 'Could not reach the server. Check your Supabase URL/key in .env.local and try again.';
+  }
+  return msg;
 }

@@ -1,29 +1,37 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2 } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, RotateCcw, Check } from 'lucide-react';
 import AuthCard from '../components/AuthCard';
+import SetupBanner from '../components/SetupBanner';
 import { useAuth } from '../contexts/AuthContext';
+import { friendlyAuthError } from './Signup';
 
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from || '/account';
-  const { signIn, signInWithGoogle } = useAuth();
+  const { signIn, signInWithGoogle, resendConfirmation } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
+  const [errorKind, setErrorKind] = useState(''); // 'unconfirmed' | 'invalid' | ''
   const [busy, setBusy] = useState(false);
+  const [resent, setResent] = useState(false);
 
   const submit = async (e) => {
     e.preventDefault();
     setError('');
+    setErrorKind('');
     setBusy(true);
     const { error } = await signIn({ email, password });
     setBusy(false);
     if (error) {
-      setError(error.message || 'Could not sign in.');
+      const msg = (error.message || '').toLowerCase();
+      if (msg.includes('email not confirmed')) setErrorKind('unconfirmed');
+      else if (msg.includes('invalid')) setErrorKind('invalid');
+      setError(friendlyAuthError(error.message));
     } else {
       navigate(from, { replace: true });
     }
@@ -32,7 +40,17 @@ export default function Login() {
   const google = async () => {
     setError('');
     const { error } = await signInWithGoogle();
-    if (error) setError(error.message);
+    if (error) setError(friendlyAuthError(error.message));
+  };
+
+  const resend = async () => {
+    if (!email) {
+      setError('Enter your email above first, then click resend.');
+      return;
+    }
+    const { error } = await resendConfirmation(email);
+    if (error) setError(friendlyAuthError(error.message));
+    else { setResent(true); setTimeout(() => setResent(false), 4000); }
   };
 
   return (
@@ -42,6 +60,8 @@ export default function Login() {
       subtitle="Track your repairs, manage bookings and access your warranty in one place."
       altLink={{ label: 'New to Spider Mobiles?', cta: 'Create an account', to: '/signup' }}
     >
+      <SetupBanner />
+
       <button onClick={google} className="w-full h-11 rounded-full border border-ink-200 bg-white hover:bg-ink-50 text-sm font-medium text-ink-900 inline-flex items-center justify-center gap-2.5 transition">
         <GoogleIcon /> Continue with Google
       </button>
@@ -70,8 +90,26 @@ export default function Login() {
         />
 
         {error && (
-          <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
-            <AlertCircle size={16} className="mt-0.5 shrink-0" /> {error}
+          <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
+            <div className="flex items-start gap-2">
+              <AlertCircle size={16} className="mt-0.5 shrink-0" /> <span>{error}</span>
+            </div>
+            {errorKind === 'unconfirmed' && (
+              <button type="button" onClick={resend} className="mt-2 ml-6 inline-flex items-center gap-1.5 text-xs font-semibold text-red-800 hover:text-red-950 underline">
+                <RotateCcw size={11}/> Resend confirmation email
+              </button>
+            )}
+            {errorKind === 'invalid' && (
+              <Link to="/signup" className="mt-2 ml-6 inline-block text-xs font-semibold text-red-800 hover:text-red-950 underline">
+                Don&rsquo;t have an account? Sign up
+              </Link>
+            )}
+          </div>
+        )}
+
+        {resent && (
+          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-sm text-emerald-700 flex items-center gap-2">
+            <Check size={16}/> Confirmation email sent. Check your inbox.
           </div>
         )}
 

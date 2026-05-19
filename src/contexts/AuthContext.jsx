@@ -13,12 +13,12 @@ export const AuthProvider = ({ children }) => {
       setProfile(null);
       return;
     }
-    const { data, error } = await supabase
+    const { data } = await supabase
       .from('customer_profiles')
       .select('*')
       .eq('id', userId)
-      .single();
-    if (!error) setProfile(data);
+      .maybeSingle();
+    if (data) setProfile(data);
   }, []);
 
   useEffect(() => {
@@ -37,12 +37,15 @@ export const AuthProvider = ({ children }) => {
     return () => subscription.unsubscribe();
   }, [loadProfile]);
 
-  const signUp = async ({ email, password, fullName }) => {
+  const signUp = async ({ email, password, fullName, phone }) => {
     return supabase.auth.signUp({
       email,
       password,
       options: {
-        data: { full_name: fullName },
+        data: {
+          full_name: fullName || null,
+          phone: phone || null,
+        },
         emailRedirectTo: `${window.location.origin}/account`,
       },
     });
@@ -55,6 +58,13 @@ export const AuthProvider = ({ children }) => {
     supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo: `${window.location.origin}/account` },
+    });
+
+  const resendConfirmation = (email) =>
+    supabase.auth.resend({
+      type: 'signup',
+      email,
+      options: { emailRedirectTo: `${window.location.origin}/account` },
     });
 
   const sendPasswordReset = (email) =>
@@ -92,6 +102,7 @@ export const AuthProvider = ({ children }) => {
     signInWithGoogle,
     signOut,
     sendPasswordReset,
+    resendConfirmation,
     updatePassword,
     updateProfile,
     refreshProfile: () => session?.user && loadProfile(session.user.id),

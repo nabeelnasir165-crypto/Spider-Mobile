@@ -18,6 +18,7 @@ create table if not exists public.customer_profiles (
 );
 
 -- Auto-create profile when a new auth user signs up
+-- Reads full_name and phone from auth signup metadata
 create or replace function public.handle_new_customer()
 returns trigger
 language plpgsql
@@ -25,13 +26,16 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.customer_profiles (id, email, full_name)
+  insert into public.customer_profiles (id, email, full_name, phone)
   values (
     new.id,
     new.email,
-    coalesce(new.raw_user_meta_data->>'full_name', new.email)
+    coalesce(new.raw_user_meta_data->>'full_name', null),
+    coalesce(new.raw_user_meta_data->>'phone', null)
   )
-  on conflict (id) do nothing;
+  on conflict (id) do update set
+    full_name = coalesce(excluded.full_name, public.customer_profiles.full_name),
+    phone     = coalesce(excluded.phone,     public.customer_profiles.phone);
   return new;
 end;
 $$;
