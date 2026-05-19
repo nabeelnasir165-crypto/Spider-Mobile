@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Customer Management - Hybrid Repair Suite</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-error-container": "#93000a",
+                        "surface-dim": "#d8d9e3",
+                        "on-surface-variant": "#414754",
+                        "on-tertiary-container": "#0e0200",
+                        "primary-fixed": "#d8e2ff",
+                        "surface-variant": "#e0e2ec",
+                        "outline": "#727785",
+                        "on-tertiary-fixed-variant": "#783100",
+                        "on-tertiary": "#ffffff",
+                        "inverse-surface": "#2d3038",
+                        "on-tertiary-fixed": "#341100",
+                        "tertiary": "#9e4300",
+                        "surface-bright": "#f9f9ff",
+                        "surface-container": "#ecedf7",
+                        "secondary-container": "#d0e1fb",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#001a41",
+                        "surface-tint": "#005bc0",
+                        "on-primary-container": "#ffffff",
+                        "primary-fixed-dim": "#adc7ff",
+                        "on-secondary-container": "#54647a",
+                        "background": "#f9f9ff",
+                        "primary-container": "#1a73e8",
+                        "surface": "#f9f9ff",
+                        "tertiary-fixed": "#ffdbcb",
+                        "primary": "#005bbf",
+                        "secondary": "#505f76",
+                        "secondary-fixed": "#d3e4fe",
+                        "on-primary": "#ffffff",
+                        "surface-container-high": "#e6e8f2",
+                        "on-secondary-fixed": "#0b1c30",
+                        "inverse-primary": "#adc7ff",
+                        "surface-container-highest": "#e0e2ec",
+                        "secondary-fixed-dim": "#b7c8e1",
+                        "on-surface": "#191c23",
+                        "inverse-on-surface": "#eff0fa",
+                        "surface-container-low": "#f2f3fd",
+                        "outline-variant": "#c1c6d6",
+                        "error-container": "#ffdad6",
+                        "on-background": "#191c23",
+                        "error": "#ba1a1a",
+                        "on-primary-fixed-variant": "#004493",
+                        "on-error": "#ffffff",
+                        "tertiary-fixed-dim": "#ffb691",
+                        "tertiary-container": "#c55500",
+                        "on-secondary-fixed-variant": "#38485d",
+                        "on-secondary": "#ffffff"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "md": "16px",
+                        "lg": "24px",
+                        "margin-mobile": "16px",
+                        "xs": "4px",
+                        "xl": "32px",
+                        "sm": "8px",
+                        "base": "8px",
+                        "container-max": "1280px",
+                        "gutter": "20px"
+                    },
+                    "fontFamily": {
+                        "label-md": ["Inter"],
+                        "headline-lg-mobile": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "code": ["JetBrains Mono"],
+                        "headline-md": ["Inter"],
+                        "display-lg": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                        "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                        "title-lg": ["18px", { "lineHeight": "28px", "fontWeight": "600" }],
+                        "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                        "code": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                        "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                        "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background antialiased font-body-md text-body-md overflow-hidden">
+<!-- TopNavBar -->
+<nav class="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface border-b border-outline-variant flat no shadows">
+<div class="flex items-center gap-md">
+<span class="text-title-lg font-title-lg font-bold text-primary">Hybrid Repair Suite V1</span>
+</div>
+<div class="flex items-center gap-lg">
+<div class="relative hidden md:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="pl-10 pr-4 py-2 bg-surface-container-low border border-outline-variant rounded-full text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none w-64 transition-all" placeholder="Search..." type="text"/>
+</div>
+<div class="flex items-center gap-sm">
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-container-low transition-colors rounded-full cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-md text-label-md font-bold ml-2 cursor-pointer border border-outline-variant">
+                    MP
+                </div>
+</div>
+</div>
+</nav>
+<!-- SideNavBar -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-[260px] flex flex-col p-md z-40 overflow-y-auto bg-surface-container-low border-r border-outline-variant flat no shadows">
+<div class="flex items-center gap-md mb-xl px-sm">
+<div class="w-10 h-10 rounded-lg bg-primary text-on-primary flex items-center justify-center font-headline-md text-headline-md">
+                H
+            </div>
+<div>
+<h2 class="font-title-lg text-title-lg font-bold text-on-surface">Hybrid Repair</h2>
+<p class="font-label-md text-label-md text-on-surface-variant">V1.0.4</p>
+</div>
+</div>
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 mb-xl hover:bg-primary/90 transition-colors shadow-sm">
+<span class="material-symbols-outlined text-sm">add</span>
+            New Repair
+        </button>
+<nav class="flex flex-col gap-xs flex-1">
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+                Dashboard
+            </a>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+                Repairs
+            </a>
+<!-- ACTIVE TAB -->
+<a class="flex items-center gap-md px-4 py-3 bg-secondary-container text-on-secondary-container font-bold rounded-lg cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="group" data-weight="fill" style="font-variation-settings: 'FILL' 1;">group</span>
+                Customers
+            </a>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+                Bookings
+            </a>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+                Pricing
+            </a>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+                CMS
+            </a>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+                Payments
+            </a>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+                Warranty
+            </a>
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+                Staff
+            </a>
+</nav>
+<div class="mt-auto pt-md border-t border-outline-variant">
+<a class="flex items-center gap-md px-4 py-3 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all duration-200 cursor-pointer font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+                Settings
+            </a>
+</div>
+</aside>
+<!-- Main Content - Split View -->
+<main class="ml-[260px] mt-16 h-[calc(100vh-64px)] flex">
+<!-- Left Panel: Customer List -->
+<section class="w-[360px] flex-shrink-0 border-r border-outline-variant bg-surface flex flex-col">
+<!-- Panel Header & Search -->
+<div class="p-md border-b border-outline-variant flex flex-col gap-md">
+<div class="flex justify-between items-center">
+<h1 class="font-title-lg text-title-lg font-bold text-on-surface">Customers</h1>
+<button class="p-2 text-primary hover:bg-surface-container-low rounded-lg transition-colors">
+<span class="material-symbols-outlined">person_add</span>
+</button>
+</div>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">search</span>
+<input class="w-full pl-10 pr-4 py-2 bg-surface-container-lowest border border-outline-variant rounded-lg text-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none transition-all" placeholder="Search by name, phone..." type="text"/>
+</div>
+<div class="flex gap-sm overflow-x-auto pb-1 hide-scrollbar">
+<button class="px-3 py-1 rounded-full border border-primary bg-primary-container/10 text-primary font-label-md text-label-md whitespace-nowrap">All</button>
+<button class="px-3 py-1 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap">Active Repairs</button>
+<button class="px-3 py-1 rounded-full border border-outline-variant text-on-surface-variant hover:bg-surface-container-low font-label-md text-label-md whitespace-nowrap">Business</button>
+</div>
+</div>
+<!-- Customer List -->
+<div class="flex-1 overflow-y-auto">
+<!-- List Item (Inactive) -->
+<div class="p-md flex items-center gap-md border-b border-outline-variant/50 hover:bg-surface-container-low cursor-pointer transition-colors">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant font-label-md text-label-md font-bold">
+                        SJ
+                    </div>
+<div class="flex-1 min-w-0">
+<h3 class="font-label-md text-label-md font-bold text-on-surface truncate">Sarah Jenkins</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate text-[13px]">+44 7700 900077</p>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container-high text-on-surface-variant">2 Repairs</span>
+</div>
+</div>
+<!-- List Item (Active) -->
+<div class="p-md flex items-center gap-md border-l-4 border-primary bg-secondary-container/30 cursor-pointer">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-label-md text-label-md font-bold">
+                        MR
+                    </div>
+<div class="flex-1 min-w-0">
+<h3 class="font-label-md text-label-md font-bold text-on-surface truncate">Marcus Reynolds</h3>
+<p class="font-body-md text-body-md text-primary truncate text-[13px]">marcus.r@example.com</p>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-primary-container/20 text-primary">5 Repairs</span>
+</div>
+</div>
+<!-- List Item (Inactive) -->
+<div class="p-md flex items-center gap-md border-b border-outline-variant/50 hover:bg-surface-container-low cursor-pointer transition-colors">
+<div class="w-10 h-10 rounded-full bg-surface-container-high flex items-center justify-center text-on-surface-variant font-label-md text-label-md font-bold">
+                        EL
+                    </div>
+<div class="flex-1 min-w-0">
+<h3 class="font-label-md text-label-md font-bold text-on-surface truncate">Elena Lawson</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate text-[13px]">+44 7700 900123</p>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-surface-container-high text-on-surface-variant">1 Repair</span>
+</div>
+</div>
+<!-- List Item (Inactive) -->
+<div class="p-md flex items-center gap-md border-b border-outline-variant/50 hover:bg-surface-container-low cursor-pointer transition-colors">
+<div class="w-10 h-10 rounded-full bg-tertiary-container/20 text-tertiary flex items-center justify-center font-label-md text-label-md font-bold">
+                        TC
+                    </div>
+<div class="flex-1 min-w-0">
+<h3 class="font-label-md text-label-md font-bold text-on-surface truncate">TechCorp Ltd</h3>
+<p class="font-body-md text-body-md text-on-surface-variant truncate text-[13px]">B2B Account</p>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center px-2 py-0.5 rounded text-[11px] font-medium bg-tertiary-container/20 text-tertiary">14 Repairs</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Right Panel: Detailed Profile Canvas -->
+<section class="flex-1 bg-surface-bright overflow-y-auto p-xl">
+<div class="max-w-[1000px] mx-auto flex flex-col gap-xl">
+<!-- Profile Header -->
+<div class="flex justify-between items-start">
+<div class="flex items-center gap-lg">
+<div class="w-20 h-20 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center font-headline-lg text-headline-lg font-bold shadow-sm">
+                            MR
+                        </div>
+<div>
+<div class="flex items-center gap-sm mb-1">
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface">Marcus Reynolds</h2>
+<span class="px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-green-100 text-green-800 border border-green-200">VIP</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant">Customer since Oct 2022 • ID: #CUS-8892</p>
+</div>
+</div>
+<div class="flex gap-sm">
+<button class="px-4 py-2 border border-outline-variant rounded-lg text-primary font-label-md text-label-md font-medium hover:bg-surface-container-low transition-colors">
+                            Edit Profile
+                        </button>
+<button class="px-4 py-2 bg-primary text-on-primary rounded-lg font-label-md text-label-md font-medium hover:bg-primary/90 transition-colors shadow-sm flex items-center gap-2">
+<span class="material-symbols-outlined text-[18px]">add</span> Create Repair
+                        </button>
+</div>
+</div>
+<!-- Bento Grid: Key Info -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-md">
+<!-- Personal Info Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex items-center gap-2 mb-md text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">contact_page</span>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Contact Details</h3>
+</div>
+<div class="flex flex-col gap-3">
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-[18px] mt-0.5">phone_iphone</span>
+<div>
+<p class="font-body-md text-body-md text-on-surface">+44 7700 900456</p>
+<p class="text-[12px] text-on-surface-variant">Primary Mobile</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-[18px] mt-0.5">mail</span>
+<div>
+<p class="font-body-md text-body-md text-on-surface">marcus.reynolds@example.com</p>
+<p class="text-[12px] text-on-surface-variant">Personal Email</p>
+</div>
+</div>
+<div class="flex items-start gap-3">
+<span class="material-symbols-outlined text-outline text-[18px] mt-0.5">location_on</span>
+<div>
+<p class="font-body-md text-body-md text-on-surface">14b High Street, London, E1 6AN</p>
+<p class="text-[12px] text-on-surface-variant">Billing Address</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Payment Summary Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex items-center justify-between mb-md">
+<div class="flex items-center gap-2 text-on-surface-variant">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Financial Overview</h3>
+</div>
+<span class="material-symbols-outlined text-primary text-[20px]">trending_up</span>
+</div>
+<div class="mb-4">
+<p class="text-[12px] text-on-surface-variant mb-1">Lifetime Value</p>
+<p class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-on-surface">£845.00</p>
+</div>
+<div class="flex gap-4 border-t border-outline-variant/50 pt-4">
+<div>
+<p class="text-[12px] text-on-surface-variant">Total Paid</p>
+<p class="font-label-md text-label-md font-medium text-on-surface">£845.00</p>
+</div>
+<div>
+<p class="text-[12px] text-on-surface-variant">Outstanding</p>
+<p class="font-label-md text-label-md font-medium text-on-surface">£0.00</p>
+</div>
+</div>
+</div>
+<!-- Warranty Status Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm relative overflow-hidden">
+<div class="absolute -right-4 -top-4 w-24 h-24 bg-primary/5 rounded-full blur-2xl"></div>
+<div class="flex items-center gap-2 mb-md text-on-surface-variant relative z-10">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+<h3 class="font-label-md text-label-md font-bold uppercase tracking-wider">Active Warranties</h3>
+</div>
+<div class="flex flex-col gap-3 relative z-10">
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-low border border-outline-variant/50">
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">iPhone 13 Pro Screen</p>
+<p class="text-[11px] text-on-surface-variant">Expires in 45 days</p>
+</div>
+<span class="w-2 h-2 rounded-full bg-green-500"></span>
+</div>
+<div class="flex items-center justify-between p-2 rounded bg-surface-container-low border border-outline-variant/50">
+<div>
+<p class="font-label-md text-label-md font-bold text-on-surface">MacBook Air Battery</p>
+<p class="text-[11px] text-on-surface-variant">Expires in 12 days</p>
+</div>
+<span class="w-2 h-2 rounded-full bg-yellow-500"></span>
+</div>
+</div>
+</div>
+</div>
+<!-- Repair History Table Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="px-lg py-md border-b border-outline-variant bg-surface flex justify-between items-center">
+<h3 class="font-title-lg text-title-lg font-bold text-on-surface">Repair History</h3>
+<button class="text-primary font-label-md text-label-md font-medium hover:underline flex items-center gap-1">
+                            View All <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-low border-b border-outline-variant text-[12px] font-medium text-on-surface-variant uppercase tracking-wider">
+<th class="px-lg py-3 font-label-md">Repair ID</th>
+<th class="px-lg py-3 font-label-md">Date</th>
+<th class="px-lg py-3 font-label-md">Device &amp; Issue</th>
+<th class="px-lg py-3 font-label-md">Status</th>
+<th class="px-lg py-3 font-label-md text-right">Cost</th>
+</tr>
+</thead>
+<tbody class="font-body-md text-body-md text-on-surface">
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-4 font-code text-primary">#REP-1042</td>
+<td class="px-lg py-4 text-on-surface-variant">12 Nov 2023</td>
+<td class="px-lg py-4">
+<p class="font-medium text-on-surface">iPhone 13 Pro</p>
+<p class="text-[13px] text-on-surface-variant">OLED Screen Replacement</p>
+</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-green-100 text-green-800 border border-green-200">
+                                            Completed
+                                        </span>
+</td>
+<td class="px-lg py-4 text-right font-medium">£285.00</td>
+</tr>
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-4 font-code text-primary">#REP-0891</td>
+<td class="px-lg py-4 text-on-surface-variant">04 Aug 2023</td>
+<td class="px-lg py-4">
+<p class="font-medium text-on-surface">MacBook Air M1</p>
+<p class="text-[13px] text-on-surface-variant">Battery Replacement</p>
+</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-green-100 text-green-800 border border-green-200">
+                                            Completed
+                                        </span>
+</td>
+<td class="px-lg py-4 text-right font-medium">£150.00</td>
+</tr>
+<tr class="border-b border-outline-variant/50 hover:bg-surface-container-low transition-colors bg-primary/5">
+<td class="px-lg py-4 font-code text-primary">#REP-1105</td>
+<td class="px-lg py-4 text-on-surface-variant">Today</td>
+<td class="px-lg py-4">
+<p class="font-medium text-on-surface">iPad Pro 11"</p>
+<p class="text-[13px] text-on-surface-variant">Charging Port Repair</p>
+</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-blue-100 text-blue-800 border border-blue-200">
+                                            In Progress
+                                        </span>
+</td>
+<td class="px-lg py-4 text-right font-medium text-on-surface-variant">Quote: £95.00</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="px-lg py-4 font-code text-primary">#REP-0452</td>
+<td class="px-lg py-4 text-on-surface-variant">22 Jan 2023</td>
+<td class="px-lg py-4">
+<p class="font-medium text-on-surface">Samsung S22</p>
+<p class="text-[13px] text-on-surface-variant">Water Damage Assessment</p>
+</td>
+<td class="px-lg py-4">
+<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[12px] font-medium bg-gray-100 text-gray-800 border border-gray-200">
+                                            Cancelled
+                                        </span>
+</td>
+<td class="px-lg py-4 text-right font-medium">£0.00</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</section>
+</main>
+</body></html>

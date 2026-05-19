@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://spidermobiles.co.uk/sitemap.xml

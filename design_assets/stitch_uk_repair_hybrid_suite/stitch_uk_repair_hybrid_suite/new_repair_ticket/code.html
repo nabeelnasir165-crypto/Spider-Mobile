@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hybrid Repair Suite V1 - Create Repair Ticket</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "on-error-container": "#93000a",
+                      "surface-dim": "#d8d9e3",
+                      "on-surface-variant": "#414754",
+                      "on-tertiary-container": "#0e0200",
+                      "primary-fixed": "#d8e2ff",
+                      "surface-variant": "#e0e2ec",
+                      "outline": "#727785",
+                      "on-tertiary-fixed-variant": "#783100",
+                      "on-tertiary": "#ffffff",
+                      "inverse-surface": "#2d3038",
+                      "on-tertiary-fixed": "#341100",
+                      "tertiary": "#9e4300",
+                      "surface-bright": "#f9f9ff",
+                      "surface-container": "#ecedf7",
+                      "secondary-container": "#d0e1fb",
+                      "surface-container-lowest": "#ffffff",
+                      "on-primary-fixed": "#001a41",
+                      "surface-tint": "#005bc0",
+                      "on-primary-container": "#ffffff",
+                      "primary-fixed-dim": "#adc7ff",
+                      "on-secondary-container": "#54647a",
+                      "background": "#f9f9ff",
+                      "primary-container": "#1a73e8",
+                      "surface": "#f9f9ff",
+                      "tertiary-fixed": "#ffdbcb",
+                      "primary": "#005bbf",
+                      "secondary": "#505f76",
+                      "secondary-fixed": "#d3e4fe",
+                      "on-primary": "#ffffff",
+                      "surface-container-high": "#e6e8f2",
+                      "on-secondary-fixed": "#0b1c30",
+                      "inverse-primary": "#adc7ff",
+                      "surface-container-highest": "#e0e2ec",
+                      "secondary-fixed-dim": "#b7c8e1",
+                      "on-surface": "#191c23",
+                      "inverse-on-surface": "#eff0fa",
+                      "surface-container-low": "#f2f3fd",
+                      "outline-variant": "#c1c6d6",
+                      "error-container": "#ffdad6",
+                      "on-background": "#191c23",
+                      "error": "#ba1a1a",
+                      "on-primary-fixed-variant": "#004493",
+                      "on-error": "#ffffff",
+                      "tertiary-fixed-dim": "#ffb691",
+                      "tertiary-container": "#c55500",
+                      "on-secondary-fixed-variant": "#38485d",
+                      "on-secondary": "#ffffff"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "md": "16px",
+                      "lg": "24px",
+                      "margin-mobile": "16px",
+                      "xs": "4px",
+                      "xl": "32px",
+                      "sm": "8px",
+                      "base": "8px",
+                      "container-max": "1280px",
+                      "gutter": "20px"
+              },
+              "fontFamily": {
+                      "label-md": [
+                              "Inter"
+                      ],
+                      "headline-lg-mobile": [
+                              "Inter"
+                      ],
+                      "body-lg": [
+                              "Inter"
+                      ],
+                      "title-lg": [
+                              "Inter"
+                      ],
+                      "body-md": [
+                              "Inter"
+                      ],
+                      "headline-lg": [
+                              "Inter"
+                      ],
+                      "code": [
+                              "JetBrains Mono"
+                      ],
+                      "headline-md": [
+                              "Inter"
+                      ],
+                      "display-lg": [
+                              "Inter"
+                      ]
+              },
+              "fontSize": {
+                      "label-md": [
+                              "12px",
+                              {
+                                      "lineHeight": "16px",
+                                      "letterSpacing": "0.02em",
+                                      "fontWeight": "500"
+                              }
+                      ],
+                      "headline-lg-mobile": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-lg": [
+                              "16px",
+                              {
+                                      "lineHeight": "24px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "title-lg": [
+                              "18px",
+                              {
+                                      "lineHeight": "28px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "body-md": [
+                              "14px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-lg": [
+                              "32px",
+                              {
+                                      "lineHeight": "40px",
+                                      "letterSpacing": "-0.01em",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "code": [
+                              "13px",
+                              {
+                                      "lineHeight": "20px",
+                                      "fontWeight": "400"
+                              }
+                      ],
+                      "headline-md": [
+                              "24px",
+                              {
+                                      "lineHeight": "32px",
+                                      "fontWeight": "600"
+                              }
+                      ],
+                      "display-lg": [
+                              "48px",
+                              {
+                                      "lineHeight": "56px",
+                                      "letterSpacing": "-0.02em",
+                                      "fontWeight": "700"
+                              }
+                      ]
+              }
+      },
+          },
+        }
+      </script>
+<style>
+        body { font-family: 'Inter', sans-serif; }
+      </style>
+</head>
+<body class="bg-background text-on-background antialiased min-h-screen flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-primary cursor-pointer hover:bg-surface-container-low transition-colors p-sm rounded-full">menu</span>
+<span class="font-title-lg text-title-lg font-bold text-primary dark:text-primary-fixed">Hybrid Repair Suite V1</span>
+</div>
+<div class="flex-1 flex justify-center max-w-md mx-lg">
+<div class="relative w-full flex items-center">
+<span class="material-symbols-outlined absolute left-sm text-on-surface-variant">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-full py-sm pl-xl pr-md text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search repairs, customers..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-md">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low transition-colors p-sm rounded-full">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:bg-surface-container-low transition-colors p-sm rounded-full">help</span>
+<div class="flex items-center gap-sm cursor-pointer hover:bg-surface-container-low transition-colors p-xs rounded-full">
+<img alt="Manager Profile" class="w-8 h-8 rounded-full border border-outline-variant" data-alt="A professional headshot of a business manager, smiling slightly, against a neutral light grey background. The lighting is soft and even, highlighting a modern corporate aesthetic fitting for an administrative dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCkrTDcCf_F4kDk8u02o29P7OFbogpAOJ1zHv8Unz6KnchtJp_0Sf9LKv9QxA_82S-DlVD02qvxZ5xBtWZ6tlzCozJQ0MmT3zZqPdOE5wlzt3ZXpIRR5WOUqYcvioADw8QJ-ZDnHgqM4t0GSzj5h1g6z_pOmffdf09B5bbGOZ4BFxR1erttlMes-ZXv45cGdI6ppIplW_gYYLbhXXASLsY-QsnI78c3CSBnPgT9GkQwT_TyeNO4NRSdkNKEmHyAcFoa_ArY1o5h1ug"/>
+</div>
+</div>
+</header>
+<!-- SideNavBar & Main Content Wrapper -->
+<div class="flex flex-1 pt-16">
+<!-- SideNavBar -->
+<nav class="hidden md:flex fixed left-0 top-16 h-[calc(100vh-64px)] w-[260px] flex-col p-md z-40 overflow-y-auto bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline">
+<button class="w-full bg-primary text-on-primary font-label-md text-label-md rounded-lg py-md px-md mb-lg flex items-center justify-center gap-sm hover:bg-on-primary-fixed-variant transition-colors shadow-sm">
+<span class="material-symbols-outlined text-[18px]">add</span>
+                New Repair
+            </button>
+<div class="flex flex-col gap-xs">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">build</span>
+                    Repairs
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">group</span>
+                    Customers
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+                    Bookings
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">payments</span>
+                    Pricing
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">language</span>
+                    CMS
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">account_balance_wallet</span>
+                    Payments
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">verified</span>
+                    Warranty
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">badge</span>
+                    Staff
+                </a>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 cursor-pointer active:scale-90 font-label-md text-label-md" href="#">
+<span class="material-symbols-outlined text-[20px]">settings</span>
+                    Settings
+                </a>
+</div>
+<div class="mt-auto pt-lg flex items-center gap-md border-t border-outline-variant">
+<img alt="Business Logo" class="w-10 h-10 rounded border border-outline-variant" data-alt="A minimal, modern corporate logo graphic featuring abstract geometric shapes in shades of blue and grey, set against a pristine white background. The aesthetic is clean, professional, and precise." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDKSsTcwIRTHIcKy7a9fA9pidRRhnX1BaDlCpgN_Yrq4ex3AoV_M6ajJwwj7Kf7CfgzVyFN3AIR4TYmshda4wurXDHMPQqk__U4wfTTpsb7lha5j9ZjeWxFVkRdwvV_rNo5aaiuemFKvcNXkQREmsIPyfsDg3846vMSrqxr0U01XgsRj1XystunQlGFEhgURew0XKxJa3stjoRWonrDyRlX8ogxLBPKE9oxE6Ai7cZZ6ZJlqtXBxgVjAKSbW8i5QH7tH4OMJUPQt8o"/>
+<div>
+<h3 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface text-[14px] leading-tight">Hybrid Repair</h3>
+<p class="font-label-md text-label-md text-on-surface-variant">V1.0.4</p>
+</div>
+</div>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-1 md:ml-[260px] p-margin-mobile md:p-lg lg:p-xl max-w-container-max mx-auto w-full">
+<div class="mb-lg">
+<h1 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-on-surface mb-sm">Create Repair Ticket</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Log a new device for assessment and repair.</p>
+</div>
+<!-- Progress Indicator -->
+<div class="w-full bg-surface-container-lowest border border-outline-variant rounded-lg p-md mb-lg shadow-sm">
+<div class="flex items-center justify-between relative">
+<div class="absolute left-0 top-1/2 w-full h-[2px] bg-surface-container-high -z-10 -translate-y-1/2"></div>
+<!-- Step 1 (Active) -->
+<div class="flex flex-col items-center gap-xs bg-surface-container-lowest px-sm">
+<div class="w-8 h-8 rounded-full bg-primary text-on-primary flex items-center justify-center font-label-md text-label-md font-bold ring-4 ring-surface-container-lowest">1</div>
+<span class="font-label-md text-label-md text-primary hidden md:block">Customer</span>
+</div>
+<!-- Step 2 -->
+<div class="flex flex-col items-center gap-xs bg-surface-container-lowest px-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-bold ring-4 ring-surface-container-lowest">2</div>
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:block">Device</span>
+</div>
+<!-- Step 3 -->
+<div class="flex flex-col items-center gap-xs bg-surface-container-lowest px-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-bold ring-4 ring-surface-container-lowest">3</div>
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:block">Issues</span>
+</div>
+<!-- Step 4 -->
+<div class="flex flex-col items-center gap-xs bg-surface-container-lowest px-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-bold ring-4 ring-surface-container-lowest">4</div>
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:block">Checklist</span>
+</div>
+<!-- Step 5 -->
+<div class="flex flex-col items-center gap-xs bg-surface-container-lowest px-sm">
+<div class="w-8 h-8 rounded-full bg-surface-container-highest text-on-surface-variant flex items-center justify-center font-label-md text-label-md font-bold ring-4 ring-surface-container-lowest">5</div>
+<span class="font-label-md text-label-md text-on-surface-variant hidden md:block">Summary</span>
+</div>
+</div>
+</div>
+<!-- Bento Grid Layout for Form -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-lg">
+<!-- Left Column (Main Form) -->
+<div class="lg:col-span-8 flex flex-col gap-lg">
+<!-- Customer Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex items-center justify-between mb-md border-b border-surface-container-high pb-sm">
+<h2 class="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">person</span>
+                                Customer Details
+                            </h2>
+<button class="text-primary font-label-md text-label-md hover:underline">Create New</button>
+</div>
+<div class="relative w-full mb-md">
+<span class="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg py-sm pl-xl pr-md text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search by name, phone, or email..." type="text"/>
+</div>
+<!-- Selected Customer Card (Mock) -->
+<div class="bg-surface-container-low border border-primary/30 rounded-lg p-md flex items-center justify-between">
+<div class="flex items-center gap-md">
+<div class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center font-title-lg text-title-lg">JS</div>
+<div>
+<p class="font-title-lg text-title-lg text-on-surface text-[14px]">John Smith</p>
+<p class="font-body-md text-body-md text-on-surface-variant text-[12px]">+44 7700 900077 • john.s@example.com</p>
+</div>
+</div>
+<button class="text-on-surface-variant hover:text-error transition-colors p-sm">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+</div>
+<!-- Device Section -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex items-center justify-between mb-md border-b border-surface-container-high pb-sm">
+<h2 class="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">smartphone</span>
+                                Device Information
+                            </h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md mb-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant pl-xs">Brand</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg py-sm px-md text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer">
+<option>Apple</option>
+<option>Samsung</option>
+<option>Google</option>
+<option>Other</option>
+</select>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant pl-xs">Model</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg py-sm px-md text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all appearance-none cursor-pointer">
+<option>iPhone 13 Pro Max</option>
+<option>iPhone 13 Pro</option>
+<option>iPhone 13</option>
+<option>iPhone 12</option>
+</select>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-md">
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant pl-xs">IMEI / Serial Number</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg py-sm px-md text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Enter 15-digit IMEI" type="text"/>
+</div>
+<div class="flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant pl-xs">Passcode / Pattern</label>
+<input class="w-full bg-surface border border-outline-variant rounded-lg py-sm px-md text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Leave blank if none" type="text"/>
+</div>
+</div>
+</div>
+<!-- Problem Selection -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex items-center justify-between mb-md border-b border-surface-container-high pb-sm">
+<h2 class="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">bug_report</span>
+                                Reported Issues
+                            </h2>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-sm">
+<!-- Quick Select Chips -->
+<label class="flex flex-col items-center justify-center p-sm border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-primary-fixed has-[:checked]:border-primary">
+<input class="sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-on-surface-variant mb-xs">broken_image</span>
+<span class="font-label-md text-label-md text-center">Screen Damage</span>
+</label>
+<label class="flex flex-col items-center justify-center p-sm border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-primary-fixed has-[:checked]:border-primary">
+<input checked="" class="sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-primary mb-xs">battery_alert</span>
+<span class="font-label-md text-label-md text-center text-primary font-bold">Battery Drain</span>
+</label>
+<label class="flex flex-col items-center justify-center p-sm border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-primary-fixed has-[:checked]:border-primary">
+<input class="sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-on-surface-variant mb-xs">power</span>
+<span class="font-label-md text-label-md text-center">Charging Port</span>
+</label>
+<label class="flex flex-col items-center justify-center p-sm border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low transition-colors has-[:checked]:bg-primary-fixed has-[:checked]:border-primary">
+<input class="sr-only" type="checkbox"/>
+<span class="material-symbols-outlined text-on-surface-variant mb-xs">water_drop</span>
+<span class="font-label-md text-label-md text-center">Water Damage</span>
+</label>
+</div>
+<div class="mt-md flex flex-col gap-xs">
+<label class="font-label-md text-label-md text-on-surface-variant pl-xs">Additional Notes</label>
+<textarea class="w-full bg-surface border border-outline-variant rounded-lg py-sm px-md text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all resize-none" placeholder="Describe the issue in detail..." rows="3"></textarea>
+</div>
+</div>
+</div>
+<!-- Right Column (Condition, Estimates, Save) -->
+<div class="lg:col-span-4 flex flex-col gap-lg">
+<!-- Pre-Repair Condition -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="mb-md border-b border-surface-container-high pb-sm">
+<h2 class="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary">fact_check</span>
+                                Condition Checklist
+                            </h2>
+</div>
+<div class="flex flex-col gap-sm">
+<label class="flex items-center gap-md p-sm border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low">
+<input class="form-checkbox h-4 w-4 text-primary border-outline-variant rounded rounded-sm focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md flex-1">Scratches on screen</span>
+</label>
+<label class="flex items-center gap-md p-sm border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low">
+<input class="form-checkbox h-4 w-4 text-primary border-outline-variant rounded rounded-sm focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md flex-1">Dents on frame</span>
+</label>
+<label class="flex items-center gap-md p-sm border border-outline-variant rounded-lg cursor-pointer hover:bg-surface-container-low">
+<input class="form-checkbox h-4 w-4 text-primary border-outline-variant rounded rounded-sm focus:ring-primary" type="checkbox"/>
+<span class="font-body-md text-body-md flex-1">Powers on</span>
+</label>
+</div>
+<div class="mt-md pt-md border-t border-surface-container-high">
+<h3 class="font-label-md text-label-md text-on-surface-variant mb-sm">Accessories Received</h3>
+<div class="flex flex-wrap gap-sm">
+<span class="px-md py-xs border border-outline-variant rounded-full font-label-md text-label-md bg-surface text-on-surface cursor-pointer hover:bg-surface-container-low">SIM Tray</span>
+<span class="px-md py-xs border border-primary bg-primary-fixed text-on-primary-fixed rounded-full font-label-md text-label-md cursor-pointer">Case</span>
+<span class="px-md py-xs border border-outline-variant rounded-full font-label-md text-label-md bg-surface text-on-surface cursor-pointer hover:bg-surface-container-low">Charger</span>
+</div>
+</div>
+</div>
+<!-- Estimate & Actions -->
+<div class="bg-surface-container-low border border-outline-variant rounded-xl p-lg shadow-sm sticky top-24">
+<h2 class="font-title-lg text-title-lg text-on-surface mb-md">Summary &amp; Estimate</h2>
+<div class="flex justify-between items-center mb-sm">
+<span class="font-body-md text-body-md text-on-surface-variant">Battery Replacement</span>
+<span class="font-body-md text-body-md text-on-surface">£45.00</span>
+</div>
+<div class="flex justify-between items-center mb-md">
+<span class="font-body-md text-body-md text-on-surface-variant">Diagnostic Fee</span>
+<span class="font-body-md text-body-md text-on-surface">£0.00</span>
+</div>
+<div class="flex justify-between items-center pt-md border-t border-outline-variant mb-lg">
+<span class="font-title-lg text-title-lg font-bold text-on-surface">Total Estimate</span>
+<span class="font-headline-md text-headline-md font-bold text-primary">£45.00</span>
+</div>
+<div class="flex flex-col gap-md">
+<button class="w-full bg-primary text-on-primary font-title-lg text-title-lg rounded-lg py-md px-lg flex items-center justify-center gap-sm hover:bg-on-primary-fixed-variant transition-colors shadow-sm">
+<span class="material-symbols-outlined">save</span>
+                                Create Ticket
+                            </button>
+<button class="w-full bg-transparent border border-outline-variant text-primary font-label-md text-label-md rounded-lg py-sm px-md flex items-center justify-center hover:bg-surface-container-high transition-colors">
+                                Save as Draft
+                            </button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

@@ -1,0 +1,26 @@
+# UK Mobile Repair Business System (Hybrid Repair Suite V1) - PRD & Wireframe Spec
+
+## Overview
+A comprehensive UK-based mobile repair business management system focused on operational efficiency, clear status tracking, and ease of use.
+
+## Design Principles
+- **Style**: Modern SaaS (Stripe/Shopify inspired).
+- **Theme**: Light (default) with dark mode support.
+- **Layout**: Card-based, clean typography, soft shadows, rounded corners.
+- **UX**: Minimize clicks (max 2-3 per action), high readability, searchable.
+
+## Screen List
+1. **Login Screen**: Minimalist center card for authentication.
+2. **Main Admin Dashboard**: KPI cards and active repairs overview.
+3. **Create Repair Ticket**: Multi-step wizard for efficient intake.
+4. **Ticket Details Page**: Detailed view with timeline and technician notes.
+5. **Repairs List**: Filterable table of all repair jobs.
+6. **Customer Management**: Split-view for customer profiles and history.
+7. **Bookings Management**: Calendar and list views for scheduling.
+8. **Pricing Manager**: Tree-structured pricing editor for brands/models.
+9. **CMS Dashboard**: Grid of editor cards for the customer website.
+10. **Homepage Editor (CMS)**: Section-based editor with live preview.
+11. **Payment Management**: Financial summary and invoice tracking.
+12. **Warranty Management**: Tracking active warranties and claims.
+13. **Staff Management**: Role-based access and activity logs.
+14. **Settings Page**: Business configuration and system preferences.

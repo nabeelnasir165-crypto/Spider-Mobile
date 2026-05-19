@@ -1,0 +1,448 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Hybrid Repair Suite V1 - Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "on-error-container": "#93000a",
+                    "surface-dim": "#d8d9e3",
+                    "on-surface-variant": "#414754",
+                    "on-tertiary-container": "#0e0200",
+                    "primary-fixed": "#d8e2ff",
+                    "surface-variant": "#e0e2ec",
+                    "outline": "#727785",
+                    "on-tertiary-fixed-variant": "#783100",
+                    "on-tertiary": "#ffffff",
+                    "inverse-surface": "#2d3038",
+                    "on-tertiary-fixed": "#341100",
+                    "tertiary": "#9e4300",
+                    "surface-bright": "#f9f9ff",
+                    "surface-container": "#ecedf7",
+                    "secondary-container": "#d0e1fb",
+                    "surface-container-lowest": "#ffffff",
+                    "on-primary-fixed": "#001a41",
+                    "surface-tint": "#005bc0",
+                    "on-primary-container": "#ffffff",
+                    "primary-fixed-dim": "#adc7ff",
+                    "on-secondary-container": "#54647a",
+                    "background": "#f9f9ff",
+                    "primary-container": "#1a73e8",
+                    "surface": "#f9f9ff",
+                    "tertiary-fixed": "#ffdbcb",
+                    "primary": "#005bbf",
+                    "secondary": "#505f76",
+                    "secondary-fixed": "#d3e4fe",
+                    "on-primary": "#ffffff",
+                    "surface-container-high": "#e6e8f2",
+                    "on-secondary-fixed": "#0b1c30",
+                    "inverse-primary": "#adc7ff",
+                    "surface-container-highest": "#e0e2ec",
+                    "secondary-fixed-dim": "#b7c8e1",
+                    "on-surface": "#191c23",
+                    "inverse-on-surface": "#eff0fa",
+                    "surface-container-low": "#f2f3fd",
+                    "outline-variant": "#c1c6d6",
+                    "error-container": "#ffdad6",
+                    "on-background": "#191c23",
+                    "error": "#ba1a1a",
+                    "on-primary-fixed-variant": "#004493",
+                    "on-error": "#ffffff",
+                    "tertiary-fixed-dim": "#ffb691",
+                    "tertiary-container": "#c55500",
+                    "on-secondary-fixed-variant": "#38485d",
+                    "on-secondary": "#ffffff"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "md": "16px",
+                    "lg": "24px",
+                    "margin-mobile": "16px",
+                    "xs": "4px",
+                    "xl": "32px",
+                    "sm": "8px",
+                    "base": "8px",
+                    "container-max": "1280px",
+                    "gutter": "20px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "title-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "code": ["JetBrains Mono"],
+                    "headline-md": ["Inter"],
+                    "display-lg": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }],
+                    "headline-lg-mobile": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                    "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+                    "title-lg": ["18px", { "lineHeight": "28px", "fontWeight": "600" }],
+                    "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+                    "headline-lg": ["32px", { "lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+                    "code": ["13px", { "lineHeight": "20px", "fontWeight": "400" }],
+                    "headline-md": ["24px", { "lineHeight": "32px", "fontWeight": "600" }],
+                    "display-lg": ["48px", { "lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700" }]
+            }
+          }
+        }
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background font-body-md text-body-md antialiased h-screen overflow-hidden flex flex-col">
+<!-- TopNavBar -->
+<header class="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="handyman">handyman</span>
+<span class="text-title-lg font-title-lg font-bold text-primary dark:text-primary-fixed">Hybrid Repair Suite V1</span>
+</div>
+<div class="flex items-center gap-md">
+<div class="flex items-center gap-xs">
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 rounded-full flex items-center justify-center text-on-surface-variant hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+</button>
+</div>
+<div class="h-8 w-px bg-outline-variant mx-xs"></div>
+<button class="flex items-center gap-sm px-sm py-xs rounded-full hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80">
+<div class="w-8 h-8 rounded-full bg-surface-container-high border border-outline flex items-center justify-center overflow-hidden">
+<img alt="Manager Profile" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9UwrXGOJwldL_QWKlemq3RouRrb5D3ruGW4YaZRCHZ4vD74NnaC6Rs_nCX-g6lKggTzgxRfQ3nyGtF84k9o9EvKzNOTBnZFdVlqlJ3E580qkmFVf_Ua3YGUIxYAegZWkHplfu4Wa_hkKBZzzC2zIK6Shvd9bwAc9CyCJ8f60P5MnbHTEge8NuXak2a3TtQ-ADoJ3Be_SehPr1SSRyP8hPvQL-5XKjk6kL_sd6GJoLhu9XbpuT9z83n8sck67zqmFJw7iRo90J0C0"/>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Profile</span>
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="expand_more" style="font-size: 16px;">expand_more</span>
+</button>
+</div>
+</header>
+<div class="flex flex-1 pt-16">
+<!-- SideNavBar -->
+<nav class="fixed left-0 top-16 h-[calc(100vh-64px)] w-[260px] flex flex-col p-md z-40 overflow-y-auto bg-surface-container-low dark:bg-surface-container-lowest border-r border-outline-variant dark:border-outline">
+<div class="mb-lg px-xs">
+<div class="flex items-center gap-md mb-md">
+<div class="w-12 h-12 rounded-lg bg-surface-container-high border border-outline-variant flex items-center justify-center">
+<span class="material-symbols-outlined text-primary" data-icon="storefront">storefront</span>
+</div>
+<div>
+<h2 class="font-headline-md text-headline-md font-bold text-on-surface dark:text-inverse-on-surface leading-tight">Hybrid Repair</h2>
+<span class="font-label-md text-label-md text-on-surface-variant">V1.0.4</span>
+</div>
+</div>
+<button class="w-full h-10 bg-primary text-on-primary font-label-md text-label-md rounded-lg flex items-center justify-center gap-sm hover:opacity-90 transition-opacity shadow-sm scale-95 active:scale-90 transition-transform cursor-pointer">
+<span class="material-symbols-outlined" data-icon="add" style="font-size: 18px;">add</span>
+                    New Repair
+                </button>
+</div>
+<ul class="flex flex-col gap-xs flex-1">
+<!-- Active Tab: Dashboard -->
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold scale-95 active:scale-90 transition-transform cursor-pointer transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+</li>
+<!-- Inactive Tabs -->
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="build">build</span>
+<span class="font-label-md text-label-md">Repairs</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-label-md text-label-md">Customers</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="calendar_today">calendar_today</span>
+<span class="font-label-md text-label-md">Bookings</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="payments">payments</span>
+<span class="font-label-md text-label-md">Pricing</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="language">language</span>
+<span class="font-label-md text-label-md">CMS</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="account_balance_wallet">account_balance_wallet</span>
+<span class="font-label-md text-label-md">Payments</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="verified">verified</span>
+<span class="font-label-md text-label-md">Warranty</span>
+</a>
+</li>
+<li>
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="badge">badge</span>
+<span class="font-label-md text-label-md">Staff</span>
+</a>
+</li>
+<li class="mt-auto">
+<a class="flex items-center gap-md px-md py-sm rounded-lg text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all duration-200 scale-95 active:scale-90 transition-transform cursor-pointer" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</li>
+</ul>
+</nav>
+<!-- Main Canvas -->
+<main class="flex-1 ml-[260px] overflow-y-auto bg-background p-lg">
+<div class="max-w-container-max mx-auto flex flex-col xl:flex-row gap-xl h-full">
+<!-- Left/Main Content Column -->
+<div class="flex-1 flex flex-col gap-lg">
+<div class="flex justify-between items-end">
+<div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface">Overview</h1>
+<p class="font-body-md text-body-md text-on-surface-variant mt-xs">Here's what's happening with your repairs today.</p>
+</div>
+</div>
+<!-- KPI Cards Row (Bento/Grid) -->
+<div class="grid grid-cols-2 lg:grid-cols-5 gap-md">
+<!-- Card 1 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant">Today’s Repairs</span>
+<span class="material-symbols-outlined text-primary opacity-80" data-icon="build" style="font-size: 20px;">build</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-auto">24</span>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant">Revenue Today</span>
+<span class="material-symbols-outlined text-primary opacity-80" data-icon="payments" style="font-size: 20px;">payments</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-auto">£1,420</span>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant">Pending Payments</span>
+<span class="material-symbols-outlined text-tertiary-container opacity-80" data-icon="credit_card" style="font-size: 20px;">credit_card</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-auto">8</span>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-tertiary-container transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant">Ready for Pickup</span>
+<span class="material-symbols-outlined text-primary opacity-80" data-icon="shopping_bag" style="font-size: 20px;">shopping_bag</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-auto">12</span>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+<!-- Card 5 -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex flex-col relative overflow-hidden group">
+<div class="flex justify-between items-start mb-sm">
+<span class="font-label-md text-label-md text-on-surface-variant">New Bookings</span>
+<span class="material-symbols-outlined text-primary opacity-80" data-icon="calendar_today" style="font-size: 20px;">calendar_today</span>
+</div>
+<span class="font-headline-lg text-headline-lg text-on-surface mt-auto">5</span>
+<div class="absolute bottom-0 left-0 w-full h-1 bg-primary transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left"></div>
+</div>
+</div>
+<!-- Active Repairs Table -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col flex-1 overflow-hidden">
+<div class="p-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
+<h2 class="font-title-lg text-title-lg text-on-surface">Active Repairs</h2>
+<button class="font-label-md text-label-md text-primary hover:underline flex items-center gap-xs">
+                                View All <span class="material-symbols-outlined" data-icon="arrow_forward" style="font-size: 16px;">arrow_forward</span>
+</button>
+</div>
+<div class="overflow-x-auto flex-1">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-low border-b border-outline-variant">
+<tr>
+<th class="p-md font-label-md text-label-md text-on-surface-variant font-semibold">Ticket ID</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant font-semibold">Customer Name</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant font-semibold">Device</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant font-semibold">Status</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant font-semibold">Payment</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant font-semibold">Date</th>
+<th class="p-md font-label-md text-label-md text-on-surface-variant font-semibold text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant font-body-md text-body-md text-on-surface bg-surface-container-lowest">
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-md font-code text-code text-primary">#TKT-1042</td>
+<td class="p-md font-medium">Sarah Jenkins</td>
+<td class="p-md text-on-surface-variant">iPhone 13 Pro</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md text-[11px]">In Progress</span>
+</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-label-md text-[11px]">Unpaid</span>
+</td>
+<td class="p-md text-on-surface-variant">10:30 AM</td>
+<td class="p-md text-right">
+<button class="font-label-md text-label-md text-primary border border-outline-variant px-3 py-1.5 rounded hover:bg-surface-container-high transition-colors">View</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-md font-code text-code text-primary">#TKT-1041</td>
+<td class="p-md font-medium">Mike Ross</td>
+<td class="p-md text-on-surface-variant">Samsung S22 Ultra</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant font-label-md text-label-md text-[11px]">Diagnosing</span>
+</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-surface-container-highest text-on-surface font-label-md text-label-md text-[11px]">Paid</span>
+</td>
+<td class="p-md text-on-surface-variant">09:15 AM</td>
+<td class="p-md text-right">
+<button class="font-label-md text-label-md text-primary border border-outline-variant px-3 py-1.5 rounded hover:bg-surface-container-high transition-colors">View</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-md font-code text-code text-primary">#TKT-1040</td>
+<td class="p-md font-medium">Emma Watson</td>
+<td class="p-md text-on-surface-variant">iPad Air 4</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-tertiary-fixed text-on-tertiary-fixed font-label-md text-label-md text-[11px]">Pending Parts</span>
+</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-label-md text-[11px]">Unpaid</span>
+</td>
+<td class="p-md text-on-surface-variant">Yesterday</td>
+<td class="p-md text-right">
+<button class="font-label-md text-label-md text-primary border border-outline-variant px-3 py-1.5 rounded hover:bg-surface-container-high transition-colors">View</button>
+</td>
+</tr>
+<tr class="hover:bg-surface-container-low transition-colors">
+<td class="p-md font-code text-code text-primary">#TKT-1039</td>
+<td class="p-md font-medium">Liam Neeson</td>
+<td class="p-md text-on-surface-variant">MacBook Pro M1</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-md text-label-md text-[11px]">In Progress</span>
+</td>
+<td class="p-md">
+<span class="inline-flex items-center px-2 py-1 rounded-full bg-error-container text-on-error-container font-label-md text-label-md text-[11px]">Unpaid</span>
+</td>
+<td class="p-md text-on-surface-variant">Yesterday</td>
+<td class="p-md text-right">
+<button class="font-label-md text-label-md text-primary border border-outline-variant px-3 py-1.5 rounded hover:bg-surface-container-high transition-colors">View</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<!-- Right Panel Column -->
+<div class="w-full xl:w-[320px] flex flex-col gap-lg">
+<!-- Alerts Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant bg-surface-bright flex items-center gap-sm">
+<span class="material-symbols-outlined text-tertiary-container" data-icon="warning">warning</span>
+<h3 class="font-title-lg text-title-lg text-on-surface">Alerts</h3>
+</div>
+<div class="p-md flex flex-col gap-md bg-surface-container-lowest">
+<div class="flex items-start gap-sm p-sm rounded bg-error-container/20 border border-error-container">
+<span class="material-symbols-outlined text-error mt-0.5" data-icon="error" style="font-size: 18px;">error</span>
+<div>
+<h4 class="font-label-md text-label-md font-bold text-on-surface">2 Overdue Invoices</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-[13px] mt-0.5">Totaling £340. Action required.</p>
+</div>
+</div>
+<div class="flex items-start gap-sm p-sm rounded bg-surface-container border border-outline-variant">
+<span class="material-symbols-outlined text-tertiary-container mt-0.5" data-icon="inventory_2" style="font-size: 18px;">inventory_2</span>
+<div>
+<h4 class="font-label-md text-label-md font-bold text-on-surface">Stock Low</h4>
+<p class="font-body-md text-body-md text-on-surface-variant text-[13px] mt-0.5">iPhone 13 Screen Protectors (2 left)</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Quick Actions Card -->
+<div class="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
+<div class="p-md border-b border-outline-variant bg-surface-bright flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary" data-icon="bolt">bolt</span>
+<h3 class="font-title-lg text-title-lg text-on-surface">Quick Actions</h3>
+</div>
+<div class="p-sm flex flex-col gap-xs bg-surface-container-lowest">
+<button class="flex items-center gap-md w-full p-sm rounded hover:bg-surface-container-low transition-colors text-left group">
+<div class="w-8 h-8 rounded-full bg-primary-fixed flex items-center justify-center group-hover:bg-primary transition-colors">
+<span class="material-symbols-outlined text-primary group-hover:text-on-primary transition-colors" data-icon="person_add" style="font-size: 18px;">person_add</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Add Customer</span>
+</button>
+<button class="flex items-center gap-md w-full p-sm rounded hover:bg-surface-container-low transition-colors text-left group">
+<div class="w-8 h-8 rounded-full bg-secondary-fixed flex items-center justify-center group-hover:bg-secondary transition-colors">
+<span class="material-symbols-outlined text-secondary group-hover:text-on-secondary transition-colors" data-icon="receipt_long" style="font-size: 18px;">receipt_long</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Create Invoice</span>
+</button>
+<button class="flex items-center gap-md w-full p-sm rounded hover:bg-surface-container-low transition-colors text-left group">
+<div class="w-8 h-8 rounded-full bg-surface-variant flex items-center justify-center group-hover:bg-outline transition-colors">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-surface-lowest transition-colors" data-icon="inventory" style="font-size: 18px;">inventory</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface">Order Parts</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Bottom padding for FAB -->
+<div class="h-24"></div>
+</main>
+</div>
+<!-- Floating Action Button (+ Create Ticket) -->
+<button class="fixed bottom-lg right-lg h-14 pl-sm pr-lg rounded-full bg-primary text-on-primary shadow-[0_8px_16px_rgba(0,91,191,0.2)] hover:shadow-[0_12px_24px_rgba(0,91,191,0.3)] hover:bg-[#004ca3] flex items-center gap-sm transition-all duration-200 z-50">
+<div class="w-10 h-10 rounded-full flex items-center justify-center bg-white/20">
+<span class="material-symbols-outlined" data-icon="add">add</span>
+</div>
+<span class="font-label-md text-label-md font-bold tracking-wide">Create Ticket</span>
+</button>
+</body></html>
