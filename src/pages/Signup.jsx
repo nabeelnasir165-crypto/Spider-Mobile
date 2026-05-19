@@ -145,20 +145,25 @@ export default function Signup() {
           onChange={(e) => setPhone(e.target.value)}
           required
         />
-        <FieldIcon
-          icon={Lock}
-          type={showPw ? 'text' : 'password'}
-          autoComplete="new-password"
-          placeholder="Password (min 8 chars)"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          right={
-            <button type="button" onClick={() => setShowPw((s) => !s)} className="text-ink-400 hover:text-ink-700 p-1" aria-label="Toggle password visibility">
-              {showPw ? <EyeOff size={16}/> : <Eye size={16}/>}
-            </button>
-          }
-        />
+        <div>
+          <FieldIcon
+            icon={Lock}
+            type={showPw ? 'text' : 'password'}
+            autoComplete="new-password"
+            placeholder="Create a password (min 8 chars)"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            right={
+              <button type="button" onClick={() => setShowPw((s) => !s)} className="text-ink-400 hover:text-ink-700 p-1" aria-label="Toggle password visibility">
+                {showPw ? <EyeOff size={16}/> : <Eye size={16}/>}
+              </button>
+            }
+          />
+          <p className="mt-1.5 ml-1 text-[11px] text-ink-500 leading-snug">
+            This is a new password just for Spider Mobiles — <strong>not your email password</strong>. You&rsquo;ll use it to sign in here later.
+          </p>
+        </div>
 
         {error && (
           <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
