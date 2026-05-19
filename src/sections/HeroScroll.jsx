@@ -207,7 +207,7 @@ export default function HeroScroll() {
                 transition={{ delay: 0.75, duration: 0.7 }}
                 className="mt-9 flex flex-wrap items-center gap-3"
               >
-                <Link to="/repairs" className="btn-accent">
+                <Link to="/book" className="btn-accent">
                   <Wrench size={16} /> Book Repair
                 </Link>
                 <Link to="/repairs#quote" className="btn-ghost text-ink-950">

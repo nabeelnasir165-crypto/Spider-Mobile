@@ -31,6 +31,12 @@ const META = {
     title: `Contact · ${SITE}`,
     description: 'Visit our Derby store or send us a message — we reply within the hour, Mon–Sat.',
   },
+  '/login': { title: `Sign in · ${SITE}`, description: 'Sign in to track your repairs and manage bookings.' },
+  '/signup': { title: `Create account · ${SITE}`, description: 'Create a free account to book and track phone repairs.' },
+  '/account': { title: `Your account · ${SITE}`, description: 'Manage bookings, repairs and your profile.' },
+  '/book': { title: `Book a repair · ${SITE}`, description: 'Book your repair in 5 quick steps. Most fixes ready in 30–60 minutes.' },
+  '/forgot-password': { title: `Forgot password · ${SITE}`, description: 'Reset your password.' },
+  '/reset-password': { title: `Reset password · ${SITE}`, description: 'Choose a new password.' },
   '/privacy': {
     title: `Privacy Policy · ${SITE}`,
     description: 'How we handle your data — clear, honest, GDPR-compliant.',

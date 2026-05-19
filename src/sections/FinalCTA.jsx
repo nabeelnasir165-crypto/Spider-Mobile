@@ -33,7 +33,7 @@ export default function FinalCTA() {
                 started before you even arrive.
               </p>
               <div className="mt-9 flex flex-wrap gap-3">
-                <Link to="/repairs" className="btn-accent">
+                <Link to="/book" className="btn-accent">
                   <Wrench size={16}/> Book a Repair
                 </Link>
                 <a href="tel:+441332000000" className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-white/10 border border-white/20 hover:bg-white/15 text-white font-medium text-sm transition">

@@ -46,7 +46,7 @@ export default function SiteLayout() {
       {/* Sticky mobile CTA */}
       {!isHome && (
         <Link
-          to="/repairs"
+          to="/book"
           className="lg:hidden fixed bottom-5 right-5 z-40 h-12 px-5 rounded-full bg-brand text-white font-semibold text-sm shadow-glow flex items-center gap-2 active:scale-95 transition"
         >
           <Wrench size={16} />

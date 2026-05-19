@@ -207,7 +207,7 @@ export default function InstantQuote() {
                     </div>
 
                     <div className="mt-8 flex flex-wrap gap-3">
-                      <a href="/repairs" className="btn-accent">
+                      <a href="/book" className="btn-accent">
                         Book this repair <ChevronRight size={16} />
                       </a>
                       <button onClick={reset} className="btn-outline">Start over</button>
