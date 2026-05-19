@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  Calendar, Users, Smartphone, TrendingUp, ChevronRight, ArrowUpRight, Loader2, Clock, ShieldCheck, CheckCircle2,
+  Calendar, Users, Smartphone, TrendingUp, ChevronRight, ArrowUpRight, Loader2, Clock, ShieldCheck, CheckCircle2, AlertCircle,
 } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 import { stages } from '../../data/track';
@@ -11,32 +11,44 @@ export default function AdminDashboard() {
   const [stats, setStats] = useState(null);
   const [recent, setRecent] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
 
   useEffect(() => {
     let cancelled = false;
     (async () => {
       const startOfToday = new Date();
       startOfToday.setHours(0, 0, 0, 0);
-      const startOfWeek = new Date(startOfToday);
-      startOfWeek.setDate(startOfToday.getDate() - 6);
 
-      const [all, today, pending, customers, recentRows] = await Promise.all([
-        supabase.from('bookings').select('*', { count: 'exact', head: true }),
-        supabase.from('bookings').select('*', { count: 'exact', head: true }).gte('created_at', startOfToday.toISOString()),
-        supabase.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'Pending'),
-        supabase.from('customer_profiles').select('*', { count: 'exact', head: true }),
-        supabase.from('bookings').select('*').order('created_at', { ascending: false }).limit(6),
-      ]);
+      try {
+        const [all, today, pending, customers, recentRows] = await Promise.race([
+          Promise.all([
+            supabase.from('bookings').select('*', { count: 'exact', head: true }),
+            supabase.from('bookings').select('*', { count: 'exact', head: true }).gte('created_at', startOfToday.toISOString()),
+            supabase.from('bookings').select('*', { count: 'exact', head: true }).eq('status', 'Pending'),
+            supabase.from('customer_profiles').select('*', { count: 'exact', head: true }),
+            supabase.from('bookings').select('*').order('created_at', { ascending: false }).limit(6),
+          ]),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Query timed out after 12s. Check Supabase config and migrations.')), 12000)
+          ),
+        ]);
 
-      if (cancelled) return;
-      setStats({
-        total: all.count ?? 0,
-        today: today.count ?? 0,
-        pending: pending.count ?? 0,
-        customers: customers.count ?? 0,
-      });
-      setRecent(recentRows.data || []);
-      setLoading(false);
+        const firstError = [all, today, pending, customers, recentRows].find((r) => r.error)?.error;
+        if (firstError) throw firstError;
+
+        if (cancelled) return;
+        setStats({
+          total: all.count ?? 0,
+          today: today.count ?? 0,
+          pending: pending.count ?? 0,
+          customers: customers.count ?? 0,
+        });
+        setRecent(recentRows.data || []);
+      } catch (e) {
+        if (!cancelled) setLoadError(e?.message || String(e));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     })();
     return () => { cancelled = true; };
   }, []);
@@ -45,6 +57,32 @@ export default function AdminDashboard() {
     return (
       <div className="py-24 grid place-items-center text-ink-500">
         <Loader2 className="animate-spin" size={28}/>
+        <p className="text-xs mt-3">Loading dashboard…</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    const lower = loadError.toLowerCase();
+    let hint = 'Open browser console for details. Most often this means a migration hasn\'t been run.';
+    if (lower.includes('does not exist') || lower.includes('relation')) {
+      hint = 'A table or column is missing. Run both migrations in Supabase → SQL Editor: 20260519_customer_auth.sql and 20260521_admin_role.sql.';
+    } else if (lower.includes('timed') || lower.includes('fetch') || lower.includes('network')) {
+      hint = 'Couldn\'t reach Supabase. Verify VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local, then restart the dev server.';
+    }
+    return (
+      <div className="p-8 rounded-2xl bg-red-50 border border-red-100 max-w-2xl">
+        <div className="flex items-start gap-3">
+          <AlertCircle size={22} className="text-red-600 shrink-0 mt-0.5"/>
+          <div>
+            <p className="font-semibold text-red-900 text-lg mb-1">Couldn&rsquo;t load admin dashboard</p>
+            <p className="text-sm text-red-700 font-mono break-words">{loadError}</p>
+            <p className="text-sm text-red-700 mt-3">{hint}</p>
+            <button onClick={() => window.location.reload()} className="mt-5 h-9 px-4 rounded-full bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition">
+              Retry
+            </button>
+          </div>
+        </div>
       </div>
     );
   }

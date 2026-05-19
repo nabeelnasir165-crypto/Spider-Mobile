@@ -73,19 +73,22 @@ export default function Book() {
 
     // Fire-and-await the email function (graceful failure — booking still succeeds)
     try {
-      await supabase.functions.invoke('send-booking-email', {
-        body: {
-          booking_ref: data.booking_ref,
-          customer_email: user.email,
-          customer_name: profile?.full_name || user.email,
-          device: `${brand?.name} ${model?.name}`,
-          issue: issue?.label,
-          requested_date,
-          quote_min: quote?.min,
-          quote_max: quote?.max,
-          eta: quote?.eta,
-        },
-      });
+      await Promise.race([
+        supabase.functions.invoke('send-booking-email', {
+          body: {
+            booking_ref: data.booking_ref,
+            customer_email: user.email,
+            customer_name: profile?.full_name || user.email,
+            device: `${brand?.name} ${model?.name}`,
+            issue: issue?.label,
+            requested_date,
+            quote_min: quote?.min,
+            quote_max: quote?.max,
+            eta: quote?.eta,
+          },
+        }),
+        new Promise((resolve) => setTimeout(resolve, 4000)), // don't make the user wait > 4s for email
+      ]);
     } catch (e) {
       // Edge function not deployed or SMTP not configured — booking is still saved
       console.warn('Confirmation email skipped:', e?.message || e);

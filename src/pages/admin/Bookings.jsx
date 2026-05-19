@@ -12,18 +12,29 @@ const STATUS_OPTIONS = ['Pending', 'Confirmed', 'Converted', 'Cancelled'];
 export default function AdminBookings() {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
   const [openId, setOpenId] = useState(null);
 
   const load = async () => {
     setLoading(true);
-    const { data } = await supabase
-      .from('bookings')
-      .select('*')
-      .order('created_at', { ascending: false });
-    setRows(data || []);
-    setLoading(false);
+    setLoadError('');
+    try {
+      const { data, error } = await Promise.race([
+        supabase.from('bookings').select('*').order('created_at', { ascending: false }),
+        new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Query timed out after 12s. Check your Supabase URL/key and migrations.')), 12000)
+        ),
+      ]);
+      if (error) throw error;
+      setRows(data || []);
+    } catch (e) {
+      setLoadError(e?.message || String(e));
+      setRows([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -94,7 +105,10 @@ export default function AdminBookings() {
       {loading ? (
         <div className="py-16 text-center text-ink-500">
           <Loader2 className="animate-spin mx-auto" size={28}/>
+          <p className="text-xs mt-3">Loading bookings…</p>
         </div>
+      ) : loadError ? (
+        <LoadErrorState message={loadError} onRetry={load}/>
       ) : filtered.length === 0 ? (
         <EmptyState query={query} statusFilter={statusFilter}/>
       ) : (
@@ -124,6 +138,33 @@ function FilterButton({ active, onClick, children }) {
     >
       {children}
     </button>
+  );
+}
+
+function LoadErrorState({ message, onRetry }) {
+  const lower = String(message).toLowerCase();
+  let hint = null;
+  if (lower.includes('does not exist') || lower.includes('relation')) {
+    hint = 'Looks like a migration hasn\'t been run. Open Supabase → SQL Editor → run 20260519_customer_auth.sql and 20260521_admin_role.sql.';
+  } else if (lower.includes('timed out') || lower.includes('fetch') || lower.includes('network')) {
+    hint = 'Couldn\'t reach Supabase. Verify VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in .env.local, then restart the dev server.';
+  } else if (lower.includes('permission') || lower.includes('rls')) {
+    hint = 'Permission denied by RLS. Run the admin migration (20260521_admin_role.sql) and ensure your profile has is_admin = true.';
+  }
+  return (
+    <div className="p-8 rounded-2xl bg-red-50 border border-red-100">
+      <div className="flex items-start gap-3">
+        <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5"/>
+        <div className="flex-1">
+          <p className="font-semibold text-red-900">Couldn&rsquo;t load bookings</p>
+          <p className="text-sm text-red-700 mt-1 font-mono break-words">{message}</p>
+          {hint && <p className="text-sm text-red-700 mt-3">{hint}</p>}
+          <button onClick={onRetry} className="mt-4 h-9 px-4 rounded-full bg-red-600 hover:bg-red-700 text-white text-sm font-medium transition">
+            Try again
+          </button>
+        </div>
+      </div>
+    </div>
   );
 }
 

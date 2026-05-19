@@ -1,34 +1,47 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Loader2, Mail, Phone, Users, ShieldCheck } from 'lucide-react';
+import { Search, Loader2, Mail, Phone, Users, ShieldCheck, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabaseClient';
 
 export default function AdminCustomers() {
   const [customers, setCustomers] = useState([]);
   const [bookingCounts, setBookingCounts] = useState({});
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [query, setQuery] = useState('');
 
   useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const { data: profiles } = await supabase
-        .from('customer_profiles')
-        .select('*')
-        .order('created_at', { ascending: false });
+      try {
+        const [profilesRes, bookingsRes] = await Promise.race([
+          Promise.all([
+            supabase.from('customer_profiles').select('*').order('created_at', { ascending: false }),
+            supabase.from('bookings').select('customer_user_id'),
+          ]),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Query timed out after 12s. Check Supabase config and migrations.')), 12000)
+          ),
+        ]);
+        if (profilesRes.error) throw profilesRes.error;
+        if (bookingsRes.error) throw bookingsRes.error;
 
-      const { data: bookings } = await supabase
-        .from('bookings')
-        .select('customer_user_id');
+        const counts = {};
+        (bookingsRes.data || []).forEach((b) => {
+          if (b.customer_user_id) counts[b.customer_user_id] = (counts[b.customer_user_id] || 0) + 1;
+        });
 
-      const counts = {};
-      (bookings || []).forEach((b) => {
-        if (b.customer_user_id) counts[b.customer_user_id] = (counts[b.customer_user_id] || 0) + 1;
-      });
-
-      setCustomers(profiles || []);
-      setBookingCounts(counts);
-      setLoading(false);
+        if (!cancelled) {
+          setCustomers(profilesRes.data || []);
+          setBookingCounts(counts);
+        }
+      } catch (e) {
+        if (!cancelled) setLoadError(e?.message || String(e));
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     })();
+    return () => { cancelled = true; };
   }, []);
 
   const filtered = useMemo(() => {
@@ -65,6 +78,18 @@ export default function AdminCustomers() {
       {loading ? (
         <div className="py-16 text-center text-ink-500">
           <Loader2 className="animate-spin mx-auto" size={28}/>
+          <p className="text-xs mt-3">Loading customers…</p>
+        </div>
+      ) : loadError ? (
+        <div className="p-8 rounded-2xl bg-red-50 border border-red-100">
+          <div className="flex items-start gap-3">
+            <AlertCircle size={20} className="text-red-600 shrink-0 mt-0.5"/>
+            <div>
+              <p className="font-semibold text-red-900 mb-1">Couldn&rsquo;t load customers</p>
+              <p className="text-sm text-red-700 font-mono break-words">{loadError}</p>
+              <p className="text-sm text-red-700 mt-3">Run both migrations in Supabase → SQL Editor: <code className="px-1.5 py-0.5 rounded bg-red-100 font-mono text-xs">20260519_customer_auth.sql</code> and <code className="px-1.5 py-0.5 rounded bg-red-100 font-mono text-xs">20260521_admin_role.sql</code>.</p>
+            </div>
+          </div>
         </div>
       ) : filtered.length === 0 ? (
         <div className="py-16 text-center rounded-2xl bg-white border border-dashed border-ink-200">

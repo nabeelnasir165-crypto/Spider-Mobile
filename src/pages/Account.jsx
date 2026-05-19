@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { User, Mail, Phone, LogOut, Plus, Smartphone, ChevronRight, Loader2, ShieldCheck, CheckCircle2 } from 'lucide-react';
+import { User, Mail, Phone, LogOut, Plus, Smartphone, ChevronRight, Loader2, ShieldCheck, CheckCircle2, AlertCircle } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabaseClient';
@@ -11,6 +11,7 @@ export default function Account() {
   const { user, profile, updateProfile, signOut } = useAuth();
   const [bookings, setBookings] = useState([]);
   const [loadingBookings, setLoadingBookings] = useState(true);
+  const [loadError, setLoadError] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [savedFlash, setSavedFlash] = useState(false);
@@ -27,14 +28,23 @@ export default function Account() {
     if (!user) return;
     let cancelled = false;
     (async () => {
-      const { data } = await supabase
-        .from('bookings')
-        .select('*')
-        .eq('customer_user_id', user.id)
-        .order('created_at', { ascending: false });
-      if (!cancelled) {
-        setBookings(data || []);
-        setLoadingBookings(false);
+      setLoadError('');
+      try {
+        const { data, error } = await Promise.race([
+          supabase.from('bookings').select('*').eq('customer_user_id', user.id).order('created_at', { ascending: false }),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('Query timed out after 12s. Check Supabase config and that migrations have been run.')), 12000)
+          ),
+        ]);
+        if (error) throw error;
+        if (!cancelled) setBookings(data || []);
+      } catch (e) {
+        if (!cancelled) {
+          setLoadError(e?.message || String(e));
+          setBookings([]);
+        }
+      } finally {
+        if (!cancelled) setLoadingBookings(false);
       }
     })();
     return () => { cancelled = true; };
@@ -76,6 +86,21 @@ export default function Account() {
             {loadingBookings ? (
               <div className="py-16 grid place-items-center text-ink-500">
                 <Loader2 className="animate-spin" size={24}/>
+                <p className="text-xs mt-3">Loading your bookings…</p>
+              </div>
+            ) : loadError ? (
+              <div className="p-6 rounded-2xl bg-red-50 border border-red-100">
+                <div className="flex items-start gap-3">
+                  <AlertCircle size={18} className="text-red-600 shrink-0 mt-0.5"/>
+                  <div>
+                    <p className="font-semibold text-red-900 mb-1">Couldn&rsquo;t load your bookings</p>
+                    <p className="text-sm text-red-700 font-mono break-words">{loadError}</p>
+                    <p className="text-sm text-red-700 mt-2">
+                      This usually means the database migration hasn&rsquo;t been run yet. Open Supabase → SQL Editor and run
+                      <code className="px-1.5 py-0.5 mx-1 rounded bg-red-100 font-mono text-xs">supabase/migrations/20260519_customer_auth.sql</code>.
+                    </p>
+                  </div>
+                </div>
               </div>
             ) : bookings.length === 0 ? (
               <EmptyBookings />
