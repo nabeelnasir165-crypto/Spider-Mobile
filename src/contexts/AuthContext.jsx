@@ -22,19 +22,45 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      if (session?.user) loadProfile(session.user.id);
-      setLoading(false);
-    });
+    let cancelled = false;
+
+    // Safety net — never let `loading` stay true longer than 6 seconds, no
+    // matter what Supabase does. Otherwise the route guards hang forever.
+    const safetyTimer = setTimeout(() => {
+      if (!cancelled) {
+        // eslint-disable-next-line no-console
+        console.warn('[Auth] getSession() did not resolve in 6s — releasing loading state.');
+        setLoading(false);
+      }
+    }, 6000);
+
+    supabase.auth.getSession()
+      .then(({ data: { session }, error }) => {
+        if (cancelled) return;
+        if (error) console.warn('[Auth] getSession error:', error.message);
+        setSession(session);
+        if (session?.user) loadProfile(session.user.id);
+        setLoading(false);
+      })
+      .catch((e) => {
+        if (cancelled) return;
+        console.warn('[Auth] getSession threw:', e?.message || e);
+        setLoading(false);
+      })
+      .finally(() => clearTimeout(safetyTimer));
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (cancelled) return;
       setSession(session);
       if (session?.user) loadProfile(session.user.id);
       else setProfile(null);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      cancelled = true;
+      clearTimeout(safetyTimer);
+      subscription.unsubscribe();
+    };
   }, [loadProfile]);
 
   // Email is the auth credential. Phone is collected as a contact field
