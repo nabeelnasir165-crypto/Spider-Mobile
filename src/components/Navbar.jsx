@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Phone, ChevronRight, User, LogOut, Smartphone, Plus } from 'lucide-react';
+import { Menu, X, Phone, ChevronRight, User, LogOut, Smartphone, Plus, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
 const navItems = [
@@ -29,7 +29,7 @@ const Logo = () => (
 );
 
 function UserPill() {
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const ref = useRef(null);
   const navigate = useNavigate();
@@ -79,10 +79,20 @@ function UserPill() {
             className="absolute right-0 mt-2 w-64 rounded-2xl bg-white border border-ink-100 shadow-soft-lg p-2 overflow-hidden"
           >
             <div className="px-3 py-2.5 mb-1 border-b border-ink-100">
-              <p className="text-sm font-semibold text-ink-950 truncate">{profile?.full_name || 'Account'}</p>
+              <div className="flex items-center gap-2">
+                <p className="text-sm font-semibold text-ink-950 truncate">{profile?.full_name || 'Account'}</p>
+                {isAdmin && (
+                  <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-accent-100 text-accent-800 text-[9px] font-bold uppercase tracking-wider">
+                    <ShieldCheck size={9}/> Admin
+                  </span>
+                )}
+              </div>
               <p className="text-xs text-ink-500 truncate">{user.email}</p>
             </div>
-            <MenuLink to="/account" onClick={() => setOpen(false)} icon={User}>Dashboard</MenuLink>
+            {isAdmin && (
+              <MenuLink to="/admin" onClick={() => setOpen(false)} icon={ShieldCheck}>Admin dashboard</MenuLink>
+            )}
+            <MenuLink to="/account" onClick={() => setOpen(false)} icon={User}>My account</MenuLink>
             <MenuLink to="/book" onClick={() => setOpen(false)} icon={Plus}>New repair</MenuLink>
             <MenuLink to="/track" onClick={() => setOpen(false)} icon={Smartphone}>My bookings</MenuLink>
             <button
@@ -111,7 +121,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
-  const { user, profile, signOut } = useAuth();
+  const { user, profile, isAdmin, signOut } = useAuth();
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -211,9 +221,14 @@ export default function Navbar() {
               )}
 
               <div className="flex-1 overflow-y-auto p-5 flex flex-col gap-1">
+                {user && isAdmin && (
+                  <NavLink to="/admin" className={({ isActive }) => `flex items-center justify-between px-4 py-3.5 rounded-xl text-base font-semibold ${isActive ? 'bg-ink-950 text-white' : 'bg-accent-50 text-accent-900'}`}>
+                    <span className="flex items-center gap-2"><ShieldCheck size={16}/> Admin dashboard</span><ChevronRight size={18} className="opacity-60" />
+                  </NavLink>
+                )}
                 {user && (
                   <NavLink to="/account" className={({ isActive }) => `flex items-center justify-between px-4 py-3.5 rounded-xl text-base font-semibold ${isActive ? 'bg-ink-950 text-white' : 'text-ink-900 hover:bg-ink-50'}`}>
-                    <span>Dashboard</span><ChevronRight size={18} className="opacity-60" />
+                    <span>My account</span><ChevronRight size={18} className="opacity-60" />
                   </NavLink>
                 )}
                 {navItems.map((item, i) => (

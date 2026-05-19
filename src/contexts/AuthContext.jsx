@@ -98,6 +98,7 @@ export const AuthProvider = ({ children }) => {
     session,
     user: session?.user || null,
     profile,
+    isAdmin: Boolean(profile?.is_admin),
     loading,
     signUp,
     signIn,

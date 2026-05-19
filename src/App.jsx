@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import SiteLayout from './components/SiteLayout';
 import ProtectedRoute from './components/ProtectedRoute';
+import AdminRoute from './components/AdminRoute';
+import AdminLayout from './components/AdminLayout';
 
 import Home from './pages/Home';
 import Repairs from './pages/Repairs';
@@ -22,6 +24,10 @@ import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import Account from './pages/Account';
 import Book from './pages/Book';
+
+import AdminDashboard from './pages/admin/Dashboard';
+import AdminBookings from './pages/admin/Bookings';
+import AdminCustomers from './pages/admin/Customers';
 
 export default function App() {
   return (
@@ -52,6 +58,15 @@ export default function App() {
             </Route>
 
             <Route path="*" element={<NotFound />} />
+          </Route>
+
+          {/* Admin area (own layout, no public navbar) */}
+          <Route element={<AdminRoute />}>
+            <Route element={<AdminLayout />}>
+              <Route path="/admin" element={<AdminDashboard />} />
+              <Route path="/admin/bookings" element={<AdminBookings />} />
+              <Route path="/admin/customers" element={<AdminCustomers />} />
+            </Route>
           </Route>
         </Routes>
       </BrowserRouter>
