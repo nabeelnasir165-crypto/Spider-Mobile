@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { AtSign, Lock, Eye, EyeOff, AlertCircle, Loader2, RotateCcw, Check } from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, RotateCcw, Check } from 'lucide-react';
 import AuthCard from '../components/AuthCard';
 import SetupBanner from '../components/SetupBanner';
 import { useAuth } from '../contexts/AuthContext';
@@ -12,7 +12,7 @@ export default function Login() {
   const from = location.state?.from || '/account';
   const { signIn, signInWithGoogle, resendConfirmation } = useAuth();
 
-  const [identifier, setIdentifier] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPw, setShowPw] = useState(false);
   const [error, setError] = useState('');
@@ -25,11 +25,11 @@ export default function Login() {
     setError('');
     setErrorKind('');
     setBusy(true);
-    const { error } = await signIn({ identifier, password });
+    const { error } = await signIn({ email, password });
     setBusy(false);
     if (error) {
       const msg = (error.message || '').toLowerCase();
-      if (msg.includes('not confirmed')) setErrorKind('unconfirmed');
+      if (msg.includes('email not confirmed')) setErrorKind('unconfirmed');
       else if (msg.includes('invalid')) setErrorKind('invalid');
       setError(friendlyAuthError(error.message));
     } else {
@@ -44,11 +44,11 @@ export default function Login() {
   };
 
   const resend = async () => {
-    if (!identifier) {
-      setError('Enter your email or mobile number above first, then click resend.');
+    if (!email) {
+      setError('Enter your email above first, then click resend.');
       return;
     }
-    const { error } = await resendConfirmation(identifier);
+    const { error } = await resendConfirmation(email);
     if (error) setError(friendlyAuthError(error.message));
     else { setResent(true); setTimeout(() => setResent(false), 4000); }
   };
@@ -57,7 +57,7 @@ export default function Login() {
     <AuthCard
       eyebrow="Welcome back"
       title="Sign in to your account"
-      subtitle="Use the email or mobile number you signed up with."
+      subtitle="Track your repairs, manage bookings and access your warranty in one place."
       altLink={{ label: 'New to Spider Mobiles?', cta: 'Create an account', to: '/signup' }}
     >
       <SetupBanner />
@@ -74,13 +74,12 @@ export default function Login() {
 
       <form onSubmit={submit} className="space-y-4" noValidate>
         <FieldIcon
-          icon={AtSign}
-          type="text"
-          autoComplete="username"
-          inputMode="email"
-          placeholder="Email or mobile number"
-          value={identifier}
-          onChange={(e) => setIdentifier(e.target.value)}
+          icon={Mail}
+          type="email"
+          autoComplete="email"
+          placeholder="Email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           required
         />
         <FieldIcon
@@ -105,7 +104,7 @@ export default function Login() {
             </div>
             {errorKind === 'unconfirmed' && (
               <button type="button" onClick={resend} className="mt-2 ml-6 inline-flex items-center gap-1.5 text-xs font-semibold text-red-800 hover:text-red-950 underline">
-                <RotateCcw size={11}/> Resend confirmation
+                <RotateCcw size={11}/> Resend confirmation email
               </button>
             )}
             {errorKind === 'invalid' && (
@@ -118,7 +117,7 @@ export default function Login() {
 
         {resent && (
           <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-sm text-emerald-700 flex items-center gap-2">
-            <Check size={16}/> Confirmation sent. Check your inbox or SMS.
+            <Check size={16}/> Confirmation email sent. Check your inbox.
           </div>
         )}
 
