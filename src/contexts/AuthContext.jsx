@@ -3,6 +3,9 @@ import { supabase } from '../lib/supabaseClient';
 
 const AuthContext = createContext({});
 
+const isEmail = (s) => typeof s === 'string' && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s.trim());
+const looksLikePhone = (s) => typeof s === 'string' && /^\+?[\d\s()-]{7,20}$/.test(s.trim()) && /\d/.test(s);
+
 export const AuthProvider = ({ children }) => {
   const [session, setSession] = useState(null);
   const [profile, setProfile] = useState(null);
@@ -37,22 +40,42 @@ export const AuthProvider = ({ children }) => {
     return () => subscription.unsubscribe();
   }, [loadProfile]);
 
-  const signUp = async ({ email, password, fullName, phone }) => {
+  // signUp with email, phone, or both. At least one must be provided.
+  const signUp = async ({ email, phone, password, fullName }) => {
+    const credential = {};
+    if (email) credential.email = email;
+    if (phone) credential.phone = phone;
+
     return supabase.auth.signUp({
-      email,
+      ...credential,
       password,
       options: {
         data: {
           full_name: fullName || null,
           phone: phone || null,
         },
-        emailRedirectTo: `${window.location.origin}/account`,
+        emailRedirectTo: email ? `${window.location.origin}/account` : undefined,
       },
     });
   };
 
-  const signIn = ({ email, password }) =>
-    supabase.auth.signInWithPassword({ email, password });
+  // signIn accepts an "identifier" (email or phone) plus password.
+  // Auto-detects which credential to use.
+  const signIn = ({ identifier, password }) => {
+    const trimmed = String(identifier || '').trim();
+    if (isEmail(trimmed)) {
+      return supabase.auth.signInWithPassword({ email: trimmed, password });
+    }
+    if (looksLikePhone(trimmed)) {
+      const phone = trimmed.replace(/[^\d+]/g, '');
+      const normalised = phone.startsWith('+') ? phone : '+' + phone.replace(/^0+/, '');
+      return supabase.auth.signInWithPassword({ phone: normalised, password });
+    }
+    return Promise.resolve({
+      data: null,
+      error: { message: 'Enter a valid email address or mobile number.' },
+    });
+  };
 
   const signInWithGoogle = () =>
     supabase.auth.signInWithOAuth({
@@ -60,12 +83,23 @@ export const AuthProvider = ({ children }) => {
       options: { redirectTo: `${window.location.origin}/account` },
     });
 
-  const resendConfirmation = (email) =>
-    supabase.auth.resend({
-      type: 'signup',
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/account` },
-    });
+  // Resend works for either email or phone
+  const resendConfirmation = (identifier) => {
+    const trimmed = String(identifier || '').trim();
+    if (isEmail(trimmed)) {
+      return supabase.auth.resend({
+        type: 'signup',
+        email: trimmed,
+        options: { emailRedirectTo: `${window.location.origin}/account` },
+      });
+    }
+    if (looksLikePhone(trimmed)) {
+      const phone = trimmed.replace(/[^\d+]/g, '');
+      const normalised = phone.startsWith('+') ? phone : '+' + phone.replace(/^0+/, '');
+      return supabase.auth.resend({ type: 'sms', phone: normalised });
+    }
+    return Promise.resolve({ error: { message: 'Enter a valid email or mobile number first.' } });
+  };
 
   const sendPasswordReset = (email) =>
     supabase.auth.resetPasswordForEmail(email, {

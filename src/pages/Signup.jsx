@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { User, Mail, Phone, Lock, Eye, EyeOff, AlertCircle, Loader2, Check } from 'lucide-react';
 import AuthCard from '../components/AuthCard';
@@ -6,9 +6,17 @@ import SetupBanner from '../components/SetupBanner';
 import { FieldIcon, GoogleIcon } from './Login';
 import { useAuth } from '../contexts/AuthContext';
 
-// Lightweight UK mobile validation: optional +44 / 0 prefix, then 10 digits
-// Accepts spaces and dashes for typing comfort.
-const PHONE_RE = /^(?:\+44|0)\s?\d(?:[\s-]?\d){9}$/;
+// Lenient international validation: optional leading +, 7–15 digits.
+// Allows spaces, dashes, and parens for typing comfort — we strip them on save.
+const PHONE_DIGITS = /^\+?\d{7,15}$/;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+export function normalisePhone(p) {
+  if (!p) return null;
+  const stripped = String(p).replace(/[^\d+]/g, '');
+  if (stripped.startsWith('+')) return '+' + stripped.slice(1).replace(/^0+/, '');
+  return '+' + stripped.replace(/^0+/, '');
+}
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -23,25 +31,43 @@ export default function Signup() {
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState(false);
 
+  const trimmedEmail = email.trim();
+  const trimmedPhone = phone.trim();
+
+  const validation = useMemo(() => {
+    if (!trimmedEmail && !trimmedPhone) {
+      return { ok: false, msg: '' }; // no msg yet, just disable button silently
+    }
+    if (trimmedEmail && !EMAIL_RE.test(trimmedEmail)) {
+      return { ok: false, msg: 'Enter a valid email address.' };
+    }
+    if (trimmedPhone) {
+      const digits = trimmedPhone.replace(/[^\d+]/g, '');
+      if (!PHONE_DIGITS.test(digits)) {
+        return { ok: false, msg: 'Enter a valid mobile number (7–15 digits, international format).' };
+      }
+    }
+    if (password.length < 8) {
+      return { ok: false, msg: 'Password must be at least 8 characters.' };
+    }
+    return { ok: true, msg: '' };
+  }, [trimmedEmail, trimmedPhone, password]);
+
   const submit = async (e) => {
     e.preventDefault();
     setError('');
 
-    if (!PHONE_RE.test(phone)) {
-      setError('Enter a valid UK mobile number (e.g. 07700 900 111).');
-      return;
-    }
-    if (password.length < 8) {
-      setError('Password must be at least 8 characters.');
+    if (!validation.ok) {
+      setError(validation.msg || 'Please enter an email or mobile number.');
       return;
     }
 
     setBusy(true);
     const { data, error } = await signUp({
-      email,
+      email: trimmedEmail || undefined,
+      phone: trimmedPhone ? normalisePhone(trimmedPhone) : undefined,
       password,
-      fullName,
-      phone: normalisePhone(phone),
+      fullName: fullName.trim() || undefined,
     });
     setBusy(false);
 
@@ -67,7 +93,11 @@ export default function Signup() {
       <AuthCard
         eyebrow="Almost there"
         title="Check your inbox"
-        subtitle={`We've sent a confirmation link to ${email}. Click it to activate your account.`}
+        subtitle={
+          trimmedEmail
+            ? `We've sent a confirmation link to ${trimmedEmail}. Click it to activate your account.`
+            : `We've sent a confirmation code by SMS to ${normalisePhone(trimmedPhone)}.`
+        }
         altLink={{ label: 'Already confirmed?', cta: 'Sign in', to: '/login' }}
       >
         <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-start gap-3">
@@ -77,7 +107,7 @@ export default function Signup() {
           <div>
             <p className="font-semibold text-emerald-900">Account created</p>
             <p className="text-sm text-emerald-700 mt-1">
-              Didn&rsquo;t get the email? Check your spam folder, or request another from the login page.
+              Didn&rsquo;t get it? Check your spam folder, or request another from the login page.
             </p>
           </div>
         </div>
@@ -85,11 +115,13 @@ export default function Signup() {
     );
   }
 
+  const oneOfMissing = !trimmedEmail && !trimmedPhone;
+
   return (
     <AuthCard
       eyebrow="Get started"
       title="Create your account"
-      subtitle="Book repairs, get instant status updates by SMS, and keep your warranty records in one place."
+      subtitle="Sign up with email or mobile number — just one is needed. We'll send you status updates by whichever you provide."
       altLink={{ label: 'Already have an account?', cta: 'Sign in', to: '/login' }}
     >
       <SetupBanner />
@@ -111,24 +143,31 @@ export default function Signup() {
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
         />
-        <FieldIcon
-          icon={Mail}
-          type="email"
-          autoComplete="email"
-          placeholder="Email address"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-        <FieldIcon
-          icon={Phone}
-          type="tel"
-          autoComplete="tel"
-          placeholder="Mobile number (07700 900 111)"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          required
-        />
+
+        <div className="rounded-xl border border-ink-200 p-1 bg-ink-50">
+          <p className="px-3 py-1.5 text-[11px] uppercase tracking-[0.16em] text-ink-500 font-semibold">
+            Use email <span className="text-ink-300">or</span> mobile — one is enough
+          </p>
+          <div className="space-y-2 p-1">
+            <FieldIcon
+              icon={Mail}
+              type="email"
+              autoComplete="email"
+              placeholder="Email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <FieldIcon
+              icon={Phone}
+              type="tel"
+              autoComplete="tel"
+              placeholder="Mobile number (any country, e.g. +92 329 6919363)"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+            />
+          </div>
+        </div>
+
         <FieldIcon
           icon={Lock}
           type={showPw ? 'text' : 'password'}
@@ -150,7 +189,11 @@ export default function Signup() {
           </div>
         )}
 
-        <button type="submit" disabled={busy} className="btn-accent w-full disabled:opacity-60">
+        <button
+          type="submit"
+          disabled={busy || oneOfMissing}
+          className="btn-accent w-full disabled:opacity-60 disabled:cursor-not-allowed"
+        >
           {busy ? <><Loader2 size={16} className="animate-spin"/> Creating account…</> : 'Create account'}
         </button>
 
@@ -165,24 +208,20 @@ export default function Signup() {
   );
 }
 
-function normalisePhone(p) {
-  const stripped = p.replace(/[\s-]/g, '');
-  if (stripped.startsWith('+44')) return stripped;
-  if (stripped.startsWith('0')) return '+44' + stripped.slice(1);
-  return stripped;
-}
-
 export function friendlyAuthError(msg) {
   if (!msg) return 'Something went wrong. Please try again.';
   const s = msg.toLowerCase();
   if (s.includes('invalid login') || s.includes('invalid credentials')) {
-    return "Wrong email or password. If you haven't created an account yet, sign up first.";
+    return "Wrong details or password. If you haven't created an account yet, sign up first.";
   }
-  if (s.includes('email not confirmed')) {
-    return 'Your email isn\'t confirmed yet — please check your inbox for the confirmation link.';
+  if (s.includes('email not confirmed') || s.includes('phone not confirmed')) {
+    return "Your account isn't confirmed yet — please check the link we sent.";
   }
-  if (s.includes('user already registered')) {
-    return 'An account with that email already exists. Try signing in instead.';
+  if (s.includes('user already registered') || s.includes('already been registered')) {
+    return 'An account with that email or number already exists. Try signing in instead.';
+  }
+  if (s.includes('phone provider') || s.includes('sms')) {
+    return 'Phone signup needs an SMS provider in your Supabase project. Add Twilio in Auth → Providers, or use email instead.';
   }
   if (s.includes('password should be') || s.includes('password')) {
     return msg;
