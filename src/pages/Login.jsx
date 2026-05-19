@@ -100,18 +100,28 @@ export default function Login() {
         {error && (
           <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
             <div className="flex items-start gap-2">
-              <AlertCircle size={16} className="mt-0.5 shrink-0" /> <span>{error}</span>
+              <AlertCircle size={16} className="mt-0.5 shrink-0" />
+              <div>
+                <p>{error}</p>
+                {(errorKind === 'invalid' || errorKind === 'unconfirmed') && (
+                  <p className="mt-1.5 text-[12px] text-red-600/80">
+                    If you just signed up, you may need to confirm your email first — check your inbox (and spam).
+                  </p>
+                )}
+              </div>
             </div>
-            {errorKind === 'unconfirmed' && (
-              <button type="button" onClick={resend} className="mt-2 ml-6 inline-flex items-center gap-1.5 text-xs font-semibold text-red-800 hover:text-red-950 underline">
-                <RotateCcw size={11}/> Resend confirmation email
-              </button>
-            )}
-            {errorKind === 'invalid' && (
-              <Link to="/signup" className="mt-2 ml-6 inline-block text-xs font-semibold text-red-800 hover:text-red-950 underline">
-                Don&rsquo;t have an account? Sign up
-              </Link>
-            )}
+            <div className="mt-2 ml-6 flex flex-wrap items-center gap-x-4 gap-y-1">
+              {(errorKind === 'unconfirmed' || errorKind === 'invalid') && (
+                <button type="button" onClick={resend} className="inline-flex items-center gap-1.5 text-xs font-semibold text-red-800 hover:text-red-950 underline">
+                  <RotateCcw size={11}/> Resend confirmation email
+                </button>
+              )}
+              {errorKind === 'invalid' && (
+                <Link to="/signup" className="text-xs font-semibold text-red-800 hover:text-red-950 underline">
+                  Don&rsquo;t have an account? Sign up
+                </Link>
+              )}
+            </div>
           </div>
         )}
 
