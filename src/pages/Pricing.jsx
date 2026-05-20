@@ -1,88 +1,49 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState, useMemo } from 'react';
+import { devicePricing } from '../data/admin';
 
 const Pricing = () => {
   const [activeBrand, setActiveBrand] = useState('Apple');
-  const [pricingData, setPricingData] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [pricingData, setPricingData] = useState(devicePricing);
+  const loading = false;
 
   const brands = ['Apple', 'Samsung', 'Google', 'Huawei', 'Other'];
 
-  useEffect(() => {
-    fetchPricing();
-  }, [activeBrand]);
+  const visibleRows = useMemo(
+    () => pricingData.filter((p) => p.brand === activeBrand).sort((a, b) => a.model.localeCompare(b.model)),
+    [pricingData, activeBrand]
+  );
 
-  const fetchPricing = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('device_pricing')
-        .select('*')
-        .eq('brand', activeBrand)
-        .order('model');
-        
-      if (error) throw error;
-      setPricingData(data || []);
-    } catch (err) {
-      console.error('Error fetching pricing:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleUpdate = async (id, field, value) => {
+  const handleUpdate = (id, field, value) => {
     const numericValue = parseFloat(value) || 0;
-    
-    // Optimistic UI update
-    setPricingData(prev => prev.map(item => item.id === id ? { ...item, [field]: numericValue } : item));
-    
-    try {
-      const { error } = await supabase.from('device_pricing').update({ [field]: numericValue }).eq('id', id);
-      if (error) throw error;
-    } catch (err) {
-      console.error('Error updating pricing:', err.message);
-      fetchPricing(); // Revert
-    }
+    setPricingData((prev) => prev.map((item) => (item.id === id ? { ...item, [field]: numericValue } : item)));
   };
 
-  const addModelService = async (model) => {
+  const addModelService = (model) => {
     const serviceName = prompt(`Enter new service name for ${model} (e.g. Screen Replacement):`);
     if (!serviceName) return;
-    
-    try {
-      const { data, error } = await supabase.from('device_pricing').insert([{
-        brand: activeBrand,
-        model: model,
-        repair_type: serviceName,
-        cost_price: 0,
-        retail_price: 0
-      }]).select().single();
-      if (error) throw error;
-      setPricingData(prev => [...prev, data]);
-    } catch (err) {
-      console.error('Error adding service:', err.message);
-      alert('Failed to add service.');
-    }
+    const created = {
+      id: 'pr-' + Math.random().toString(36).slice(2, 8),
+      brand: activeBrand,
+      model,
+      repair_type: serviceName,
+      cost_price: 0,
+      retail_price: 0,
+    };
+    setPricingData((prev) => [...prev, created]);
   };
 
-  const addNewModel = async () => {
+  const addNewModel = () => {
     const model = prompt(`Enter new device model for ${activeBrand} (e.g. iPhone 14 Pro):`);
     if (!model) return;
     addModelService(model);
   };
 
-  const deleteService = async (id) => {
+  const deleteService = (id) => {
     if (!window.confirm('Are you sure you want to delete this service?')) return;
-    try {
-      const { error } = await supabase.from('device_pricing').delete().eq('id', id);
-      if (error) throw error;
-      setPricingData(prev => prev.filter(item => item.id !== id));
-    } catch (err) {
-      console.error('Error deleting service:', err.message);
-    }
+    setPricingData((prev) => prev.filter((item) => item.id !== id));
   };
 
-  const models = [...new Set(pricingData.map(item => item.model))];
+  const models = [...new Set(visibleRows.map((item) => item.model))];
 
   return (
     <main className="h-full overflow-y-auto p-md md:p-xl bg-background">
@@ -151,7 +112,7 @@ const Pricing = () => {
                         </tr>
                       </thead>
                       <tbody className="font-body-md text-body-md text-on-surface divide-y divide-outline-variant/50">
-                        {pricingData.filter(item => item.model === model).map((item) => (
+                        {visibleRows.filter(item => item.model === model).map((item) => (
                           <tr key={item.id}>
                             <td className="py-sm px-md font-medium text-on-surface">{item.repair_type}</td>
                             <td className="py-sm px-md">

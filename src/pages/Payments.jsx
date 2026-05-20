@@ -1,79 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { ticketsWithCustomer } from '../data/admin';
 
 const Payments = () => {
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const tickets = useMemo(
+    () => [...ticketsWithCustomer].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
+    []
+  );
+  const loading = false;
   const [statusFilter, setStatusFilter] = useState('');
-  
-  // Metrics state
-  const [metrics, setMetrics] = useState({
-    revenueToday: 0,
-    outstanding: 0,
-    revenueThisMonth: 0
-  });
 
-  useEffect(() => {
-    fetchPayments();
-  }, []);
+  // Metrics computed from local mock data
+  const metrics = useMemo(() => {
+    const now = new Date();
+    const todayString = now.toISOString().split('T')[0];
+    const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
 
-  const fetchPayments = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('tickets')
-        .select(`
-          id,
-          ticket_ref,
-          created_at,
-          estimated_price,
-          payment_status,
-          customer_id,
-          customers ( full_name )
-        `)
-        .order('created_at', { ascending: false });
+    let revToday = 0;
+    let outstd = 0;
+    let revMonth = 0;
 
-      if (error) throw error;
-      
-      const allTickets = data || [];
-      setTickets(allTickets);
-      
-      // Calculate Metrics
-      const now = new Date();
-      const todayString = now.toISOString().split('T')[0];
-      const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+    tickets.forEach((t) => {
+      const price = parseFloat(t.estimated_price) || 0;
+      const isPaid = t.payment_status?.toLowerCase() === 'paid';
+      const createdAt = new Date(t.created_at);
+      const dateString = createdAt.toISOString().split('T')[0];
 
-      let revToday = 0;
-      let outstd = 0;
-      let revMonth = 0;
+      if (!isPaid) {
+        outstd += price;
+      } else {
+        if (dateString === todayString) revToday += price;
+        if (createdAt.toISOString() >= startOfMonth) revMonth += price;
+      }
+    });
 
-      allTickets.forEach(t => {
-        const price = parseFloat(t.estimated_price) || 0;
-        const isPaid = t.payment_status?.toLowerCase() === 'paid';
-        const createdAt = new Date(t.created_at);
-        const dateString = createdAt.toISOString().split('T')[0];
-
-        if (!isPaid) {
-          outstd += price;
-        } else {
-          if (dateString === todayString) revToday += price;
-          if (createdAt.toISOString() >= startOfMonth) revMonth += price;
-        }
-      });
-
-      setMetrics({
-        revenueToday: revToday,
-        outstanding: outstd,
-        revenueThisMonth: revMonth
-      });
-
-    } catch (err) {
-      console.error('Error fetching payments:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return { revenueToday: revToday, outstanding: outstd, revenueThisMonth: revMonth };
+  }, [tickets]);
 
   const filteredTickets = tickets.filter(t => {
     if (!statusFilter) return true;

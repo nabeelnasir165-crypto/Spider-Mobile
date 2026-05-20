@@ -69,6 +69,22 @@ export default {
         "tertiary-container": "#c55500",
         "on-secondary-fixed-variant": "#38485d",
         "on-secondary": "#ffffff",
+
+        // Success semantic tokens (green — used by status badges, warranty, alerts)
+        "success": "#1b6d2f",
+        "on-success": "#ffffff",
+        "success-container": "#a8f5a2",
+        "on-success-container": "#00210a",
+
+        // Warning semantic tokens (amber — used by "Repairing" / "In Progress" badges)
+        "warning": "#7c5800",
+        "on-warning": "#ffffff",
+        "warning-container": "#ffe08d",
+        "on-warning-container": "#261a00",
+
+        // Additional secondary-fixed tokens used by TicketDetails badges
+        "on-secondary-fixed": "#0b1c30",
+        "on-primary-fixed": "#001a41",
       },
       borderRadius: {
         "DEFAULT": "0.25rem",

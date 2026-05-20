@@ -71,17 +71,17 @@ const Dashboard = () => {
               { label: 'Ready for Pickup', icon: 'shopping_bag', value: metrics.readyForPickup, color: 'primary' },
               { label: 'New Bookings', icon: 'calendar_today', value: metrics.newBookings, color: 'primary' }
             ].map((card, index) => (
-              <div key={index} className="bg-surface-container-lowest border border-outline-variant rounded-lg p-md flex flex-col relative overflow-hidden group">
+              <div key={index} className="bg-surface-container-lowest border border-outline-variant rounded-xl px-md py-5 flex flex-col relative overflow-hidden group shadow-sm">
                 <div className="flex justify-between items-start mb-sm">
                   <span className="font-label-md text-label-md text-on-surface-variant">{card.label}</span>
-                  <span className={`material-symbols-outlined text-${card.color} opacity-80`} data-icon={card.icon} style={{ fontSize: '20px' }}>{card.icon}</span>
+                  <span className={`material-symbols-outlined text-${card.color} opacity-60`} data-icon={card.icon} style={{ fontSize: '22px' }}>{card.icon}</span>
                 </div>
-                <span className="font-headline-lg text-headline-lg text-on-surface mt-auto">{card.value}</span>
+                <span className="text-[28px] font-bold leading-tight text-on-surface mt-auto">{card.value}</span>
                 <div className={`absolute bottom-0 left-0 w-full h-1 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left ${card.barColor || 'bg-primary'}`}></div>
               </div>
             ))}
           </div>
-          <div className="bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col flex-1 overflow-hidden">
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl flex flex-col flex-1 overflow-hidden shadow-sm">
             <div className="p-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
               <h2 className="font-title-lg text-title-lg text-on-surface">Active Repairs</h2>
               <Link to="/admin/repairs" className="font-label-md text-label-md text-primary hover:underline flex items-center gap-xs">

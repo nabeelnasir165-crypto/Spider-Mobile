@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { customers as mockCustomers } from '../data/admin';
 
 const NewRepairTicket = () => {
   const navigate = useNavigate();
@@ -49,21 +49,18 @@ const NewRepairTicket = () => {
     }
   }, [searchQuery]);
 
-  const searchCustomers = async (query) => {
-    try {
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .or(`full_name.ilike.%${query}%,email.ilike.%${query}%,phone.ilike.%${query}%`)
-        .limit(5);
-        
-      if (error) {
-        console.error("Supabase search error:", error);
-      }
-      setCustomers(data || []);
-    } catch (err) {
-      console.error(err);
-    }
+  const searchCustomers = (query) => {
+    const q = query.toLowerCase();
+    setCustomers(
+      mockCustomers
+        .filter(
+          (c) =>
+            (c.full_name || '').toLowerCase().includes(q) ||
+            (c.email || '').toLowerCase().includes(q) ||
+            (c.phone || '').includes(q)
+        )
+        .slice(0, 5)
+    );
   };
 
   const toggleIssue = (issue) => {
@@ -78,60 +75,23 @@ const NewRepairTicket = () => {
     );
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
     if (!selectedCustomer) {
-      alert("Please select a customer first.");
+      alert('Please select a customer first.');
       return;
     }
-    
+
     setLoading(true);
-    try {
-      // Create a ticket ref
-      const ref = `REP-${Math.floor(1000 + Math.random() * 9000)}`;
-      
-      const { data, error } = await supabase
-        .from('tickets')
-        .insert([{
-          ticket_ref: ref,
-          customer_id: selectedCustomer.id,
-          device_brand: deviceBrand,
-          device_model: deviceModel,
-          device_imei: deviceImei,
-          device_passcode: devicePasscode,
-          reported_issues: reportedIssues,
-          condition_checklist: conditionChecklist,
-          accessories_received: accessories,
-          estimated_price: estimatedPrice,
-          status: 'Booked'
-        }])
-        .select()
-        .single();
-        
-      if (error) throw error;
-      
-      // If there are notes, insert them
-      if (additionalNotes) {
-        await supabase.from('ticket_notes').insert([{
-          ticket_id: data.id,
-          author: 'System Admin',
-          content: additionalNotes
-        }]);
-      }
-      
-      // Update booking status if converted from a booking
-      if (bookingId) {
-        await supabase.from('bookings').update({ status: 'Converted' }).eq('id', bookingId);
-      }
-      
-      // Navigate to the ticket details page
-      navigate(`/admin/ticket/${data.ticket_ref}`);
-    } catch (err) {
-      console.error(err);
-      alert("Error creating ticket: " + err.message);
-    } finally {
+    // Local-only creation — no Supabase. In the demo, "create" just shows
+    // a success message and goes back to the repairs list (the new ticket
+    // isn't persisted since we're not pushing to the in-memory store yet).
+    const ref = `REP-${Math.floor(1000 + Math.random() * 9000)}`;
+    setTimeout(() => {
       setLoading(false);
-    }
+      alert(`Ticket ${ref} created (demo only — not persisted).`);
+      navigate('/admin/repairs');
+    }, 350);
   };
 
   return (

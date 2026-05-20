@@ -1,50 +1,29 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { ticketsWithCustomer } from '../data/admin';
 
 const Warranty = () => {
-  const [warranties, setWarranties] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const loading = false;
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
-  useEffect(() => {
-    fetchWarranties();
-  }, []);
-
-  const fetchWarranties = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('tickets')
-        .select('id, ticket_ref, device_brand, device_model, reported_issues, status, updated_at, customers(full_name)')
-        .eq('status', 'Completed')
-        .order('updated_at', { ascending: false });
-
-      if (error) throw error;
-      
-      const processed = (data || []).map(ticket => {
+  const warranties = useMemo(() => {
+    const now = new Date();
+    return ticketsWithCustomer
+      .filter((t) => t.status === 'Completed')
+      .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+      .map((ticket) => {
         const completedDate = new Date(ticket.updated_at);
         const expiryDate = new Date(completedDate);
-        expiryDate.setDate(expiryDate.getDate() + 90); // 90 day warranty
-        
-        const now = new Date();
+        expiryDate.setDate(expiryDate.getDate() + 90);
         const isExpired = now > expiryDate;
-        
         return {
           ...ticket,
           expiry_date: expiryDate,
-          warranty_status: isExpired ? 'Expired' : 'Active'
+          warranty_status: isExpired ? 'Expired' : 'Active',
         };
       });
-
-      setWarranties(processed);
-    } catch (err) {
-      console.error('Error fetching warranties:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  }, []);
 
   const filteredWarranties = warranties.filter(w => {
     const searchMatch = !searchQuery || 

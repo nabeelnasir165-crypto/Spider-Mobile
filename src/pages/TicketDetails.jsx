@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { ticketsWithCustomer, ticketNotes as mockNotes } from '../data/admin';
 
 const TicketDetails = () => {
   const { id } = useParams();
@@ -10,169 +10,105 @@ const TicketDetails = () => {
   const [newNote, setNewNote] = useState('');
   const [isStatusModalOpen, setIsStatusModalOpen] = useState(false);
   const [selectedStatus, setSelectedStatus] = useState('');
-  
+
   const [deliveryInfo, setDeliveryInfo] = useState({ courierName: '', status: 'Not Dispatched' });
   const [isSavingDelivery, setIsSavingDelivery] = useState(false);
-  
+
   const [partsConsumed, setPartsConsumed] = useState([]);
   const [newPartName, setNewPartName] = useState('');
 
   const statuses = [
-    'Booked', 
-    'Received', 
-    'Diagnosed', 
-    'Repairing', 
-    'Ready for Collection', 
-    'Completed',
-    'Returned Unrepaired',
-    'Abandoned (Lost Job)'
+    'Booked', 'Received', 'Diagnosed', 'Repairing',
+    'Ready for Collection', 'Completed', 'Returned Unrepaired', 'Abandoned (Lost Job)',
   ];
 
   useEffect(() => {
-    fetchTicketData();
+    setLoading(true);
+    const found = ticketsWithCustomer.find((t) => t.ticket_ref === id);
+    if (found) {
+      setTicket(found);
+      if (found.delivery_info) setDeliveryInfo(found.delivery_info);
+      if (found.parts_consumed) setPartsConsumed(found.parts_consumed);
+      setNotes(
+        mockNotes
+          .filter((n) => n.ticket_id === found.id)
+          .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+      );
+    }
+    setLoading(false);
   }, [id]);
 
-  const fetchTicketData = async () => {
-    try {
-      setLoading(true);
-      const { data: ticketData, error: ticketError } = await supabase
-        .from('tickets')
-        .select(`
-          *,
-          customers (*)
-        `)
-        .eq('ticket_ref', id)
-        .single();
-        
-      if (ticketError) throw ticketError;
-      setTicket(ticketData);
-      if (ticketData.delivery_info) setDeliveryInfo(ticketData.delivery_info);
-      if (ticketData.parts_consumed) setPartsConsumed(ticketData.parts_consumed);
-
-      const { data: notesData, error: notesError } = await supabase
-        .from('ticket_notes')
-        .select('*')
-        .eq('ticket_id', ticketData.id)
-        .order('created_at', { ascending: false });
-        
-      if (!notesError) setNotes(notesData || []);
-      
-    } catch (error) {
-      console.error('Error fetching ticket:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleAddNote = async () => {
+  // Local-only mutations
+  const handleAddNote = () => {
     if (!newNote.trim()) return;
-    try {
-      const { error } = await supabase
-        .from('ticket_notes')
-        .insert([{
-          ticket_id: ticket.id,
-          author: 'System/Tech', 
-          content: newNote,
-          is_status_update: false
-        }]);
-        
-      if (error) throw error;
-      setNewNote('');
-      fetchTicketData();
-    } catch (error) {
-      console.error('Error adding note:', error.message);
-    }
+    const note = {
+      id: 'n-' + Math.random().toString(36).slice(2, 8),
+      ticket_id: ticket.id,
+      author: 'You',
+      content: newNote,
+      is_status_update: false,
+      created_at: new Date().toISOString(),
+    };
+    setNotes((prev) => [note, ...prev]);
+    setNewNote('');
   };
 
-  const handleUpdateStatus = async () => {
+  const handleUpdateStatus = () => {
     if (!selectedStatus) return;
-    try {
-      const { error } = await supabase
-        .from('tickets')
-        .update({ status: selectedStatus })
-        .eq('id', ticket.id);
-        
-      if (error) throw error;
-      
-      await supabase.from('ticket_notes').insert([{
+    setTicket((prev) => ({ ...prev, status: selectedStatus }));
+    setNotes((prev) => [
+      {
+        id: 'n-' + Math.random().toString(36).slice(2, 8),
         ticket_id: ticket.id,
         author: 'System',
         content: `Status updated to ${selectedStatus}`,
-        is_status_update: true
-      }]);
-
-      setIsStatusModalOpen(false);
-      fetchTicketData();
-    } catch (error) {
-      console.error('Error updating status:', error.message);
-      alert('Failed to update status');
-    }
+        is_status_update: true,
+        created_at: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+    setIsStatusModalOpen(false);
   };
 
-  const handleMarkAsPaid = async () => {
-    try {
-      const { error } = await supabase
-        .from('tickets')
-        .update({ payment_status: 'Paid' })
-        .eq('id', ticket.id);
-        
-      if (error) throw error;
-      
-      await supabase.from('ticket_notes').insert([{
+  const handleMarkAsPaid = () => {
+    setTicket((prev) => ({ ...prev, payment_status: 'Paid' }));
+    setNotes((prev) => [
+      {
+        id: 'n-' + Math.random().toString(36).slice(2, 8),
         ticket_id: ticket.id,
         author: 'System',
-        content: `Payment marked as Paid`,
-        is_status_update: true
-      }]);
-      
-      fetchTicketData();
-    } catch (error) {
-      console.error('Error marking as paid:', error.message);
-      alert('Failed to mark as paid');
-    }
+        content: 'Payment marked as Paid',
+        is_status_update: true,
+        created_at: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
   };
 
-  const handleUpdateDelivery = async () => {
+  const handleUpdateDelivery = () => {
     setIsSavingDelivery(true);
-    try {
-      const { error } = await supabase
-        .from('tickets')
-        .update({ delivery_info: deliveryInfo })
-        .eq('id', ticket.id);
-      if (error) throw error;
-      alert('Delivery info updated!');
-    } catch (err) {
-      console.error(err);
-      alert('Failed to update delivery');
-    } finally {
+    setTimeout(() => {
       setIsSavingDelivery(false);
-    }
+      alert('Delivery info updated (local only).');
+    }, 250);
   };
 
-  const handleAddPart = async () => {
+  const handleAddPart = () => {
     if (!newPartName.trim()) return;
     const updatedParts = [...partsConsumed, { name: newPartName, date: new Date().toISOString() }];
-    try {
-      const { error } = await supabase
-        .from('tickets')
-        .update({ parts_consumed: updatedParts })
-        .eq('id', ticket.id);
-      if (error) throw error;
-      setPartsConsumed(updatedParts);
-      setNewPartName('');
-      
-      // Auto-log a note
-      await supabase.from('ticket_notes').insert([{
+    setPartsConsumed(updatedParts);
+    setNotes((prev) => [
+      {
+        id: 'n-' + Math.random().toString(36).slice(2, 8),
         ticket_id: ticket.id,
         author: 'System',
         content: `Part consumed: ${newPartName}`,
-        is_status_update: true
-      }]);
-      fetchTicketData();
-    } catch (err) {
-      console.error(err);
-      alert('Failed to add part log');
-    }
+        is_status_update: true,
+        created_at: new Date().toISOString(),
+      },
+      ...prev,
+    ]);
+    setNewPartName('');
   };
 
   if (loading) {

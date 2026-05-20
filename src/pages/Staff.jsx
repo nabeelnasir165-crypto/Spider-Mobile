@@ -1,36 +1,14 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState } from 'react';
+import { staff as mockStaff } from '../data/admin';
 
 const Staff = () => {
-  const [staffList, setStaffList] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [staffList, setStaffList] = useState(
+    [...mockStaff].sort((a, b) => a.full_name.localeCompare(b.full_name))
+  );
+  const loading = false;
 
-  useEffect(() => {
-    fetchStaff();
-  }, []);
-
-  const fetchStaff = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.from('staff').select('*').order('full_name');
-      if (error) throw error;
-      setStaffList(data || []);
-    } catch (err) {
-      console.error('Error fetching staff:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const toggleStatus = async (id, currentStatus) => {
-    try {
-      const { error } = await supabase.from('staff').update({ is_active: !currentStatus }).eq('id', id);
-      if (error) throw error;
-      setStaffList(prev => prev.map(s => s.id === id ? { ...s, is_active: !currentStatus } : s));
-    } catch (err) {
-      console.error('Error updating status:', err.message);
-      alert('Failed to update status.');
-    }
+  const toggleStatus = (id, currentStatus) => {
+    setStaffList((prev) => prev.map((s) => (s.id === id ? { ...s, is_active: !currentStatus } : s)));
   };
 
   const getInitials = (name) => {

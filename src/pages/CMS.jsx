@@ -1,34 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState } from 'react';
+import { cmsContent } from '../data/admin';
 
 const CMS = () => {
   const [activeTab, setActiveTab] = useState('homepage');
   const [isSaving, setIsSaving] = useState(false);
   const [content, setContent] = useState({
-    homepage_hero: {
-      headline: 'Spider Mobiles - Expert Repairs in Derby',
-      subheading: 'Established in 2013. We are a small mobile repair store located in the heart of Allenton Derby, rated 4.9 stars by our satisfied customers.',
-      ctaText: 'Book a Repair'
-    },
-    faqs: [
-      { question: 'Do you use original Apple parts?', answer: 'Yes, we use Genuine Apple parts provided through the Independent Repair Provider program, as well as high-quality aftermarket options if requested.' },
-      { question: 'How long does a screen repair take?', answer: 'Most screen repairs are completed within 30-45 minutes of drop-off.' }
-    ],
-    promotions: {
-      active: false,
-      bannerText: 'Get 10% off all screen repairs this week!',
-      discountCode: 'SCREEN10'
-    },
-    contact: {
-      phone: '01332 986446',
-      email: 'hello@spidermobiles.co.uk',
-      address: '835 Osmaston Road, Derby, United Kingdom'
-    },
-    inventory: [
-      { partName: 'iPhone 13 Screen (OLED)', stock: 15, reorderLevel: 5 },
-      { partName: 'iPhone 13 Battery', stock: 3, reorderLevel: 5 },
-      { partName: 'Samsung S21 Charging Port', stock: 8, reorderLevel: 10 }
-    ]
+    homepage_hero: cmsContent.homepage_hero,
+    faqs: cmsContent.faqs,
+    promotions: cmsContent.promotions,
+    contact: cmsContent.contact,
+    inventory: cmsContent.inventory,
   });
 
   const tabs = [
@@ -39,49 +20,12 @@ const CMS = () => {
     { id: 'inventory', label: 'Inventory', icon: 'inventory_2' }
   ];
 
-  useEffect(() => {
-    fetchCMS();
-  }, []);
-
-  const fetchCMS = async () => {
-    try {
-      const { data, error } = await supabase.from('cms_content').select('*');
-      if (error) throw error;
-      
-      if (data && data.length > 0) {
-        setContent(prev => {
-          const newContent = { ...prev };
-          data.forEach(item => {
-            if (newContent[item.section_key] !== undefined) {
-              newContent[item.section_key] = item.content;
-            }
-          });
-          return newContent;
-        });
-      }
-    } catch (err) {
-      console.error('Error fetching CMS content:', err.message);
-    }
-  };
-
-  const saveCMS = async () => {
+  const saveCMS = () => {
     setIsSaving(true);
-    try {
-      const updates = Object.keys(content).map(key => ({
-        section_key: key,
-        content: content[key],
-        updated_at: new Date().toISOString()
-      }));
-
-      const { error } = await supabase.from('cms_content').upsert(updates, { onConflict: 'section_key' });
-      if (error) throw error;
-      alert('Website content published successfully!');
-    } catch (err) {
-      console.error('Error saving CMS:', err.message);
-      alert('Failed to publish changes: ' + err.message);
-    } finally {
+    setTimeout(() => {
       setIsSaving(false);
-    }
+      alert('Content published (local only — not persisted to a backend).');
+    }, 350);
   };
 
   const updateSection = (section, field, value) => {

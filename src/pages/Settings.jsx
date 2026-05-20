@@ -1,59 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState } from 'react';
+import { cmsContent } from '../data/admin';
 
 const Settings = () => {
-  const [settings, setSettings] = useState({
-    businessName: 'Spider Mobiles',
-    supportEmail: 'hello@spidermobiles.co.uk',
-    businessAddress: '835 Osmaston Road, Derby, United Kingdom',
-    emailNotifications: true,
-    smsAlerts: true
-  });
+  const [settings, setSettings] = useState({ ...cmsContent.app_settings });
   const [isSaving, setIsSaving] = useState(false);
-  const [loading, setLoading] = useState(true);
+  const loading = false;
 
-  useEffect(() => {
-    fetchSettings();
-  }, []);
-
-  const fetchSettings = async () => {
-    setLoading(true);
-    try {
-      const { data, error } = await supabase
-        .from('cms_content')
-        .select('content')
-        .eq('section_key', 'app_settings')
-        .single();
-        
-      if (error && error.code !== 'PGRST116') throw error;
-      
-      if (data && data.content) {
-        setSettings(data.content);
-      }
-    } catch (err) {
-      console.error('Error fetching settings:', err.message);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const saveSettings = async () => {
+  const saveSettings = () => {
     setIsSaving(true);
-    try {
-      const { error } = await supabase.from('cms_content').upsert({
-        section_key: 'app_settings',
-        content: settings,
-        updated_at: new Date().toISOString()
-      }, { onConflict: 'section_key' });
-      
-      if (error) throw error;
-      alert('Settings saved successfully!');
-    } catch (err) {
-      console.error('Error saving settings:', err.message);
-      alert('Failed to save settings.');
-    } finally {
+    setTimeout(() => {
       setIsSaving(false);
-    }
+      alert('Settings saved (local only — not persisted).');
+    }, 350);
   };
 
   const handleChange = (field, value) => {
