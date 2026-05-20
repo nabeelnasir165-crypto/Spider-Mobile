@@ -92,6 +92,18 @@ export default function App() {
               {/* On the admin subdomain we want '/' to land on the dashboard.
                   Internal links still use '/admin/...' for navigation. */}
               {TARGET === 'admin' && <Route path="/" element={<Navigate to="/admin" replace />} />}
+
+              {/* Auth pages — needed inside the admin bundle so AdminRoute
+                  can redirect there when the user isn't signed in.
+                  Rendered standalone (no SiteLayout) — AuthCard is full-screen. */}
+              {TARGET === 'admin' && (
+                <>
+                  <Route path="/login"           element={<Login />} />
+                  <Route path="/forgot-password" element={<ForgotPassword />} />
+                  <Route path="/reset-password"  element={<ResetPassword />} />
+                </>
+              )}
+
               <Route element={<AdminRoute />}>
                 <Route path="/admin" element={<AdminLayout />}>
                   <Route index                element={<Dashboard />} />

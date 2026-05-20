@@ -6,10 +6,12 @@ import SetupBanner from '../components/SetupBanner';
 import { useAuth } from '../contexts/AuthContext';
 import { friendlyAuthError } from './Signup';
 
+const IS_ADMIN_BUILD = import.meta.env.VITE_BUILD_TARGET === 'admin';
+
 export default function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const from = location.state?.from || '/account';
+  const from = location.state?.from || (IS_ADMIN_BUILD ? '/admin' : '/account');
   const { signIn, signInWithGoogle, resendConfirmation } = useAuth();
 
   const [email, setEmail] = useState('');
@@ -58,7 +60,7 @@ export default function Login() {
       eyebrow="Welcome back"
       title="Sign in to your account"
       subtitle="Track your repairs, manage bookings and access your warranty in one place."
-      altLink={{ label: 'New to Spider Mobiles?', cta: 'Create an account', to: '/signup' }}
+      altLink={IS_ADMIN_BUILD ? null : { label: 'New to Spider Mobiles?', cta: 'Create an account', to: '/signup' }}
     >
       <SetupBanner />
 
