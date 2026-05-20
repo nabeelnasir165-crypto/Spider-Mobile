@@ -39,6 +39,26 @@ const Bookings = () => {
     return () => { cancelled = true; };
   }, []);
 
+  // Helpers — defined before they're used in filteredBookings below.
+  const getStartDate = () => {
+    const now = new Date();
+    return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
+  };
+
+  const getStatusColor = (status) => {
+    switch (status?.toLowerCase()) {
+      case 'confirmed': return 'bg-success-container text-on-success-container';
+      case 'converted': return 'bg-surface-variant text-on-surface-variant';
+      default: return 'bg-warning-container text-on-warning-container'; // Pending
+    }
+  };
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'Unknown';
+    const date = new Date(dateString);
+    return date.toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
+  };
+
   const filteredBookings = bookings.filter(b => {
     const matchesSearch = (b.customer_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
                           (b.booking_ref?.toLowerCase() || '').includes(searchTerm.toLowerCase());
@@ -56,26 +76,6 @@ const Bookings = () => {
     }
     return matchesSearch && matchesStatus && matchesDate;
   });
-
-  const getStatusColor = (status) => {
-    switch (status?.toLowerCase()) {
-      case 'confirmed': return 'bg-success-container text-on-success-container';
-      case 'converted': return 'bg-surface-variant text-on-surface-variant';
-      default: return 'bg-warning-container text-on-warning-container'; // Pending
-    }
-  };
-
-  const formatDate = (dateString) => {
-    if (!dateString) return 'Unknown';
-    const date = new Date(dateString);
-    return date.toLocaleString('en-GB', { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' });
-  };
-
-  // Helper to get start date for last 30 days filter
-  const getStartDate = () => {
-    const now = new Date();
-    return new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
-  };
 
   return (
     <main className="h-full overflow-y-auto p-md md:p-xl bg-background">
