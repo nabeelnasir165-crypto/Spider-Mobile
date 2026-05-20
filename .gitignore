@@ -40,3 +40,4 @@ skills-lock.json
 # per-target build outputs
 dist-site
 dist-admin
+.vercel
