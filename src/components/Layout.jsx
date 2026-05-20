@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Outlet, NavLink, Link, useLocation } from 'react-router-dom';
+import { Outlet, NavLink, Link } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
 const TopNavBar = () => {
@@ -168,9 +168,6 @@ const SideNavBar = () => {
 };
 
 const Layout = () => {
-  const location = useLocation();
-  const isNewTicketPage = location.pathname === '/admin/new-ticket';
-
   return (
     <div className="pt-16 w-full min-h-screen relative overflow-x-hidden" style={{ backgroundColor: '#f4f5fb' }}>
       <TopNavBar />
@@ -178,18 +175,9 @@ const Layout = () => {
       <div className="ml-[260px] w-[calc(100%-260px)] min-h-[calc(100vh-64px)]">
         <Outlet />
       </div>
-
-      {!isNewTicketPage && (
-        <Link
-          to="/admin/new-ticket"
-          className="fixed bottom-6 right-6 h-14 pl-2 pr-6 rounded-full bg-primary text-on-primary shadow-[0_8px_16px_rgba(0,91,191,0.2)] hover:shadow-[0_12px_24px_rgba(0,91,191,0.3)] hover:bg-[#004ca3] flex items-center gap-2 transition-all duration-200 z-50 cursor-pointer"
-        >
-          <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/20">
-            <span className="material-symbols-outlined" data-icon="add">add</span>
-          </div>
-          <span className="text-sm font-bold tracking-wide">Create Ticket</span>
-        </Link>
-      )}
+      {/* Floating "Create Ticket" FAB removed — the sidebar "+ New Repair"
+          button at the top is the canonical CTA and the FAB was a visual
+          duplicate sitting right next to it on every page. */}
     </div>
   );
 };
