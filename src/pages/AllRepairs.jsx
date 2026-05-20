@@ -1,13 +1,41 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ticketsWithCustomer } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { getStoredTickets } from '../lib/localStore';
 
 const AllRepairs = () => {
-  // Tickets = mock + any saved by the admin via /admin/new-ticket.
-  // Stored tickets are kept up to date via storage events so multiple
-  // tabs stay in sync.
+  // Three data sources, merged in priority order:
+  //   1. Supabase tickets (the real source — when configured + migration run)
+  //   2. localStorage tickets (admin actions made before Supabase tables existed)
+  //   3. Mock tickets (so the dashboard never looks empty)
+  const [liveTickets, setLiveTickets] = useState([]);
   const [savedTickets, setSavedTickets] = useState(getStoredTickets());
+
+  // Pull live tickets from Supabase
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await Promise.race([
+          supabase
+            .from('tickets')
+            .select('*, customers ( full_name, email, phone )')
+            .order('created_at', { ascending: false }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+        ]);
+        if (cancelled) return;
+        if (error || !data) return;          // fall back to mock + localStore
+        setLiveTickets(data);
+      } catch (e) {
+        console.warn('[admin] tickets fetch failed, using fallback:', e?.message || e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // Keep localStore in sync across tabs / window focus
   useEffect(() => {
     const sync = () => setSavedTickets(getStoredTickets());
     window.addEventListener('storage', sync);
@@ -18,10 +46,11 @@ const AllRepairs = () => {
     };
   }, []);
 
-  const tickets = [...savedTickets, ...ticketsWithCustomer]
-    // De-dupe by ticket_ref (saved wins, mock fills in)
-    .filter((t, i, arr) => arr.findIndex((x) => x.ticket_ref === t.ticket_ref) === i)
-    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const tickets = useMemo(() => {
+    return [...liveTickets, ...savedTickets, ...ticketsWithCustomer]
+      .filter((t, i, arr) => arr.findIndex((x) => x.ticket_ref === t.ticket_ref) === i)
+      .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  }, [liveTickets, savedTickets]);
   const loading = false;
 
   // Filters state

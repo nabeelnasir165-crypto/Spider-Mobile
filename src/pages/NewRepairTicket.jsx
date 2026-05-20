@@ -162,7 +162,7 @@ const NewRepairTicket = () => {
     );
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!selectedCustomer) {
       alert('Please select a customer first.');
@@ -173,58 +173,161 @@ const NewRepairTicket = () => {
     const ref = `REP-${Math.floor(1000 + Math.random() * 9000)}`;
     const nowIso = new Date().toISOString();
 
-    // If this is a draft customer (came from a booking, not in the directory),
-    // store them so they appear in the Customer Database too.
-    if (selectedCustomer.is_draft) {
-      saveCustomer({
-        id: selectedCustomer.id,
-        full_name: selectedCustomer.full_name,
-        email: selectedCustomer.email,
-        phone: selectedCustomer.phone,
-        address: '',
-        is_business_account: false,
-        notes: `Created from ticket ${ref}`,
-        created_at: nowIso,
-      });
+    let customerId = selectedCustomer.is_draft ? null : selectedCustomer.id;
+    let supabaseSucceeded = false;
+
+    // --- 1. Find or create the customer in Supabase ---
+    if (isSupabaseConfigured) {
+      try {
+        if (selectedCustomer.is_draft) {
+          // Draft customer — check if a row already exists by email, else insert
+          if (selectedCustomer.email) {
+            const { data: existing } = await supabase
+              .from('customers')
+              .select('id')
+              .eq('email', selectedCustomer.email)
+              .maybeSingle();
+            if (existing?.id) {
+              customerId = existing.id;
+            } else {
+              const { data: inserted, error } = await supabase
+                .from('customers')
+                .insert({
+                  full_name: selectedCustomer.full_name,
+                  email:     selectedCustomer.email || null,
+                  phone:     selectedCustomer.phone || null,
+                  notes:     `Created from ticket ${ref}`,
+                })
+                .select('id')
+                .single();
+              if (error) throw error;
+              customerId = inserted.id;
+            }
+          } else {
+            // No email — phone-only draft
+            const { data: inserted, error } = await supabase
+              .from('customers')
+              .insert({
+                full_name: selectedCustomer.full_name,
+                phone:     selectedCustomer.phone || null,
+                notes:     `Created from ticket ${ref}`,
+              })
+              .select('id')
+              .single();
+            if (error) throw error;
+            customerId = inserted.id;
+          }
+        } else if (typeof selectedCustomer.id === 'string' && selectedCustomer.id.startsWith('c')) {
+          // Selected from mock data — not a real Supabase row. Mirror it.
+          const { data: existing } = await supabase
+            .from('customers')
+            .select('id')
+            .eq('email', selectedCustomer.email)
+            .maybeSingle();
+          if (existing?.id) {
+            customerId = existing.id;
+          } else {
+            const { data: inserted, error } = await supabase
+              .from('customers')
+              .insert({
+                full_name: selectedCustomer.full_name,
+                email:     selectedCustomer.email || null,
+                phone:     selectedCustomer.phone || null,
+              })
+              .select('id')
+              .single();
+            if (error) throw error;
+            customerId = inserted.id;
+          }
+        }
+
+        // --- 2. Insert the ticket ---
+        const { data: ticketRow, error: ticketError } = await supabase
+          .from('tickets')
+          .insert({
+            ticket_ref:           ref,
+            customer_id:          customerId,
+            device_brand:         deviceBrand,
+            device_model:         deviceModel,
+            device_imei:          deviceImei  || null,
+            device_passcode:      devicePasscode || null,
+            reported_issues:      reportedIssues,
+            condition_checklist:  conditionChecklist,
+            accessories_received: accessories,
+            status:               'Booked',
+            payment_status:       'Unpaid',
+            estimated_price:      estimatedPrice,
+            delivery_info:        { method: 'collection', tracking: '' },
+            parts_consumed:       [],
+            notes:                additionalNotes,
+          })
+          .select()
+          .single();
+        if (ticketError) throw ticketError;
+
+        // --- 3. Mark the source booking as Converted if applicable ---
+        if (bookingId) {
+          await supabase
+            .from('bookings')
+            .update({ status: 'Converted' })
+            .eq('id', bookingId);
+        }
+
+        supabaseSucceeded = true;
+        console.info('[admin] ticket saved to Supabase:', ticketRow?.ticket_ref);
+      } catch (err) {
+        // RLS / network / missing-table — fall back to localStorage so the
+        // demo still shows the ticket. Show a soft warning, don't block.
+        console.warn('[admin] Supabase ticket save failed, using localStorage:', err?.message || err);
+      }
     }
 
-    // Build the ticket row in the same shape as the mock data + Supabase table.
-    const ticket = {
-      id: 't-' + Math.random().toString(36).slice(2, 10),
-      ticket_ref: ref,
-      customer_id: selectedCustomer.id,
-      customers: {
-        full_name: selectedCustomer.full_name,
-        email: selectedCustomer.email,
-        phone: selectedCustomer.phone,
-      },
-      device_brand: deviceBrand,
-      device_model: deviceModel,
-      device_imei: deviceImei,
-      device_passcode: devicePasscode,
-      reported_issues: reportedIssues,
-      condition_checklist: conditionChecklist,
-      accessories_received: accessories,
-      status: 'Booked',
-      payment_status: 'Unpaid',
-      estimated_price: estimatedPrice,
-      assigned_tech: '',
-      delivery_info: { method: 'collection', tracking: '' },
-      parts_consumed: [],
-      created_at: nowIso,
-      updated_at: nowIso,
-      notes: additionalNotes,
-    };
-    saveTicket(ticket);
+    // --- Fallback: localStorage so the new ticket still appears in
+    //     /admin/repairs even without Supabase (e.g. RLS not migrated yet).
+    if (!supabaseSucceeded) {
+      if (selectedCustomer.is_draft) {
+        saveCustomer({
+          id:        selectedCustomer.id,
+          full_name: selectedCustomer.full_name,
+          email:     selectedCustomer.email,
+          phone:     selectedCustomer.phone,
+          address:   '',
+          is_business_account: false,
+          notes:     `Created from ticket ${ref}`,
+          created_at: nowIso,
+        });
+      }
+      saveTicket({
+        id:         't-' + Math.random().toString(36).slice(2, 10),
+        ticket_ref: ref,
+        customer_id: selectedCustomer.id,
+        customers:  {
+          full_name: selectedCustomer.full_name,
+          email:     selectedCustomer.email,
+          phone:     selectedCustomer.phone,
+        },
+        device_brand:         deviceBrand,
+        device_model:         deviceModel,
+        device_imei:          deviceImei,
+        device_passcode:      devicePasscode,
+        reported_issues:      reportedIssues,
+        condition_checklist:  conditionChecklist,
+        accessories_received: accessories,
+        status:               'Booked',
+        payment_status:       'Unpaid',
+        estimated_price:      estimatedPrice,
+        assigned_tech:        '',
+        delivery_info:        { method: 'collection', tracking: '' },
+        parts_consumed:       [],
+        created_at:           nowIso,
+        updated_at:           nowIso,
+        notes:                additionalNotes,
+      });
+      if (bookingId) setBookingStatus(bookingId, 'Converted');
+    }
 
-    // If we came from a booking, mark it as converted so it doesn't show
-    // as Pending in /admin/bookings any more.
-    if (bookingId) setBookingStatus(bookingId, 'Converted');
-
-    setTimeout(() => {
-      setLoading(false);
-      navigate('/admin/repairs');
-    }, 350);
+    setLoading(false);
+    navigate('/admin/repairs');
   };
 
   return (
