@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { ticketsWithCustomer } from '../data/admin';
 
 const AllRepairs = () => {
-  const [tickets, setTickets] = useState([]);
-  const [loading, setLoading] = useState(true);
-  
+  // Local mock data — sorted newest first
+  const tickets = [...ticketsWithCustomer].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  const loading = false;
+
   // Filters state
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
@@ -14,38 +15,6 @@ const AllRepairs = () => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
-
-  useEffect(() => {
-    fetchTickets();
-  }, []);
-
-  const fetchTickets = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('tickets')
-        .select(`
-          *,
-          customers (
-            full_name,
-            email,
-            phone,
-            is_business_account
-          )
-        `)
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-      
-      setTickets(data || []);
-    } catch (error) {
-      console.error('Error fetching tickets:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {

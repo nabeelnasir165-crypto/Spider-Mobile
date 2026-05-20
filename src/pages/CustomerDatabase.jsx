@@ -1,14 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import React, { useState } from 'react';
+import { customers as mockCustomers } from '../data/admin';
 
 const CustomerDatabase = () => {
-  const [customers, setCustomers] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [customers, setCustomers] = useState(
+    [...mockCustomers].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+  );
+  const loading = false;
   const [selectedCustomer, setSelectedCustomer] = useState(null);
-  
+
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddingCustomer, setIsAddingCustomer] = useState(false);
-  
+
   // Form State
   const [newCustomer, setNewCustomer] = useState({
     full_name: '',
@@ -19,30 +21,6 @@ const CustomerDatabase = () => {
     notes: ''
   });
   const [saving, setSaving] = useState(false);
-
-  useEffect(() => {
-    fetchCustomers();
-  }, []);
-
-  const fetchCustomers = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('customers')
-        .select('*')
-        .order('created_at', { ascending: false });
-
-      if (error) {
-        throw error;
-      }
-      
-      setCustomers(data || []);
-    } catch (error) {
-      console.error('Error fetching customers:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSelectCustomer = (customer) => {
     setSelectedCustomer(customer);
@@ -56,33 +34,24 @@ const CustomerDatabase = () => {
     }
     
     setSaving(true);
-    try {
-      const { data, error } = await supabase
-        .from('customers')
-        .insert([newCustomer])
-        .select()
-        .single();
-        
-      if (error) throw error;
-      
-      // Update local state
-      setCustomers(prev => [data, ...prev]);
-      setSelectedCustomer(data);
-      setIsAddingCustomer(false);
-      setNewCustomer({
-        full_name: '',
-        email: '',
-        phone: '',
-        address: '',
-        is_business_account: false,
-        notes: ''
-      });
-    } catch (err) {
-      console.error(err);
-      alert("Error creating customer: " + err.message);
-    } finally {
-      setSaving(false);
-    }
+    // Local-only add: prepend to in-memory list (not persisted across reloads)
+    const created = {
+      ...newCustomer,
+      id: 'c' + Math.random().toString(36).slice(2, 9),
+      created_at: new Date().toISOString(),
+    };
+    setCustomers((prev) => [created, ...prev]);
+    setSelectedCustomer(created);
+    setIsAddingCustomer(false);
+    setNewCustomer({
+      full_name: '',
+      email: '',
+      phone: '',
+      address: '',
+      is_business_account: false,
+      notes: '',
+    });
+    setSaving(false);
   };
 
   const filteredCustomers = customers.filter(c => 

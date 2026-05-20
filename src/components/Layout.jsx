@@ -172,7 +172,7 @@ const Layout = () => {
   const isNewTicketPage = location.pathname === '/admin/new-ticket';
 
   return (
-    <div className="pt-16 w-full min-h-screen bg-background relative overflow-x-hidden">
+    <div className="pt-16 w-full min-h-screen relative overflow-x-hidden" style={{ backgroundColor: '#f4f5fb' }}>
       <TopNavBar />
       <SideNavBar />
       <div className="ml-[260px] w-[calc(100%-260px)] min-h-[calc(100vh-64px)]">

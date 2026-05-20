@@ -1,121 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { ticketsWithCustomer, bookings as mockBookings } from '../data/admin';
 
 const Dashboard = () => {
-  const [activeRepairs, setActiveRepairs] = useState([]);
-  const [metrics, setMetrics] = useState({
-    todaysRepairs: 0,
-    revenueToday: 0,
-    pendingPayments: 0,
-    readyForPickup: 0,
-    newBookings: 0,
-    overdueCount: 0,
-    overdueAmount: 0
-  });
-  const [loading, setLoading] = useState(true);
+  // Local mock data — replace with real DB queries when wiring Supabase back in
+  const activeRepairs = ticketsWithCustomer.slice(0, 5);
+  const metrics = {
+    todaysRepairs: ticketsWithCustomer.filter((t) => sameDay(t.created_at, new Date())).length,
+    revenueToday: ticketsWithCustomer
+      .filter((t) => t.payment_status === 'Paid' && sameDay(t.created_at, new Date()))
+      .reduce((sum, t) => sum + (t.estimated_price || 0), 0),
+    pendingPayments: ticketsWithCustomer.filter((t) => t.payment_status === 'Unpaid').length,
+    readyForPickup: ticketsWithCustomer.filter((t) => t.status === 'Ready').length,
+    newBookings: mockBookings.filter((b) => b.status === 'Pending').length,
+    overdueCount: ticketsWithCustomer.filter((t) => t.payment_status === 'Unpaid' && t.status === 'Completed').length,
+    overdueAmount: ticketsWithCustomer
+      .filter((t) => t.payment_status === 'Unpaid' && t.status === 'Completed')
+      .reduce((sum, t) => sum + (t.estimated_price || 0), 0),
+  };
+  const loading = false;
   const [hideOverdueAlert, setHideOverdueAlert] = useState(false);
 
-  useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      const todayISO = today.toISOString();
-
-      // 1. Fetch Active Repairs
-      const repairsPromise = supabase
-        .from('tickets')
-        .select(`*, customers (full_name)`)
-        .order('created_at', { ascending: false })
-        .limit(5);
-
-      // 2. Fetch Today's Repairs Count
-      const todaysRepairsPromise = supabase
-        .from('tickets')
-        .select('id', { count: 'exact', head: true })
-        .gte('created_at', todayISO);
-
-      // 3. Fetch Revenue (Sum of paid tickets)
-      // Note: Ideally you sum paid tickets today, but for now we sum all paid tickets 
-      // or tickets completed today. Let's sum estimated_price for Paid tickets.
-      const revenuePromise = supabase
-        .from('tickets')
-        .select('estimated_price')
-        .eq('payment_status', 'Paid')
-        .gte('created_at', todayISO);
-
-      // 4. Fetch Pending Payments Count
-      const pendingPaymentsPromise = supabase
-        .from('tickets')
-        .select('id', { count: 'exact', head: true })
-        .eq('payment_status', 'Unpaid');
-
-      // 5. Fetch Ready for Pickup Count
-      const readyPromise = supabase
-        .from('tickets')
-        .select('id', { count: 'exact', head: true })
-        .eq('status', 'Ready');
-
-      // 6. Fetch New Bookings Count
-      const bookingsPromise = supabase
-        .from('bookings')
-        .select('id', { count: 'exact', head: true })
-        .gte('created_at', todayISO);
-
-      // 7. Fetch Overdue/Unpaid Completed Tickets for Alerts
-      const overduePromise = supabase
-        .from('tickets')
-        .select('estimated_price')
-        .eq('payment_status', 'Unpaid')
-        .eq('status', 'Completed');
-
-      const [
-        repairsRes,
-        todaysRepairsRes,
-        revenueRes,
-        pendingPaymentsRes,
-        readyRes,
-        bookingsRes,
-        overdueRes
-      ] = await Promise.all([
-        repairsPromise,
-        todaysRepairsPromise,
-        revenuePromise,
-        pendingPaymentsPromise,
-        readyPromise,
-        bookingsPromise,
-        overduePromise
-      ]);
-
-      if (repairsRes.error) throw repairsRes.error;
-
-      // Calculate Revenue
-      const revenue = revenueRes.data?.reduce((sum, ticket) => sum + (ticket.estimated_price || 0), 0) || 0;
-      const overdueAmount = overdueRes.data?.reduce((sum, ticket) => sum + (ticket.estimated_price || 0), 0) || 0;
-
-      setActiveRepairs(repairsRes.data || []);
-      setMetrics({
-        todaysRepairs: todaysRepairsRes.count || 0,
-        revenueToday: revenue,
-        pendingPayments: pendingPaymentsRes.count || 0,
-        readyForPickup: readyRes.count || 0,
-        newBookings: bookingsRes.count || 0,
-        overdueCount: overdueRes.data?.length || 0,
-        overdueAmount: overdueAmount
-      });
-
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
+  function sameDay(iso, ref) {
+    if (!iso) return false;
+    const d = new Date(iso);
+    return d.getFullYear() === ref.getFullYear() && d.getMonth() === ref.getMonth() && d.getDate() === ref.getDate();
+  }
 
   const getStatusColor = (status) => {
     switch (status?.toLowerCase()) {

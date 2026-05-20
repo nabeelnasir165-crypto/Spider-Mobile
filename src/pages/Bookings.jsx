@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { supabase } from '../lib/supabaseClient';
+import { bookings as mockBookings } from '../data/admin';
 
 const Bookings = () => {
-  const [bookings, setBookings] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const bookings = [...mockBookings].sort((a, b) => new Date(a.requested_date) - new Date(b.requested_date));
+  const loading = false;
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('last30');
@@ -12,27 +12,6 @@ const Bookings = () => {
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
-  
-  useEffect(() => {
-    fetchBookings();
-  }, []);
-
-  const fetchBookings = async () => {
-    try {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from('bookings')
-        .select('*')
-        .order('requested_date', { ascending: true });
-        
-      if (error) throw error;
-      setBookings(data || []);
-    } catch (error) {
-      console.error('Error fetching bookings:', error.message);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const filteredBookings = bookings.filter(b => {
     const matchesSearch = (b.customer_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||
