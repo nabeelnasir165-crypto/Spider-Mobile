@@ -6,6 +6,9 @@ import react from '@vitejs/plugin-react'
 //   vite build --mode admin → ./dist-admin (admin subdomain, robots noindex)
 //   vite build              → ./dist       (combined, default for one-host dev)
 export default defineConfig(({ mode }) => {
+  // We accept env vars under both VITE_ (our local convention) and
+  // NEXT_PUBLIC_ (what the Vercel Supabase integration sets). Vite only
+  // exposes vars that match a prefix in `envPrefix`, so we list both.
   const env = loadEnv(mode, process.cwd(), '');
   const target = env.VITE_BUILD_TARGET || 'all';
 
@@ -15,6 +18,7 @@ export default defineConfig(({ mode }) => {
                          'dist';
 
   return {
+    envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
     plugins: [
       react(),
       {
