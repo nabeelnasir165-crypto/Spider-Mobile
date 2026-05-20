@@ -4,6 +4,22 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    // Status badge colors (composed dynamically in getStatusColor / getPaymentColor)
+    'bg-success-container', 'text-on-success-container',
+    'bg-warning-container', 'text-on-warning-container',
+    'bg-primary-container', 'text-on-primary-container',
+    'bg-error-container', 'text-on-error-container',
+    'bg-surface-container-highest', 'text-on-surface-variant',
+    'bg-surface-variant', 'text-on-surface',
+    'bg-secondary-container', 'text-on-secondary-container',
+    'bg-tertiary-container', 'text-on-tertiary-container',
+    'bg-secondary-fixed', 'text-on-secondary-fixed',
+    'text-primary', 'text-tertiary-container', 'text-error', 'text-success',
+    'bg-success', 'bg-warning', 'bg-error', 'bg-outline',
+    'border-success', 'border-warning', 'border-error',
+    'border-success/20', 'border-warning/20', 'border-error/20', 'border-primary/20',
+  ],
   darkMode: "class",
   theme: {
     extend: {

@@ -43,7 +43,7 @@ const Dashboard = () => {
 
   const getPaymentColor = (paymentStatus) => {
     return paymentStatus?.toLowerCase() === 'paid' 
-      ? 'bg-surface-container-highest text-on-surface'
+      ? 'bg-success-container text-on-success-container'
       : 'bg-error-container text-on-error-container';
   };
 
