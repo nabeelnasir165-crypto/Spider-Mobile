@@ -1,13 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { customers as mockCustomers } from '../data/admin';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { getStoredCustomers } from '../lib/localStore';
 
 const sortByCreated = (list) =>
   [...list].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
+const dedupeByEmail = (list) => {
+  const byEmail = new Map();
+  list.forEach((c) => {
+    const key = (c.email || c.id || '').toLowerCase();
+    if (!byEmail.has(key)) byEmail.set(key, c);
+  });
+  return [...byEmail.values()];
+};
+
 const CustomerDatabase = () => {
-  // Start with the mock list so the UI is never empty while Supabase resolves.
-  const [customers, setCustomers] = useState(sortByCreated(mockCustomers));
+  // Start with mock + any locally-saved customer drafts so the UI is never empty.
+  const [customers, setCustomers] = useState(
+    sortByCreated(dedupeByEmail([...getStoredCustomers(), ...mockCustomers]))
+  );
   const [loading, setLoading] = useState(isSupabaseConfigured);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
 
@@ -37,7 +49,7 @@ const CustomerDatabase = () => {
           notes: p.marketing_opt_in ? 'Marketing opted-in' : '',
           created_at: p.created_at,
         }));
-        setCustomers(sortByCreated(normalised));
+        setCustomers(sortByCreated(dedupeByEmail([...getStoredCustomers(), ...normalised, ...mockCustomers])));
       } catch (e) {
         // Silently fall back to mock — surfaces in console only.
         console.warn('[admin] customer_profiles fetch failed, using mock:', e?.message || e);

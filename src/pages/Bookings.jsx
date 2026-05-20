@@ -2,14 +2,30 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { bookings as mockBookings } from '../data/admin';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { applyBookingOverrides } from '../lib/localStore';
 
 const sortByRequested = (list) =>
   [...list].sort((a, b) => new Date(a.requested_date) - new Date(b.requested_date));
 
 const Bookings = () => {
-  // Start with the mock list so the UI is never empty while Supabase resolves.
-  const [bookings, setBookings] = useState(sortByRequested(mockBookings));
+  // Start with the mock list (with any local status overrides applied) so
+  // the UI is never empty while Supabase resolves.
+  const [bookings, setBookings] = useState(
+    sortByRequested(applyBookingOverrides(mockBookings))
+  );
   const [loading, setLoading] = useState(isSupabaseConfigured);
+
+  // Re-apply overrides when window regains focus (e.g. after creating a ticket
+  // in another tab and coming back to /admin/bookings).
+  useEffect(() => {
+    const refresh = () => setBookings((prev) => applyBookingOverrides(prev));
+    window.addEventListener('focus', refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener('focus', refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, []);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('last30');
@@ -29,7 +45,7 @@ const Bookings = () => {
         ]);
         if (cancelled) return;
         if (error || !data || data.length === 0) return;  // keep mock fallback
-        setBookings(sortByRequested(data));
+        setBookings(sortByRequested(applyBookingOverrides(data)));
       } catch (e) {
         console.warn('[admin] bookings fetch failed, using mock:', e?.message || e);
       } finally {

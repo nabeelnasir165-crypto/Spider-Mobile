@@ -1,10 +1,27 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { ticketsWithCustomer } from '../data/admin';
+import { getStoredTickets } from '../lib/localStore';
 
 const AllRepairs = () => {
-  // Local mock data — sorted newest first
-  const tickets = [...ticketsWithCustomer].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+  // Tickets = mock + any saved by the admin via /admin/new-ticket.
+  // Stored tickets are kept up to date via storage events so multiple
+  // tabs stay in sync.
+  const [savedTickets, setSavedTickets] = useState(getStoredTickets());
+  useEffect(() => {
+    const sync = () => setSavedTickets(getStoredTickets());
+    window.addEventListener('storage', sync);
+    window.addEventListener('focus', sync);
+    return () => {
+      window.removeEventListener('storage', sync);
+      window.removeEventListener('focus', sync);
+    };
+  }, []);
+
+  const tickets = [...savedTickets, ...ticketsWithCustomer]
+    // De-dupe by ticket_ref (saved wins, mock fills in)
+    .filter((t, i, arr) => arr.findIndex((x) => x.ticket_ref === t.ticket_ref) === i)
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   const loading = false;
 
   // Filters state

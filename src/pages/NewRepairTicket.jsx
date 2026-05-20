@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { customers as mockCustomers } from '../data/admin';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { saveTicket, setBookingStatus, saveCustomer } from '../lib/localStore';
 
 // Map booking.issue / booking.service_requested → known reported issue label
 const issueAliases = {
@@ -169,13 +170,59 @@ const NewRepairTicket = () => {
     }
 
     setLoading(true);
-    // Local-only creation — no Supabase. In the demo, "create" just shows
-    // a success message and goes back to the repairs list (the new ticket
-    // isn't persisted since we're not pushing to the in-memory store yet).
     const ref = `REP-${Math.floor(1000 + Math.random() * 9000)}`;
+    const nowIso = new Date().toISOString();
+
+    // If this is a draft customer (came from a booking, not in the directory),
+    // store them so they appear in the Customer Database too.
+    if (selectedCustomer.is_draft) {
+      saveCustomer({
+        id: selectedCustomer.id,
+        full_name: selectedCustomer.full_name,
+        email: selectedCustomer.email,
+        phone: selectedCustomer.phone,
+        address: '',
+        is_business_account: false,
+        notes: `Created from ticket ${ref}`,
+        created_at: nowIso,
+      });
+    }
+
+    // Build the ticket row in the same shape as the mock data + Supabase table.
+    const ticket = {
+      id: 't-' + Math.random().toString(36).slice(2, 10),
+      ticket_ref: ref,
+      customer_id: selectedCustomer.id,
+      customers: {
+        full_name: selectedCustomer.full_name,
+        email: selectedCustomer.email,
+        phone: selectedCustomer.phone,
+      },
+      device_brand: deviceBrand,
+      device_model: deviceModel,
+      device_imei: deviceImei,
+      device_passcode: devicePasscode,
+      reported_issues: reportedIssues,
+      condition_checklist: conditionChecklist,
+      accessories_received: accessories,
+      status: 'Booked',
+      payment_status: 'Unpaid',
+      estimated_price: estimatedPrice,
+      assigned_tech: '',
+      delivery_info: { method: 'collection', tracking: '' },
+      parts_consumed: [],
+      created_at: nowIso,
+      updated_at: nowIso,
+      notes: additionalNotes,
+    };
+    saveTicket(ticket);
+
+    // If we came from a booking, mark it as converted so it doesn't show
+    // as Pending in /admin/bookings any more.
+    if (bookingId) setBookingStatus(bookingId, 'Converted');
+
     setTimeout(() => {
       setLoading(false);
-      alert(`Ticket ${ref} created (demo only — not persisted).`);
       navigate('/admin/repairs');
     }, 350);
   };
