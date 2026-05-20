@@ -187,7 +187,7 @@ const TicketDetails = () => {
     return (
       <div className="flex flex-col items-center justify-center h-full gap-md">
         <h2 className="font-headline-md text-headline-md text-on-surface">Ticket not found</h2>
-        <Link to="/repairs" className="text-primary hover:underline">Return to Repairs</Link>
+        <Link to="/admin/repairs" className="text-primary hover:underline">Return to Repairs</Link>
       </div>
     );
   }
@@ -196,7 +196,7 @@ const TicketDetails = () => {
     <div className="max-w-container-max mx-auto px-margin-mobile md:px-lg lg:px-xl py-lg">
       {/* Header Section */}
       <header className="mb-lg">
-        <Link to="/repairs" className="inline-flex items-center gap-sm text-on-surface-variant hover:text-primary transition-colors mb-md font-label-md text-label-md">
+        <Link to="/admin/repairs" className="inline-flex items-center gap-sm text-on-surface-variant hover:text-primary transition-colors mb-md font-label-md text-label-md">
           <span className="material-symbols-outlined text-[16px]">arrow_back</span>
           Back to Repairs
         </Link>

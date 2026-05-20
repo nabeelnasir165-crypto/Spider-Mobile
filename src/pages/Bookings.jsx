@@ -235,7 +235,7 @@ const Bookings = () => {
                       </td>
                       <td className="py-md px-md text-right">
                         {row.status?.toLowerCase() !== 'converted' ? (
-                          <Link to="/new-ticket" state={{ fromBooking: row }} className="inline-flex items-center gap-xs px-3 py-1.5 bg-primary text-on-primary rounded font-label-md text-label-md hover:bg-primary/90 transition-colors cursor-pointer shadow-sm">
+                          <Link to="/admin/new-ticket" state={{ fromBooking: row }} className="inline-flex items-center gap-xs px-3 py-1.5 bg-primary text-on-primary rounded font-label-md text-label-md hover:bg-primary/90 transition-colors cursor-pointer shadow-sm">
                             <span className="material-symbols-outlined text-[16px]">receipt_long</span>
                             Convert to Ticket
                           </Link>

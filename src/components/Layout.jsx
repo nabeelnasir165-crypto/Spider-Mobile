@@ -9,9 +9,9 @@ const TopNavBar = () => {
 
   return (
     <header className="fixed top-0 w-full z-50 flex justify-between items-center px-lg h-16 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline">
-      <Link to="/" className="flex items-center gap-sm cursor-pointer">
+      <Link to="/admin" className="flex items-center gap-sm cursor-pointer">
         <span className="material-symbols-outlined text-primary dark:text-primary-fixed" data-icon="handyman">handyman</span>
-        <span className="text-title-lg font-title-lg font-bold text-primary dark:text-primary-fixed">Hybrid Repair Suite V1</span>
+        <span className="text-title-lg font-title-lg font-bold text-primary dark:text-primary-fixed">Spider Mobiles · Admin</span>
       </Link>
       <div className="flex items-center gap-md">
         <div className="flex items-center gap-xs relative">
@@ -36,7 +36,7 @@ const TopNavBar = () => {
                 </div>
               </div>
               <div className="max-h-80 overflow-y-auto">
-                <Link to="/repairs" onClick={() => setIsNotificationOpen(false)} className="p-md border-b border-outline-variant hover:bg-surface-container-lowest transition-colors cursor-pointer flex gap-sm items-start w-full text-left">
+                <Link to="/admin/repairs" onClick={() => setIsNotificationOpen(false)} className="p-md border-b border-outline-variant hover:bg-surface-container-lowest transition-colors cursor-pointer flex gap-sm items-start w-full text-left">
                   <div className="w-8 h-8 rounded-full bg-error-container text-on-error-container flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined text-[16px]">error</span>
                   </div>
@@ -46,7 +46,7 @@ const TopNavBar = () => {
                     <span className="font-label-sm text-label-sm text-primary mt-1 block">Just now</span>
                   </div>
                 </Link>
-                <Link to="/" onClick={() => setIsNotificationOpen(false)} className="p-md hover:bg-surface-container-lowest transition-colors cursor-pointer flex gap-sm items-start w-full text-left">
+                <Link to="/admin" onClick={() => setIsNotificationOpen(false)} className="p-md hover:bg-surface-container-lowest transition-colors cursor-pointer flex gap-sm items-start w-full text-left">
                   <div className="w-8 h-8 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center shrink-0">
                     <span className="material-symbols-outlined text-[16px]">build</span>
                   </div>
@@ -58,7 +58,7 @@ const TopNavBar = () => {
                 </Link>
               </div>
               <div className="p-sm border-t border-outline-variant bg-surface-bright text-center">
-                <Link to="/repairs" onClick={() => setIsNotificationOpen(false)} className="text-primary font-label-md text-label-md hover:underline cursor-pointer w-full block">View all activity</Link>
+                <Link to="/admin/repairs" onClick={() => setIsNotificationOpen(false)} className="text-primary font-label-md text-label-md hover:underline cursor-pointer w-full block">View all activity</Link>
               </div>
             </div>
           )}
@@ -81,7 +81,7 @@ const TopNavBar = () => {
           {isProfileOpen && (
             <div className="absolute top-12 right-0 w-48 bg-surface rounded-xl shadow-lg border border-outline-variant overflow-hidden flex flex-col z-50">
               <div className="p-sm flex flex-col gap-xs">
-                <Link to="/settings" onClick={() => setIsProfileOpen(false)} className="px-md py-sm text-on-surface font-label-md text-label-md hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer text-left flex items-center gap-sm">
+                <Link to="/admin/settings" onClick={() => setIsProfileOpen(false)} className="px-md py-sm text-on-surface font-label-md text-label-md hover:bg-surface-container-low rounded-lg transition-colors cursor-pointer text-left flex items-center gap-sm">
                   <span className="material-symbols-outlined text-[18px]">settings</span>
                   Settings
                 </Link>
@@ -100,15 +100,15 @@ const TopNavBar = () => {
 
 const SideNavBar = () => {
   const navItems = [
-    { icon: 'dashboard', label: 'Dashboard', path: '/' },
-    { icon: 'build', label: 'Repairs', path: '/repairs' },
-    { icon: 'group', label: 'Customers', path: '/customers' },
-    { icon: 'calendar_today', label: 'Bookings', path: '/bookings' },
-    { icon: 'payments', label: 'Pricing', path: '/pricing' },
-    { icon: 'language', label: 'CMS', path: '/cms' },
-    { icon: 'account_balance_wallet', label: 'Payments', path: '/payments' },
-    { icon: 'verified', label: 'Warranty', path: '/warranty' },
-    { icon: 'badge', label: 'Staff', path: '/staff' },
+    { icon: 'dashboard', label: 'Dashboard', path: '/admin', end: true },
+    { icon: 'build', label: 'Repairs', path: '/admin/repairs' },
+    { icon: 'group', label: 'Customers', path: '/admin/customers' },
+    { icon: 'calendar_today', label: 'Bookings', path: '/admin/bookings' },
+    { icon: 'payments', label: 'Pricing', path: '/admin/pricing' },
+    { icon: 'language', label: 'CMS', path: '/admin/cms' },
+    { icon: 'account_balance_wallet', label: 'Payments', path: '/admin/payments' },
+    { icon: 'verified', label: 'Warranty', path: '/admin/warranty' },
+    { icon: 'badge', label: 'Staff', path: '/admin/staff' },
   ];
 
   return (
@@ -123,7 +123,7 @@ const SideNavBar = () => {
             <span className="font-label-md text-label-md text-on-surface-variant">V1.0.4</span>
           </div>
         </div>
-        <Link to="/new-ticket" className="w-full h-10 bg-primary text-on-primary font-label-md text-label-md rounded-lg flex items-center justify-center gap-sm hover:opacity-90 transition-opacity shadow-sm scale-95 active:scale-90 cursor-pointer">
+        <Link to="/admin/new-ticket" className="w-full h-10 bg-primary text-on-primary font-label-md text-label-md rounded-lg flex items-center justify-center gap-sm hover:opacity-90 transition-opacity shadow-sm scale-95 active:scale-90 cursor-pointer">
           <span className="material-symbols-outlined" data-icon="add" style={{ fontSize: '18px' }}>add</span>
           New Repair
         </Link>
@@ -133,10 +133,11 @@ const SideNavBar = () => {
           <li key={index}>
             <NavLink
               to={item.path}
-              className={({ isActive }) => 
+              end={item.end}
+              className={({ isActive }) =>
                 `flex items-center gap-md px-md py-sm rounded-lg scale-95 active:scale-90 transition-all duration-200 cursor-pointer ${
-                  isActive 
-                  ? "bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold" 
+                  isActive
+                  ? "bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold"
                   : "text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest"
                 }`
               }
@@ -148,11 +149,11 @@ const SideNavBar = () => {
         ))}
         <li className="mt-auto">
           <NavLink
-            to="/settings"
-            className={({ isActive }) => 
+            to="/admin/settings"
+            className={({ isActive }) =>
               `flex items-center gap-md px-md py-sm rounded-lg scale-95 active:scale-90 transition-all duration-200 cursor-pointer ${
-                isActive 
-                ? "bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold" 
+                isActive
+                ? "bg-secondary-container dark:bg-secondary text-on-secondary-container dark:text-on-secondary font-bold"
                 : "text-on-surface-variant dark:text-surface-variant hover:bg-surface-container-high dark:hover:bg-surface-container-highest"
               }`
             }
@@ -168,18 +169,18 @@ const SideNavBar = () => {
 
 const Layout = () => {
   const location = useLocation();
-  const isNewTicketPage = location.pathname === '/new-ticket';
+  const isNewTicketPage = location.pathname === '/admin/new-ticket';
 
   return (
-    <div className="flex flex-1 pt-16 w-full h-full bg-background relative overflow-x-hidden">
+    <div className="flex flex-1 pt-16 w-full min-h-screen bg-background relative overflow-x-hidden">
       <TopNavBar />
       <SideNavBar />
       <div className="flex-1 ml-[260px] overflow-y-auto w-full h-[calc(100vh-64px)]">
         <Outlet />
       </div>
-      
+
       {!isNewTicketPage && (
-        <Link to="/new-ticket" className="fixed bottom-lg right-lg h-14 pl-sm pr-lg rounded-full bg-primary text-on-primary shadow-[0_8px_16px_rgba(0,91,191,0.2)] hover:shadow-[0_12px_24px_rgba(0,91,191,0.3)] hover:bg-[#004ca3] flex items-center gap-sm transition-all duration-200 z-50 cursor-pointer">
+        <Link to="/admin/new-ticket" className="fixed bottom-lg right-lg h-14 pl-sm pr-lg rounded-full bg-primary text-on-primary shadow-[0_8px_16px_rgba(0,91,191,0.2)] hover:shadow-[0_12px_24px_rgba(0,91,191,0.3)] hover:bg-[#004ca3] flex items-center gap-sm transition-all duration-200 z-50 cursor-pointer">
           <div className="w-10 h-10 rounded-full flex items-center justify-center bg-white/20">
             <span className="material-symbols-outlined" data-icon="add">add</span>
           </div>

@@ -174,7 +174,7 @@ const Dashboard = () => {
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg flex flex-col flex-1 overflow-hidden">
             <div className="p-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
               <h2 className="font-title-lg text-title-lg text-on-surface">Active Repairs</h2>
-              <Link to="/repairs" className="font-label-md text-label-md text-primary hover:underline flex items-center gap-xs">
+              <Link to="/admin/repairs" className="font-label-md text-label-md text-primary hover:underline flex items-center gap-xs">
                 View All <span className="material-symbols-outlined" data-icon="arrow_forward" style={{ fontSize: '16px' }}>arrow_forward</span>
               </Link>
             </div>
@@ -234,7 +234,7 @@ const Dashboard = () => {
               {metrics.overdueCount > 0 ? (
                 !hideOverdueAlert && (
                   <div className="relative w-full">
-                    <Link to="/repairs" className="flex items-start gap-md p-md rounded-xl bg-error-container border-2 border-error hover:opacity-90 transition-opacity cursor-pointer w-full shadow-sm pr-12">
+                    <Link to="/admin/repairs" className="flex items-start gap-md p-md rounded-xl bg-error-container border-2 border-error hover:opacity-90 transition-opacity cursor-pointer w-full shadow-sm pr-12">
                       <div className="bg-error w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm mt-0.5">
                         <span className="material-symbols-outlined text-on-error" style={{ fontSize: '24px' }}>error</span>
                       </div>
@@ -272,15 +272,15 @@ const Dashboard = () => {
               <h3 className="font-title-lg text-title-lg text-on-surface">Quick Actions</h3>
             </div>
             <div className="p-md flex flex-col gap-sm bg-surface-container-lowest">
-              <Link to="/new-ticket" className="w-full flex items-center gap-sm justify-center bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:shadow-md hover:opacity-90 transition-all cursor-pointer">
+              <Link to="/admin/new-ticket" className="w-full flex items-center gap-sm justify-center bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:shadow-md hover:opacity-90 transition-all cursor-pointer">
                 <span className="material-symbols-outlined text-[20px]">add_circle</span>
                 New Repair Ticket
               </Link>
-              <Link to="/customers" className="w-full flex items-center gap-sm justify-center bg-surface text-on-surface font-label-md text-label-md py-sm rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer shadow-sm">
+              <Link to="/admin/customers" className="w-full flex items-center gap-sm justify-center bg-surface text-on-surface font-label-md text-label-md py-sm rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer shadow-sm">
                 <span className="material-symbols-outlined text-[20px]">person_add</span>
                 Add Customer
               </Link>
-              <Link to="/repairs" className="w-full flex items-center gap-sm justify-center bg-surface text-on-surface font-label-md text-label-md py-sm rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer shadow-sm">
+              <Link to="/admin/repairs" className="w-full flex items-center gap-sm justify-center bg-surface text-on-surface font-label-md text-label-md py-sm rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer shadow-sm">
                 <span className="material-symbols-outlined text-[20px]">search</span>
                 Search Repairs
               </Link>

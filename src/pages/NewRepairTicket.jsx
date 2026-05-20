@@ -125,7 +125,7 @@ const NewRepairTicket = () => {
       }
       
       // Navigate to the ticket details page
-      navigate(`/ticket/${data.ticket_ref}`);
+      navigate(`/admin/ticket/${data.ticket_ref}`);
     } catch (err) {
       console.error(err);
       alert("Error creating ticket: " + err.message);
@@ -207,7 +207,7 @@ const NewRepairTicket = () => {
                       ))
                     ) : (
                       <div className="p-sm text-center text-on-surface-variant">
-                        No customer found. <button onClick={() => navigate('/customers')} className="text-primary hover:underline ml-xs cursor-pointer">Create new</button>
+                        No customer found. <button onClick={() => navigate('/admin/customers')} className="text-primary hover:underline ml-xs cursor-pointer">Create new</button>
                       </div>
                     )}
                   </div>

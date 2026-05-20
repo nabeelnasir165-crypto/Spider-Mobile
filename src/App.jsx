@@ -5,8 +5,9 @@ import { AuthProvider } from './contexts/AuthContext';
 import SiteLayout from './components/SiteLayout';
 import ProtectedRoute from './components/ProtectedRoute';
 import AdminRoute from './components/AdminRoute';
-import AdminLayout from './components/AdminLayout';
+import AdminLayout from './components/Layout';
 
+// Customer site pages
 import Home from './pages/Home';
 import Repairs from './pages/Repairs';
 import Refurbished from './pages/Refurbished';
@@ -17,7 +18,6 @@ import Contact from './pages/Contact';
 import Privacy from './pages/Privacy';
 import Terms from './pages/Terms';
 import NotFound from './pages/NotFound';
-
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import ForgotPassword from './pages/ForgotPassword';
@@ -25,15 +25,26 @@ import ResetPassword from './pages/ResetPassword';
 import Account from './pages/Account';
 import Book from './pages/Book';
 
-import AdminDashboard from './pages/admin/Dashboard';
-import AdminBookings from './pages/admin/Bookings';
-import AdminCustomers from './pages/admin/Customers';
+// Admin dashboard pages (Hybrid Repair Suite)
+import Dashboard from './pages/Dashboard';
+import AllRepairs from './pages/AllRepairs';
+import CustomerDatabase from './pages/CustomerDatabase';
+import NewRepairTicket from './pages/NewRepairTicket';
+import TicketDetails from './pages/TicketDetails';
+import AdminBookings from './pages/Bookings';
+import Pricing from './pages/Pricing';
+import CMS from './pages/CMS';
+import Payments from './pages/Payments';
+import Warranty from './pages/Warranty';
+import Staff from './pages/Staff';
+import Settings from './pages/Settings';
 
 export default function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          {/* Customer-facing site */}
           <Route element={<SiteLayout />}>
             <Route index element={<Home />} />
             <Route path="/repairs" element={<Repairs />} />
@@ -45,13 +56,11 @@ export default function App() {
             <Route path="/privacy" element={<Privacy />} />
             <Route path="/terms" element={<Terms />} />
 
-            {/* Auth */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
             <Route path="/reset-password" element={<ResetPassword />} />
 
-            {/* Protected */}
             <Route element={<ProtectedRoute />}>
               <Route path="/account" element={<Account />} />
               <Route path="/book" element={<Book />} />
@@ -60,12 +69,21 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
 
-          {/* Admin area (own layout, no public navbar) */}
+          {/* Admin dashboard (Hybrid Repair Suite — restricted to is_admin) */}
           <Route element={<AdminRoute />}>
-            <Route element={<AdminLayout />}>
-              <Route path="/admin" element={<AdminDashboard />} />
-              <Route path="/admin/bookings" element={<AdminBookings />} />
-              <Route path="/admin/customers" element={<AdminCustomers />} />
+            <Route path="/admin" element={<AdminLayout />}>
+              <Route index element={<Dashboard />} />
+              <Route path="repairs" element={<AllRepairs />} />
+              <Route path="customers" element={<CustomerDatabase />} />
+              <Route path="new-ticket" element={<NewRepairTicket />} />
+              <Route path="ticket/:id" element={<TicketDetails />} />
+              <Route path="bookings" element={<AdminBookings />} />
+              <Route path="pricing" element={<Pricing />} />
+              <Route path="cms" element={<CMS />} />
+              <Route path="payments" element={<Payments />} />
+              <Route path="warranty" element={<Warranty />} />
+              <Route path="staff" element={<Staff />} />
+              <Route path="settings" element={<Settings />} />
             </Route>
           </Route>
         </Routes>
