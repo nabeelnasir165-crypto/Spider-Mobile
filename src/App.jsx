@@ -4,7 +4,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './contexts/AuthContext';
 import SiteLayout from './components/SiteLayout';
 import ProtectedRoute from './components/ProtectedRoute';
-import AdminRoute from './components/AdminRoute';
 import AdminLayout from './components/Layout';
 
 // Customer site pages
@@ -69,22 +68,20 @@ export default function App() {
             <Route path="*" element={<NotFound />} />
           </Route>
 
-          {/* Admin dashboard (Hybrid Repair Suite — restricted to is_admin) */}
-          <Route element={<AdminRoute />}>
-            <Route path="/admin" element={<AdminLayout />}>
-              <Route index element={<Dashboard />} />
-              <Route path="repairs" element={<AllRepairs />} />
-              <Route path="customers" element={<CustomerDatabase />} />
-              <Route path="new-ticket" element={<NewRepairTicket />} />
-              <Route path="ticket/:id" element={<TicketDetails />} />
-              <Route path="bookings" element={<AdminBookings />} />
-              <Route path="pricing" element={<Pricing />} />
-              <Route path="cms" element={<CMS />} />
-              <Route path="payments" element={<Payments />} />
-              <Route path="warranty" element={<Warranty />} />
-              <Route path="staff" element={<Staff />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
+          {/* Admin dashboard (Hybrid Repair Suite — local mock data) */}
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="repairs" element={<AllRepairs />} />
+            <Route path="customers" element={<CustomerDatabase />} />
+            <Route path="new-ticket" element={<NewRepairTicket />} />
+            <Route path="ticket/:id" element={<TicketDetails />} />
+            <Route path="bookings" element={<AdminBookings />} />
+            <Route path="pricing" element={<Pricing />} />
+            <Route path="cms" element={<CMS />} />
+            <Route path="payments" element={<Payments />} />
+            <Route path="warranty" element={<Warranty />} />
+            <Route path="staff" element={<Staff />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
         </Routes>
       </BrowserRouter>
