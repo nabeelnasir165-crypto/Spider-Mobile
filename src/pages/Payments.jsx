@@ -1,14 +1,41 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ticketsWithCustomer } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 
 const Payments = () => {
-  const tickets = useMemo(
-    () => [...ticketsWithCustomer].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
-    []
-  );
-  const loading = false;
+  const [rawTickets, setRawTickets] = useState(ticketsWithCustomer);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
   const [statusFilter, setStatusFilter] = useState('');
+
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await Promise.race([
+          supabase
+            .from('tickets')
+            .select('id, ticket_ref, created_at, estimated_price, payment_status, customer_id, customers ( full_name )')
+            .order('created_at', { ascending: false }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+        ]);
+        if (cancelled) return;
+        if (error || !data || data.length === 0) return;
+        setRawTickets(data);
+      } catch (e) {
+        console.warn('[admin] payments fetch failed, using mock:', e?.message || e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const tickets = useMemo(
+    () => [...rawTickets].sort((a, b) => new Date(b.created_at) - new Date(a.created_at)),
+    [rawTickets]
+  );
 
   // Metrics computed from local mock data
   const metrics = useMemo(() => {

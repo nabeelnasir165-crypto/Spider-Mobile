@@ -1,16 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cmsContent } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 
 const Settings = () => {
   const [settings, setSettings] = useState({ ...cmsContent.app_settings });
   const [isSaving, setIsSaving] = useState(false);
-  const loading = false;
+  const [loading, setLoading] = useState(isSupabaseConfigured);
 
-  const saveSettings = () => {
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('cms_content')
+          .select('content')
+          .eq('section_key', 'app_settings')
+          .maybeSingle();
+        if (cancelled) return;
+        if (!error && data?.content) setSettings({ ...settings, ...data.content });
+      } catch (e) {
+        console.warn('[admin] settings fetch failed, using mock:', e?.message || e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const saveSettings = async () => {
     setIsSaving(true);
+    if (isSupabaseConfigured) {
+      try {
+        const { error } = await supabase.from('cms_content').upsert(
+          { section_key: 'app_settings', content: settings, updated_at: new Date().toISOString() },
+          { onConflict: 'section_key' }
+        );
+        if (error) throw error;
+        setIsSaving(false);
+        alert('Settings saved.');
+        return;
+      } catch (e) {
+        console.warn('[admin] settings save failed, falling back to local:', e?.message || e);
+      }
+    }
     setTimeout(() => {
       setIsSaving(false);
-      alert('Settings saved (local only — not persisted).');
+      alert('Settings saved (local only — Supabase not reachable).');
     }, 350);
   };
 

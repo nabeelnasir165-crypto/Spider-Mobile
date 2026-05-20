@@ -1,14 +1,45 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { staff as mockStaff } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+
+const sortByName = (list) =>
+  [...list].sort((a, b) => (a.full_name || '').localeCompare(b.full_name || ''));
 
 const Staff = () => {
-  const [staffList, setStaffList] = useState(
-    [...mockStaff].sort((a, b) => a.full_name.localeCompare(b.full_name))
-  );
-  const loading = false;
+  const [staffList, setStaffList] = useState(sortByName(mockStaff));
+  const [loading, setLoading] = useState(isSupabaseConfigured);
 
-  const toggleStatus = (id, currentStatus) => {
+  // Pull live staff from Supabase
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await Promise.race([
+          supabase.from('staff').select('*').order('full_name'),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+        ]);
+        if (cancelled) return;
+        if (error || !data || data.length === 0) return; // keep mock fallback
+        setStaffList(sortByName(data));
+      } catch (e) {
+        console.warn('[admin] staff fetch failed, using mock:', e?.message || e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  const toggleStatus = async (id, currentStatus) => {
+    // Optimistic update
     setStaffList((prev) => prev.map((s) => (s.id === id ? { ...s, is_active: !currentStatus } : s)));
+    if (!isSupabaseConfigured) return;
+    try {
+      await supabase.from('staff').update({ is_active: !currentStatus }).eq('id', id);
+    } catch (e) {
+      console.warn('[admin] staff toggle failed:', e?.message || e);
+    }
   };
 
   const getInitials = (name) => {

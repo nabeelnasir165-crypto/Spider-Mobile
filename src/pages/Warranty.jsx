@@ -1,15 +1,42 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { ticketsWithCustomer } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 
 const Warranty = () => {
-  const loading = false;
+  const [tickets, setTickets] = useState(ticketsWithCustomer);
+  const [loading, setLoading] = useState(isSupabaseConfigured);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
 
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await Promise.race([
+          supabase
+            .from('tickets')
+            .select('*, customers ( full_name )')
+            .eq('status', 'Completed')
+            .order('updated_at', { ascending: false }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+        ]);
+        if (cancelled) return;
+        if (error || !data || data.length === 0) return; // keep mock fallback
+        setTickets(data);
+      } catch (e) {
+        console.warn('[admin] warranty fetch failed, using mock:', e?.message || e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   const warranties = useMemo(() => {
     const now = new Date();
-    return ticketsWithCustomer
+    return tickets
       .filter((t) => t.status === 'Completed')
       .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
       .map((ticket) => {
@@ -23,7 +50,7 @@ const Warranty = () => {
           warranty_status: isExpired ? 'Expired' : 'Active',
         };
       });
-  }, []);
+  }, [tickets]);
 
   const filteredWarranties = warranties.filter(w => {
     const searchMatch = !searchQuery || 

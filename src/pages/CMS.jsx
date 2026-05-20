@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cmsContent } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 
 const CMS = () => {
   const [activeTab, setActiveTab] = useState('homepage');
@@ -12,6 +13,32 @@ const CMS = () => {
     inventory: cmsContent.inventory,
   });
 
+  // Hydrate from cms_content table on mount
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('cms_content')
+          .select('section_key, content');
+        if (cancelled || error || !data?.length) return;
+        setContent((prev) => {
+          const next = { ...prev };
+          data.forEach((row) => {
+            if (row.section_key && row.section_key in next) {
+              next[row.section_key] = row.content;
+            }
+          });
+          return next;
+        });
+      } catch (e) {
+        console.warn('[admin] CMS fetch failed, using mock:', e?.message || e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
   const tabs = [
     { id: 'homepage', label: 'Homepage Editor', icon: 'home' },
     { id: 'faq', label: 'FAQs', icon: 'quiz' },
@@ -20,11 +47,29 @@ const CMS = () => {
     { id: 'inventory', label: 'Inventory', icon: 'inventory_2' }
   ];
 
-  const saveCMS = () => {
+  const saveCMS = async () => {
     setIsSaving(true);
+    if (isSupabaseConfigured) {
+      try {
+        const rows = Object.entries(content).map(([section_key, value]) => ({
+          section_key,
+          content: value,
+          updated_at: new Date().toISOString(),
+        }));
+        const { error } = await supabase
+          .from('cms_content')
+          .upsert(rows, { onConflict: 'section_key' });
+        if (error) throw error;
+        setIsSaving(false);
+        alert('Website content published.');
+        return;
+      } catch (e) {
+        console.warn('[admin] CMS save failed, falling back to local:', e?.message || e);
+      }
+    }
     setTimeout(() => {
       setIsSaving(false);
-      alert('Content published (local only — not persisted to a backend).');
+      alert('Content published (local only — Supabase not reachable).');
     }, 350);
   };
 

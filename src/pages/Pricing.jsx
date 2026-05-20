@@ -1,35 +1,74 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { devicePricing } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 
 const Pricing = () => {
   const [activeBrand, setActiveBrand] = useState('Apple');
   const [pricingData, setPricingData] = useState(devicePricing);
-  const loading = false;
+  const [loading, setLoading] = useState(isSupabaseConfigured);
 
   const brands = ['Apple', 'Samsung', 'Google', 'Huawei', 'Other'];
+
+  // Hydrate from Supabase on mount
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await Promise.race([
+          supabase.from('device_pricing').select('*').order('brand').order('model'),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+        ]);
+        if (cancelled) return;
+        if (error || !data || data.length === 0) return; // keep mock fallback
+        setPricingData(data);
+      } catch (e) {
+        console.warn('[admin] pricing fetch failed, using mock:', e?.message || e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const visibleRows = useMemo(
     () => pricingData.filter((p) => p.brand === activeBrand).sort((a, b) => a.model.localeCompare(b.model)),
     [pricingData, activeBrand]
   );
 
-  const handleUpdate = (id, field, value) => {
+  const handleUpdate = async (id, field, value) => {
     const numericValue = parseFloat(value) || 0;
+    // Optimistic UI
     setPricingData((prev) => prev.map((item) => (item.id === id ? { ...item, [field]: numericValue } : item)));
+    if (!isSupabaseConfigured) return;
+    try {
+      await supabase.from('device_pricing').update({ [field]: numericValue }).eq('id', id);
+    } catch (e) {
+      console.warn('[admin] pricing update failed:', e?.message || e);
+    }
   };
 
-  const addModelService = (model) => {
+  const addModelService = async (model) => {
     const serviceName = prompt(`Enter new service name for ${model} (e.g. Screen Replacement):`);
     if (!serviceName) return;
-    const created = {
-      id: 'pr-' + Math.random().toString(36).slice(2, 8),
+    const draft = {
       brand: activeBrand,
       model,
       repair_type: serviceName,
       cost_price: 0,
       retail_price: 0,
     };
-    setPricingData((prev) => [...prev, created]);
+    if (isSupabaseConfigured) {
+      try {
+        const { data, error } = await supabase.from('device_pricing').insert(draft).select().single();
+        if (error) throw error;
+        setPricingData((prev) => [...prev, data]);
+        return;
+      } catch (e) {
+        console.warn('[admin] pricing insert failed, using local:', e?.message || e);
+      }
+    }
+    setPricingData((prev) => [...prev, { ...draft, id: 'pr-' + Math.random().toString(36).slice(2, 8) }]);
   };
 
   const addNewModel = () => {
@@ -38,9 +77,16 @@ const Pricing = () => {
     addModelService(model);
   };
 
-  const deleteService = (id) => {
+  const deleteService = async (id) => {
     if (!window.confirm('Are you sure you want to delete this service?')) return;
+    // Optimistic UI
     setPricingData((prev) => prev.filter((item) => item.id !== id));
+    if (!isSupabaseConfigured) return;
+    try {
+      await supabase.from('device_pricing').delete().eq('id', id);
+    } catch (e) {
+      console.warn('[admin] pricing delete failed:', e?.message || e);
+    }
   };
 
   const models = [...new Set(visibleRows.map((item) => item.model))];
