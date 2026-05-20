@@ -1,17 +1,43 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { bookings as mockBookings } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+
+const sortByRequested = (list) =>
+  [...list].sort((a, b) => new Date(a.requested_date) - new Date(b.requested_date));
 
 const Bookings = () => {
-  const bookings = [...mockBookings].sort((a, b) => new Date(a.requested_date) - new Date(b.requested_date));
-  const loading = false;
+  // Start with the mock list so the UI is never empty while Supabase resolves.
+  const [bookings, setBookings] = useState(sortByRequested(mockBookings));
+  const [loading, setLoading] = useState(isSupabaseConfigured);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
   const [dateFilter, setDateFilter] = useState('last30');
-  // Calendar modal state
   const [isCalendarOpen, setIsCalendarOpen] = useState(false);
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
+
+  // Pull real bookings from Supabase. Customers create these via the /book page.
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await Promise.race([
+          supabase.from('bookings').select('*').order('requested_date', { ascending: true }),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 8000)),
+        ]);
+        if (cancelled) return;
+        if (error || !data || data.length === 0) return;  // keep mock fallback
+        setBookings(sortByRequested(data));
+      } catch (e) {
+        console.warn('[admin] bookings fetch failed, using mock:', e?.message || e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const filteredBookings = bookings.filter(b => {
     const matchesSearch = (b.customer_name?.toLowerCase() || '').includes(searchTerm.toLowerCase()) ||

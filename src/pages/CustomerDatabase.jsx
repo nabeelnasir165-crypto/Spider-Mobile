@@ -1,12 +1,52 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { customers as mockCustomers } from '../data/admin';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+
+const sortByCreated = (list) =>
+  [...list].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
 const CustomerDatabase = () => {
-  const [customers, setCustomers] = useState(
-    [...mockCustomers].sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
-  );
-  const loading = false;
+  // Start with the mock list so the UI is never empty while Supabase resolves.
+  const [customers, setCustomers] = useState(sortByCreated(mockCustomers));
+  const [loading, setLoading] = useState(isSupabaseConfigured);
   const [selectedCustomer, setSelectedCustomer] = useState(null);
+
+  // Pull real customer signups from Supabase's customer_profiles table.
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await Promise.race([
+          supabase.from('customer_profiles').select('*').order('created_at', { ascending: false }),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('timeout')), 8000)
+          ),
+        ]);
+        if (cancelled) return;
+        if (error || !data) return;          // keep mock data as fallback
+        if (data.length === 0) return;       // empty table → keep mock for demo
+        // Map customer_profiles rows to the shape the UI expects.
+        const normalised = data.map((p) => ({
+          id: p.id,
+          full_name: p.full_name || p.email?.split('@')[0] || 'Unknown',
+          email: p.email || '',
+          phone: p.phone || '',
+          address: '',
+          is_business_account: false,
+          notes: p.marketing_opt_in ? 'Marketing opted-in' : '',
+          created_at: p.created_at,
+        }));
+        setCustomers(sortByCreated(normalised));
+      } catch (e) {
+        // Silently fall back to mock — surfaces in console only.
+        console.warn('[admin] customer_profiles fetch failed, using mock:', e?.message || e);
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [isAddingCustomer, setIsAddingCustomer] = useState(false);
