@@ -4,10 +4,14 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite --port 5173 --strictPort --open /",
-    "dev:admin": "vite --port 5180 --strictPort --open /admin",
-    "dev:both": "concurrently -n site,admin -c cyan,magenta \"npm:dev\" \"npm:dev:admin\"",
-    "build": "vite build",
+    "dev":       "vite --port 5173 --strictPort --open /",
+    "dev:site":  "vite --mode site  --port 5173 --strictPort --open /",
+    "dev:admin": "vite --mode admin --port 5180 --strictPort --open /admin",
+    "dev:both":  "concurrently -n site,admin -c cyan,magenta \"npm:dev:site\" \"npm:dev:admin\"",
+    "build":       "vite build",
+    "build:site":  "vite build --mode site",
+    "build:admin": "vite build --mode admin",
+    "build:both":  "npm run build:site && npm run build:admin",
     "lint": "eslint .",
     "preview": "vite preview"
   },

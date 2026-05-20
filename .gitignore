@@ -36,3 +36,7 @@ skills-lock.json
 *.njsproj
 *.sln
 *.sw?
+
+# per-target build outputs
+dist-site
+dist-admin

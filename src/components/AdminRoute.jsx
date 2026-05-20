@@ -3,9 +3,19 @@ import { Navigate, useLocation, Outlet, Link } from 'react-router-dom';
 import { Loader2, ShieldX, Home } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 
+// In local dev (`VITE_BUILD_TARGET` unset → 'all') we skip the auth gate so the
+// dashboard opens immediately. The strict gate runs for the dedicated admin
+// build that ships to `admin.spidermobiles.co.uk`.
+const TARGET = import.meta.env.VITE_BUILD_TARGET || 'all';
+const ENFORCE_AUTH = TARGET === 'admin' || import.meta.env.VITE_ENFORCE_ADMIN_AUTH === 'true';
+
 export default function AdminRoute({ children }) {
   const { user, isAdmin, loading } = useAuth();
   const location = useLocation();
+
+  if (!ENFORCE_AUTH) {
+    return children ? children : <Outlet />;
+  }
 
   if (loading) {
     return (
