@@ -12,9 +12,11 @@ dist
 dist-ssr
 *.local
 
-# Env / secrets
+# Env / secrets — only ignore truly local + secret files.
+# .env.site / .env.admin are committed (they contain build config, no secrets).
 .env
-.env.*
+.env.local
+.env.*.local
 
 # Source assets duplicated under public/
 Hero Secetion/
