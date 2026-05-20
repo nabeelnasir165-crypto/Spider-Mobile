@@ -1,0 +1,20 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "rewrites": [
+    { "source": "/(.*)", "destination": "/index.html" }
+  ],
+  "headers": [
+    {
+      "source": "/(.*)",
+      "has": [
+        { "type": "host", "value": "(?<host>.*admin.*)" }
+      ],
+      "headers": [
+        { "key": "X-Robots-Tag",        "value": "noindex, nofollow, noarchive" },
+        { "key": "X-Frame-Options",     "value": "DENY" },
+        { "key": "Referrer-Policy",     "value": "no-referrer" },
+        { "key": "Permissions-Policy",  "value": "camera=(), microphone=(), geolocation=()" }
+      ]
+    }
+  ]
+}
