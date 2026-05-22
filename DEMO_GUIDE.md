@@ -19,7 +19,7 @@ A short, self-contained walkthrough you can share with the client. Covers what's
 
 ## 2. Demo accounts
 
-Create these in **Supabase → Authentication → Users → Add user** (email + password, "Auto-confirm" enabled). The admin role grant uses one SQL line.
+Both accounts are **already provisioned** in Supabase Auth with `email_confirm: true` (no inbox round-trip). Just sign in.
 
 ### Customer
 ```
@@ -27,19 +27,13 @@ Email:    demo-customer@spidermobiles.co.uk
 Password: SpiderDemo2026!
 ```
 
-### Admin
+### Admin (full Hybrid Repair Suite access)
 ```
 Email:    demo-admin@spidermobiles.co.uk
 Password: SpiderDemoAdmin2026!
 ```
 
-After creating the admin user, run this once in **Supabase → SQL Editor** to grant the role:
-
-```sql
-update public.profiles
-   set role = 'admin'
- where id = (select id from auth.users where email = 'demo-admin@spidermobiles.co.uk');
-```
+The admin's role is granted via `public.customer_profiles.is_admin = true`; the SECURITY DEFINER `is_admin()` function gates every write policy in the dashboard.
 
 ---
 
