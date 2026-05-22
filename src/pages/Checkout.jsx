@@ -155,8 +155,34 @@ export default function Checkout() {
       }
     }
 
-    // If we had real Stripe wired up we'd redirect here.
-    // For now, we drop the user on the confirmation page with a "demo mode" note.
+    // Live Stripe: redirect to a hosted Checkout Session. The Edge Function
+    // returns a URL that Stripe will redirect back to /order/:id on success.
+    if (STRIPE_LIVE && payment === 'stripe') {
+      try {
+        const { data, error: invokeError } = await supabase.functions.invoke('create-checkout-session', {
+          body: {
+            order_ref: order.id,
+            customer_email: email,
+            items: items.map((i) => ({ name: i.name, qty: i.qty, price: i.price, image: i.image })),
+            delivery_fee: deliveryFee,
+            success_origin: window.location.origin,
+          },
+        });
+        if (invokeError) throw invokeError;
+        if (!data?.url) throw new Error('No checkout URL returned');
+        // Don't clear the cart yet — Stripe might cancel and we want them
+        // to return to a populated checkout. The success page handles cart
+        // clearing via the stripe_status=paid query param.
+        window.location.href = data.url;
+        return;
+      } catch (e) {
+        console.warn('[checkout] Stripe redirect failed, falling back to demo flow:', e?.message || e);
+        // fall through to the demo flow so the customer doesn't get stuck
+      }
+    }
+
+    // Demo flow (or Stripe fallback): drop the user on /order/:id with
+    // payment marked "pending_demo".
     clear();
     navigate(`/order/${order.id}`, { replace: true, state: { order, stripeLive: STRIPE_LIVE } });
   };

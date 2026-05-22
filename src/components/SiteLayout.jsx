@@ -8,6 +8,8 @@ import SEO from './SEO';
 import CookieBanner from './CookieBanner';
 import CartDrawer from './CartDrawer';
 import WhatsAppButton from './WhatsAppButton';
+import Breadcrumbs from './Breadcrumbs';
+import Analytics from './Analytics';
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -34,7 +36,9 @@ export default function SiteLayout() {
       <a href="#main-content" className="sr-only">Skip to main content</a>
       <ScrollToTop />
       <SEO />
+      <Analytics />
       <Navbar />
+      <Breadcrumbs />
 
       <AnimatePresence mode="wait">
         <motion.main

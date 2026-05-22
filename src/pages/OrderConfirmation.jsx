@@ -1,8 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Link, useLocation, useParams } from 'react-router-dom';
+import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle2, Mail, Truck, Store, Package, Lock, CreditCard, Banknote, AlertCircle } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
+import { useCart } from '../contexts/CartContext';
 
 const STORAGE_ORDERS = 'sm_orders_v1';
 const STRIPE_PK = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY || '';
@@ -11,23 +12,43 @@ const STRIPE_LIVE = !!STRIPE_PK;
 export default function OrderConfirmation() {
   const { id } = useParams();
   const location = useLocation();
+  const [params] = useSearchParams();
+  const { clear } = useCart();
   const passed = location.state?.order;
   const stripeLiveFromState = location.state?.stripeLive;
   const stripeLive = stripeLiveFromState ?? STRIPE_LIVE;
+  const stripePaid = params.get('stripe_status') === 'paid';
   const [order, setOrder] = useState(passed || null);
   const [notFound, setNotFound] = useState(false);
 
-  // If the user landed here via direct link, recover from localStorage.
+  // If the user landed here via direct link (e.g. Stripe redirect), recover
+  // the order from localStorage. Mark it paid if Stripe says so.
   useEffect(() => {
     if (order) return;
     try {
       const raw = localStorage.getItem(STORAGE_ORDERS);
       const list = raw ? JSON.parse(raw) : [];
       const found = list.find((o) => o.id === id);
-      if (found) setOrder(found);
+      if (found) {
+        if (stripePaid && found.payment) found.payment.status = 'paid';
+        setOrder(found);
+      }
       else setNotFound(true);
     } catch { setNotFound(true); }
-  }, [id, order]);
+  }, [id, order, stripePaid]);
+
+  // When Stripe redirects back with status=paid, persist the paid flag to
+  // localStorage and clear the cart (which we kept full during the redirect).
+  useEffect(() => {
+    if (!stripePaid || !order) return;
+    try {
+      const raw = localStorage.getItem(STORAGE_ORDERS);
+      const list = raw ? JSON.parse(raw) : [];
+      const updated = list.map((o) => o.id === id ? { ...o, payment: { ...o.payment, status: 'paid' } } : o);
+      localStorage.setItem(STORAGE_ORDERS, JSON.stringify(updated));
+    } catch { /* ignore */ }
+    clear();
+  }, [stripePaid, order, id, clear]);
 
   if (notFound) {
     return (
