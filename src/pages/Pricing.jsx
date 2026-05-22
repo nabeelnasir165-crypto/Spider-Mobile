@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { devicePricing } from '../data/admin';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { Skeleton } from '../components/Skeleton';
 
 const Pricing = () => {
   const [activeBrand, setActiveBrand] = useState('Apple');
@@ -128,8 +129,21 @@ const Pricing = () => {
           {/* Main List: Models and Repairs */}
           <div className="md:col-span-9 lg:col-span-10 flex flex-col gap-lg">
             {loading ? (
-              <div className="flex justify-center items-center py-xl">
-                <span aria-hidden="true" className="material-symbols-outlined animate-spin text-primary" style={{ fontSize: '32px' }}>autorenew</span>
+              <div aria-busy="true" className="flex flex-col gap-lg">
+                {Array.from({ length: 3 }).map((_, m) => (
+                  <div key={m} className="bg-surface-container-lowest border border-outline-variant rounded-xl p-md">
+                    <Skeleton className="h-5 w-40 mb-md" />
+                    <div className="space-y-2">
+                      {Array.from({ length: 3 }).map((_, r) => (
+                        <div key={r} className="flex items-center gap-md">
+                          <Skeleton className="h-3 flex-1" />
+                          <Skeleton className="h-3 w-20" />
+                          <Skeleton className="h-3 w-20" />
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ))}
               </div>
             ) : models.length === 0 ? (
               <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-xl text-center shadow-sm">

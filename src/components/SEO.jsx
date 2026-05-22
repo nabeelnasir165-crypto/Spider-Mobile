@@ -2,6 +2,45 @@ import { useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
 const SITE = 'Spider Mobiles Derby';
+
+// LocalBusiness structured data — Google rich-results for the Derby store.
+// Sites only need to inject this once on the page (we use a script with a
+// stable id and replace its contents on each navigation).
+const LOCAL_BUSINESS_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'MobilePhoneStore',
+  '@id': 'https://spidermobiles.co.uk#store',
+  name: 'Spider Mobiles Derby',
+  image: 'https://spidermobiles.co.uk/og-image.png',
+  url: 'https://spidermobiles.co.uk',
+  telephone: '+44 1332 986446',
+  priceRange: '££',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: '835 Osmaston Road',
+    addressLocality: 'Derby',
+    postalCode: 'DE24 8EX',
+    addressCountry: 'GB',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 52.8959,
+    longitude: -1.4634,
+  },
+  openingHoursSpecification: [
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: ['Monday','Tuesday','Wednesday','Thursday','Friday'], opens: '09:00', closes: '18:30' },
+    { '@type': 'OpeningHoursSpecification', dayOfWeek: 'Saturday', opens: '10:00', closes: '17:00' },
+  ],
+  aggregateRating: {
+    '@type': 'AggregateRating',
+    ratingValue: '4.9',
+    reviewCount: '1247',
+    bestRating: '5',
+    worstRating: '1',
+  },
+  areaServed: { '@type': 'City', name: 'Derby' },
+  sameAs: [],
+};
 const META = {
   '/': {
     title: 'Spider Mobiles Derby — Fast, Trusted Phone Repairs',
@@ -90,6 +129,17 @@ export default function SEO() {
       document.head.appendChild(canonical);
     }
     canonical.setAttribute('href', `https://spidermobiles.co.uk${pathname}`);
+
+    // LocalBusiness structured data (Google rich results). Stays the same
+    // across pages so we just upsert it once.
+    let ld = document.getElementById('ld-localbusiness');
+    if (!ld) {
+      ld = document.createElement('script');
+      ld.id = 'ld-localbusiness';
+      ld.type = 'application/ld+json';
+      document.head.appendChild(ld);
+    }
+    ld.textContent = JSON.stringify(LOCAL_BUSINESS_JSONLD);
   }, [pathname]);
 
   return null;

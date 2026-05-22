@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { cmsContent } from '../data/admin';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
+import { Skeleton } from '../components/Skeleton';
 
 const Settings = () => {
   const [settings, setSettings] = useState({ ...cmsContent.app_settings });
@@ -57,8 +58,26 @@ const Settings = () => {
 
   if (loading) {
     return (
-      <main className="h-full overflow-y-auto p-md md:p-xl bg-background flex justify-center items-center">
-        <span aria-hidden="true" className="material-symbols-outlined animate-spin text-primary" style={{ fontSize: '32px' }}>autorenew</span>
+      <main aria-busy="true" className="h-full overflow-y-auto p-md md:p-xl bg-background">
+        <div className="max-w-[800px] mx-auto">
+          <Skeleton className="h-7 w-56 mb-xs" />
+          <Skeleton className="h-4 w-80 mb-lg" />
+          <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm p-lg">
+            {Array.from({ length: 3 }).map((_, section) => (
+              <div key={section} className="mb-lg last:mb-0">
+                <Skeleton className="h-5 w-44 mb-md" />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
+                  {Array.from({ length: 4 }).map((_, i) => (
+                    <div key={i} className="space-y-2">
+                      <Skeleton className="h-3 w-24" />
+                      <Skeleton className="h-9 w-full rounded-lg" />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       </main>
     );
   }

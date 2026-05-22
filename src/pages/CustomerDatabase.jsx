@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SkeletonCard } from '../components/Skeleton';
 import { customers as mockCustomers } from '../data/admin';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 import { getStoredCustomers } from '../lib/localStore';
@@ -155,9 +156,9 @@ const CustomerDatabase = () => {
             
             <div className="flex-1 overflow-y-auto">
               {loading ? (
-                <div className="p-lg flex justify-center text-on-surface-variant">
-                  <span aria-hidden="true" className="material-symbols-outlined animate-spin text-[32px]">sync</span>
-                </div>
+                <ul aria-busy="true" aria-label="Loading customers" className="divide-y divide-outline-variant/50">
+                  {Array.from({ length: 6 }).map((_, i) => <li key={i}><SkeletonCard/></li>)}
+                </ul>
               ) : filteredCustomers.length === 0 ? (
                 <div className="p-lg text-center text-on-surface-variant">
                   No customers found.

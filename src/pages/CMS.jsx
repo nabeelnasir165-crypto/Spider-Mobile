@@ -164,30 +164,60 @@ const CMS = () => {
           <div className="p-lg md:p-xl bg-surface-container-lowest min-h-[500px]">
             {activeTab === 'homepage' && (
               <div className="flex flex-col gap-lg max-w-[800px]">
-                <h2 className="font-title-lg text-title-lg text-on-surface border-b border-outline-variant pb-xs">Hero Section</h2>
+                <div>
+                  <h2 className="font-title-lg text-title-lg text-on-surface border-b border-outline-variant pb-xs">Hero Section</h2>
+                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-xs">Edits update the public homepage hero live. Headline splits into two halves: the second renders in the brand gradient — leave blank for a single-line headline.</p>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-md">
+                  <div className="flex flex-col gap-sm">
+                    <label className="font-label-md text-label-md text-on-surface-variant">Headline · top line</label>
+                    <input
+                      type="text"
+                      className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                      value={content.homepage_hero.headline_top ?? content.homepage_hero.headline ?? ''}
+                      onChange={(e) => updateSection('homepage_hero', 'headline_top', e.target.value)}
+                      placeholder="Fast. Trusted."
+                    />
+                  </div>
+                  <div className="flex flex-col gap-sm">
+                    <label className="font-label-md text-label-md text-on-surface-variant">Headline · accent (gradient)</label>
+                    <input
+                      type="text"
+                      className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                      value={content.homepage_hero.headline_accent ?? ''}
+                      onChange={(e) => updateSection('homepage_hero', 'headline_accent', e.target.value)}
+                      placeholder="Repairs."
+                    />
+                  </div>
+                </div>
+
                 <div className="flex flex-col gap-sm">
-                  <label className="font-label-md text-label-md text-on-surface-variant">Main Headline</label>
-                  <input 
-                    type="text" 
-                    className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" 
-                    value={content.homepage_hero.headline}
-                    onChange={(e) => updateSection('homepage_hero', 'headline', e.target.value)}
+                  <label className="font-label-md text-label-md text-on-surface-variant">Status pill</label>
+                  <input
+                    type="text"
+                    className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none max-w-[420px]"
+                    value={content.homepage_hero.pill ?? ''}
+                    onChange={(e) => updateSection('homepage_hero', 'pill', e.target.value)}
+                    placeholder="Open today · Most repairs in 30 min"
                   />
                 </div>
+
                 <div className="flex flex-col gap-sm">
                   <label className="font-label-md text-label-md text-on-surface-variant">Subheading</label>
-                  <textarea 
-                    className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" 
-                    rows="2" 
+                  <textarea
+                    className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none"
+                    rows="2"
                     value={content.homepage_hero.subheading}
                     onChange={(e) => updateSection('homepage_hero', 'subheading', e.target.value)}
                   />
                 </div>
+
                 <div className="flex flex-col gap-sm">
                   <label className="font-label-md text-label-md text-on-surface-variant">Call to Action Button</label>
-                  <input 
-                    type="text" 
-                    className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none max-w-[300px]" 
+                  <input
+                    type="text"
+                    className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none max-w-[300px]"
                     value={content.homepage_hero.ctaText}
                     onChange={(e) => updateSection('homepage_hero', 'ctaText', e.target.value)}
                   />
