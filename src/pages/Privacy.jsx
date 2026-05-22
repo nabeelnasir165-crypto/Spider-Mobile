@@ -4,7 +4,7 @@ import PageHeader from '../components/PageHeader';
 const sections = [
   {
     h: '1. Who we are',
-    p: 'Spider Mobiles Derby ("we", "us") operates this website at spidermobiles.co.uk and our retail store at 24 St Peter\'s Street, Derby. For any privacy questions, email hello@spidermobiles.co.uk.',
+    p: 'Spider Mobiles Derby ("we", "us") operates this website at spidermobiles.co.uk and our retail store at 835 Osmaston Road, Derby. For any privacy questions, email hello@spidermobiles.co.uk.',
   },
   {
     h: '2. Information we collect',

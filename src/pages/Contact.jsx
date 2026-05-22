@@ -82,7 +82,7 @@ export default function Contact() {
                 <ContactCard
                   icon={MapPin}
                   title="Find us"
-                  lines={['24 St Peter&rsquo;s Street', 'Derby, DE1 1XJ', 'United Kingdom']}
+                  lines={['835 Osmaston Road', 'Derby, DE24 8EX', 'United Kingdom']}
                 />
               </Reveal>
               <Reveal delay={0.05}>
@@ -96,7 +96,7 @@ export default function Contact() {
                 <ContactCard
                   icon={Phone}
                   title="Phone"
-                  lines={['01332 000 000', 'WhatsApp 07700 900 111']}
+                  lines={['01332 986446', 'WhatsApp 07700 900 000']}
                 />
               </Reveal>
               <Reveal delay={0.15}>

@@ -35,6 +35,8 @@ const META = {
   '/signup': { title: `Create account · ${SITE}`, description: 'Create a free account to book and track phone repairs.' },
   '/account': { title: `Your account · ${SITE}`, description: 'Manage bookings, repairs and your profile.' },
   '/book': { title: `Book a repair · ${SITE}`, description: 'Book your repair in 5 quick steps. Most fixes ready in 30–60 minutes.' },
+  '/cart': { title: `Your bag · ${SITE}`, description: 'Review items before checkout.' },
+  '/checkout': { title: `Checkout · ${SITE}`, description: 'Secure checkout — card, Apple Pay, Google Pay, or cash on collection.' },
   '/forgot-password': { title: `Forgot password · ${SITE}`, description: 'Reset your password.' },
   '/reset-password': { title: `Reset password · ${SITE}`, description: 'Choose a new password.' },
   '/privacy': {
@@ -67,9 +69,16 @@ export default function SEO() {
     setMeta('name', 'description', meta.description);
     setMeta('property', 'og:title', meta.title);
     setMeta('property', 'og:description', meta.description);
+    setMeta('property', 'og:type', pathname === '/' ? 'website' : 'article');
+    setMeta('property', 'og:site_name', SITE);
     setMeta('property', 'og:url', `https://spidermobiles.co.uk${pathname}`);
+    setMeta('property', 'og:image', 'https://spidermobiles.co.uk/og-image.svg');
+    setMeta('property', 'og:image:alt', 'Spider Mobiles Derby — fast, trusted phone repairs');
+    setMeta('name', 'twitter:card', 'summary_large_image');
     setMeta('name', 'twitter:title', meta.title);
     setMeta('name', 'twitter:description', meta.description);
+    setMeta('name', 'twitter:image', 'https://spidermobiles.co.uk/og-image.svg');
+    setMeta('name', 'theme-color', '#0EA5E9');
 
     let canonical = document.querySelector('link[rel="canonical"]');
     if (!canonical) {

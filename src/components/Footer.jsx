@@ -129,8 +129,8 @@ export default function Footer() {
 
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 text-sm text-white/70">
-            <div className="flex items-center gap-2"><MapPin size={14} className="text-brand-light"/> 24 St Peter&rsquo;s St, Derby DE1</div>
-            <div className="flex items-center gap-2"><Phone size={14} className="text-brand-light"/> 01332 000 000</div>
+            <div className="flex items-center gap-2"><MapPin size={14} className="text-brand-light"/> 835 Osmaston Road, Derby</div>
+            <div className="flex items-center gap-2"><Phone size={14} className="text-brand-light"/> <a href="tel:+441332986446" className="hover:text-white transition">01332 986446</a></div>
             <div className="flex items-center gap-2"><Mail size={14} className="text-brand-light"/> hello@spidermobiles.co.uk</div>
           </div>
           <p className="text-xs text-white/40">&copy; {new Date().getFullYear()} Spider Mobiles Derby. All rights reserved.</p>

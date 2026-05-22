@@ -5,7 +5,15 @@ import { useAuth } from '../contexts/AuthContext';
 const TopNavBar = ({ onMenuClick }) => {
   const [isNotificationOpen, setIsNotificationOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const { signOut } = useAuth();
+  const { signOut, user, profile } = useAuth();
+
+  const displayName = profile?.full_name || user?.email?.split('@')[0] || 'Admin';
+  const initials = (profile?.full_name || user?.email || 'A')
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => s[0]?.toUpperCase())
+    .join('') || 'A';
 
   return (
     <header className="fixed top-0 w-full z-50 flex justify-between items-center px-3 sm:px-md h-16 bg-surface dark:bg-inverse-surface border-b border-outline-variant dark:border-outline">
@@ -85,11 +93,11 @@ const TopNavBar = ({ onMenuClick }) => {
         </div>
         <div className="hidden sm:block h-8 w-px bg-outline-variant mx-xs"></div>
         <div className="relative">
-          <button onClick={() => setIsProfileOpen(!isProfileOpen)} aria-label="Profile menu" aria-expanded={isProfileOpen} aria-haspopup="menu" className="flex items-center gap-sm px-2 sm:px-sm py-xs rounded-full hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80">
-            <div className="w-8 h-8 rounded-full bg-surface-container-high border border-outline flex items-center justify-center overflow-hidden">
-              <img alt="" className="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9UwrXGOJwldL_QWKlemq3RouRrb5D3ruGW4YaZRCHZ4vD74NnaC6Rs_nCX-g6lKggTzgxRfQ3nyGtF84k9o9EvKzNOTBnZFdVlqlJ3E580qkmFVf_Ua3YGUIxYAegZWkHplfu4Wa_hkKBZzzC2zIK6Shvd9bwAc9CyCJ8f60P5MnbHTEge8NuXak2a3TtQ-ADoJ3Be_SehPr1SSRyP8hPvQL-5XKjk6kL_sd6GJoLhu9XbpuT9z83n8sck67zqmFJw7iRo90J0C0"/>
+          <button onClick={() => setIsProfileOpen(!isProfileOpen)} aria-label={`Profile menu — ${displayName}`} aria-expanded={isProfileOpen} aria-haspopup="menu" className="flex items-center gap-sm px-2 sm:px-sm py-xs rounded-full hover:bg-surface-container-low transition-colors cursor-pointer active:opacity-80">
+            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-tertiary text-on-primary flex items-center justify-center text-[12px] font-bold shadow-sm" aria-hidden="true">
+              {initials}
             </div>
-            <span className="hidden sm:block font-label-md text-label-md text-on-surface">Profile</span>
+            <span className="hidden sm:block font-label-md text-label-md text-on-surface max-w-[140px] truncate">{displayName}</span>
             <span aria-hidden="true" className="hidden sm:block material-symbols-outlined text-on-surface-variant" data-icon="expand_more" style={{ fontSize: '16px' }}>expand_more</span>
           </button>
 

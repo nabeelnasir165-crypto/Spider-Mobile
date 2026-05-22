@@ -314,8 +314,8 @@ export default function Navbar() {
                     <Link to="/login" className="btn-outline w-full">Sign in</Link>
                   </>
                 )}
-                <a href="tel:+441332000000" className="inline-flex items-center justify-center gap-2 h-11 text-sm font-medium text-ink-700">
-                  <Phone size={14}/> 01332 000 000
+                <a href="tel:+441332986446" className="inline-flex items-center justify-center gap-2 h-11 text-sm font-medium text-ink-700">
+                  <Phone size={14}/> 01332 986446
                 </a>
               </div>
             </motion.div>

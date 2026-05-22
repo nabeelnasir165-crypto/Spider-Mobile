@@ -9,17 +9,19 @@ import { Reveal, SectionHeader } from '../components/Section';
 
 const milestones = [
   { year: '2014', title: 'Started in Derby', desc: 'Opened our first small workshop fixing iPhones and BlackBerries.' },
-  { year: '2017', title: '1,000 repairs', desc: 'Quickly outgrew our space — moved to St Peter&rsquo;s Street.' },
+  { year: '2017', title: '1,000 repairs', desc: 'Quickly outgrew our space — moved to 835 Osmaston Road, Derby.' },
   { year: '2020', title: 'Refurb store launch', desc: 'Started selling certified pre-owned phones across the UK.' },
   { year: '2024', title: '12,000+ customers', desc: 'Now Derby&rsquo;s highest-rated phone repair specialist.' },
 ];
 
 const team = [
-  { name: 'Adam Khan', role: 'Founder & Lead Technician', img: 'https://i.pravatar.cc/300?img=12' },
-  { name: 'Priya Shah', role: 'Senior Engineer', img: 'https://i.pravatar.cc/300?img=47' },
-  { name: 'James Holt', role: 'Refurb Manager', img: 'https://i.pravatar.cc/300?img=33' },
-  { name: 'Leah Cole', role: 'Customer Care Lead', img: 'https://i.pravatar.cc/300?img=24' },
+  { name: 'Adam Khan',  role: 'Founder & Lead Technician', tint: 'from-sky-500 to-blue-700' },
+  { name: 'Priya Shah', role: 'Senior Engineer',           tint: 'from-emerald-500 to-teal-700' },
+  { name: 'James Holt', role: 'Refurb Manager',            tint: 'from-amber-500 to-orange-700' },
+  { name: 'Leah Cole',  role: 'Customer Care Lead',        tint: 'from-rose-500 to-pink-700' },
 ];
+
+const initials = (name) => name.split(/\s+/).filter(Boolean).slice(0, 2).map((s) => s[0].toUpperCase()).join('');
 
 export default function About() {
   return (
@@ -35,9 +37,10 @@ export default function About() {
           <Reveal>
             <div className="relative aspect-[4/5] rounded-3xl overflow-hidden bg-ink-100">
               <img
-                src="https://images.unsplash.com/photo-1581092583537-20d51b4b4f1b?auto=format&fit=crop&w=800&q=80"
-                alt="Spider Mobiles workshop"
+                src="/products/workshop.jpg"
+                alt="Inside the Spider Mobiles workshop in Derby"
                 className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-ink-950/40 to-transparent"/>
               <div className="absolute bottom-5 left-5 right-5 p-5 rounded-2xl bg-white/85 backdrop-blur border border-white/40">
@@ -117,16 +120,14 @@ export default function About() {
             {team.map((t, i) => (
               <Reveal key={t.name} delay={i * 0.05}>
                 <div className="group">
-                  <div className="aspect-square rounded-2xl overflow-hidden mb-4 bg-ink-100">
-                    <motion.img
-                      src={t.img}
-                      alt={t.name}
-                      className="w-full h-full object-cover"
-                      whileHover={{ scale: 1.05 }}
-                      transition={{ duration: 0.6 }}
-                      loading="lazy"
-                    />
-                  </div>
+                  <motion.div
+                    whileHover={{ scale: 1.03 }}
+                    transition={{ duration: 0.4 }}
+                    className={`aspect-square rounded-2xl mb-4 grid place-items-center bg-gradient-to-br ${t.tint} text-white shadow-soft`}
+                  >
+                    <span className="text-5xl font-bold tracking-tight" aria-hidden="true">{initials(t.name)}</span>
+                    <span className="sr-only">Portrait placeholder for {t.name}</span>
+                  </motion.div>
                   <h3 className="text-base font-semibold text-ink-950">{t.name}</h3>
                   <p className="text-sm text-ink-500">{t.role}</p>
                 </div>

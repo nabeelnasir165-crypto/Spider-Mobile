@@ -36,8 +36,8 @@ export default function FinalCTA() {
                 <Link to="/book" className="btn-accent">
                   <Wrench size={16}/> Book a Repair
                 </Link>
-                <a href="tel:+441332000000" className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-white/10 border border-white/20 hover:bg-white/15 text-white font-medium text-sm transition">
-                  <Phone size={16}/> 01332 000 000
+                <a href="tel:+441332986446" className="inline-flex items-center gap-2 h-12 px-6 rounded-full bg-white/10 border border-white/20 hover:bg-white/15 text-white font-medium text-sm transition">
+                  <Phone size={16}/> 01332 986446
                 </a>
                 <Link to="/contact" className="inline-flex items-center gap-2 h-12 px-6 text-white/85 hover:text-white text-sm font-medium transition">
                   Find our store <ChevronRight size={15} />
