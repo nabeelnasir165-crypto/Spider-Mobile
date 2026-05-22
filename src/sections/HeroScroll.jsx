@@ -60,34 +60,35 @@ export default function HeroScroll() {
   // Preload frames in two waves:
   //   1. Fetch frame 1 eagerly. As soon as it paints, drop the splash so the
   //      page becomes interactive (~50 KB instead of waiting for ~4.9 MB).
-  //   2. After the first paint, kick off the remaining 112 frames at low
-  //      priority so the scroll animation is ready by the time the user
-  //      reaches it, without blocking initial render.
+  //   2. After the first paint, kick off the remaining 112 frames in parallel.
+  //      Each frame redraws the canvas on load if it happens to be the one
+  //      the current scroll position points at — otherwise the canvas would
+  //      stay frozen on frame 1 whenever the user scrolls past a frame that
+  //      hasn't downloaded yet.
   useEffect(() => {
     const imgs = new Array(FRAME_COUNT);
     imagesRef.current = imgs;
 
-    const first = new Image();
-    first.fetchPriority = 'high';
-    first.src = framePath(1);
-    first.onload = () => {
-      imgs[0] = first;
-      drawFrame(0);
-      setLoaded(true);
-      // Queue the rest after the browser has rendered the splash transition
-      requestIdleCallback?.(loadRest) ?? setTimeout(loadRest, 0);
+    const loadFrame = (n) => {
+      const img = new Image();
+      img.src = framePath(n);
+      imgs[n - 1] = img;
+      img.onload = () => {
+        if (n === 1) {
+          drawFrame(0);
+          setLoaded(true);
+        }
+        // If the user has already scrolled past this frame while it was
+        // downloading, redraw now so the canvas catches up.
+        if (currentFrameRef.current === n - 1) drawFrame(n - 1);
+      };
     };
-    imgs[0] = first;
 
-    const loadRest = () => {
-      for (let i = 2; i <= FRAME_COUNT; i++) {
-        const img = new Image();
-        img.fetchPriority = 'low';
-        img.loading = 'lazy';
-        img.src = framePath(i);
-        imgs[i - 1] = img;
-      }
-    };
+    // Eager: frame 1 first so the hero appears as soon as possible.
+    loadFrame(1);
+    // Kick off the rest immediately at default priority — 112 small JPEGs
+    // load in parallel under HTTP/2 well within a few seconds.
+    for (let i = 2; i <= FRAME_COUNT; i++) loadFrame(i);
 
     // Hard timeout fallback in case frame 1 stalls (e.g. flaky network)
     const timer = setTimeout(() => setLoaded(true), 1500);
@@ -99,7 +100,19 @@ export default function HeroScroll() {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
-    const img = imagesRef.current[frameIndex];
+    // Walk outward from the requested frame to the nearest one that's
+    // actually loaded — so the canvas never freezes on frame 1 if a later
+    // frame hasn't downloaded yet.
+    let img = imagesRef.current[frameIndex];
+    if (!img || !img.complete || img.naturalWidth === 0) {
+      const imgs = imagesRef.current;
+      for (let off = 1; off < FRAME_COUNT; off++) {
+        const lo = imgs[frameIndex - off];
+        const hi = imgs[frameIndex + off];
+        if (lo && lo.complete && lo.naturalWidth > 0) { img = lo; break; }
+        if (hi && hi.complete && hi.naturalWidth > 0) { img = hi; break; }
+      }
+    }
     if (!img || !img.complete || img.naturalWidth === 0) return;
 
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
@@ -304,19 +317,6 @@ export default function HeroScroll() {
               </span>
             </div>
           </motion.div>
-        </div>
-
-        {/* Frame progress meter */}
-        <div className="absolute top-20 right-4 sm:right-8 z-10 hidden md:flex flex-col items-end gap-2">
-          <div className="text-[10px] uppercase tracking-[0.22em] text-white/50">
-            Frame {String(Math.round(progress * (FRAME_COUNT - 1)) + 1).padStart(3, '0')} / {FRAME_COUNT}
-          </div>
-          <div className="w-32 h-px bg-white/15 relative overflow-hidden">
-            <div
-              className="absolute inset-y-0 left-0 bg-brand"
-              style={{ width: `${progress * 100}%` }}
-            />
-          </div>
         </div>
 
         {/* Trust row floating bottom */}
