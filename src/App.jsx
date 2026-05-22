@@ -102,14 +102,14 @@ export default function App() {
                 <Route path="/forgot-password"  element={<ForgotPassword />} />
                 <Route path="/reset-password"   element={<ResetPassword />} />
 
-                {/* Shopping (open — guests can buy as well as logged-in users) */}
+                {/* Open booking + shopping — guests complete without an account */}
+                <Route path="/book"             element={<Book />} />
                 <Route path="/cart"             element={<Cart />} />
                 <Route path="/checkout"         element={<Checkout />} />
                 <Route path="/order/:id"        element={<OrderConfirmation />} />
 
                 <Route element={<ProtectedRoute />}>
                   <Route path="/account" element={<Account />} />
-                  <Route path="/book"    element={<Book />} />
                 </Route>
 
                 {/* Catch-all on the public site → 404 */}

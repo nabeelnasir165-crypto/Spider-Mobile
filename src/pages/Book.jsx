@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Smartphone, BatteryCharging, Plug, Camera, Droplets, Volume2, Square, TerminalSquare,
   ChevronRight, ChevronLeft, Loader2, CheckCircle2, Calendar, MessageSquare, ShieldCheck,
+  User, Mail, Phone, AlertCircle,
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { brands, models, issues, calcQuote } from '../data/repairs';
@@ -29,6 +30,12 @@ export default function Book() {
   const [error, setError] = useState('');
   const [confirmed, setConfirmed] = useState(null);
 
+  // Guest contact fields — used when there's no signed-in user
+  const isGuest = !user;
+  const [guestName,  setGuestName]  = useState('');
+  const [guestEmail, setGuestEmail] = useState('');
+  const [guestPhone, setGuestPhone] = useState('');
+
   // Default date: tomorrow
   useEffect(() => {
     const d = new Date();
@@ -42,13 +49,24 @@ export default function Book() {
 
   const submit = async () => {
     setError('');
+    // Validate guest contact fields up-front so we don't ship a half-filled row
+    if (isGuest) {
+      if (!guestName.trim())  { setError('Please enter your name.'); return; }
+      if (!/^\S+@\S+\.\S+$/.test(guestEmail)) { setError('Please enter a valid email.'); return; }
+      if (!guestPhone.trim()) { setError('Please enter a phone number.'); return; }
+    }
+
     setBusy(true);
     const requested_date = new Date(`${date}T${time}`).toISOString();
+    const customerName  = isGuest ? guestName  : (profile?.full_name || user.email);
+    const customerEmail = isGuest ? guestEmail : user.email;
+    const customerPhone = isGuest ? guestPhone : (profile?.phone || null);
+
     const payload = {
-      customer_user_id: user.id,
-      customer_name: profile?.full_name || user.email,
-      customer_email: user.email,
-      customer_phone: profile?.phone || null,
+      customer_user_id: user?.id || null,
+      customer_name: customerName,
+      customer_email: customerEmail,
+      customer_phone: customerPhone,
       device_brand: brand?.name,
       device_model: model?.name,
       issue: issue?.label,
@@ -77,8 +95,8 @@ export default function Book() {
         supabase.functions.invoke('send-booking-email', {
           body: {
             booking_ref: data.booking_ref,
-            customer_email: user.email,
-            customer_name: profile?.full_name || user.email,
+            customer_email: customerEmail,
+            customer_name: customerName,
             device: `${brand?.name} ${model?.name}`,
             issue: issue?.label,
             requested_date,
@@ -267,6 +285,20 @@ export default function Book() {
                 <Step key="confirm">
                   <h3 className="text-lg font-semibold mb-5">Confirm your booking</h3>
 
+                  {isGuest && (
+                    <div className="mb-5 rounded-2xl bg-white border border-ink-100 p-5">
+                      <div className="flex items-center justify-between mb-4">
+                        <p className="text-xs font-semibold uppercase tracking-[0.14em] text-ink-500">Your details</p>
+                        <Link to="/login" state={{ from: '/book' }} className="text-xs text-brand hover:underline">Have an account? Sign in</Link>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                        <GuestField icon={User}  type="text"  placeholder="Full name"     value={guestName}  onChange={setGuestName}  autoComplete="name"  full/>
+                        <GuestField icon={Mail}  type="email" placeholder="Email"         value={guestEmail} onChange={setGuestEmail} autoComplete="email"/>
+                        <GuestField icon={Phone} type="tel"   placeholder="Phone number" value={guestPhone} onChange={setGuestPhone} autoComplete="tel"/>
+                      </div>
+                    </div>
+                  )}
+
                   <div className="rounded-2xl bg-ink-50 border border-ink-100 p-6 space-y-4">
                     <Row label="Device" value={`${brand?.name} ${model?.name}`}/>
                     <Row label="Service" value={issue?.label}/>
@@ -351,6 +383,23 @@ function Row({ label, value, accent, mute }) {
       <p className="text-sm text-ink-500">{label}</p>
       <p className={`text-sm text-right ${accent ? 'font-bold text-ink-950 text-base' : mute ? 'text-ink-400' : 'font-medium text-ink-900'}`}>{value}</p>
     </div>
+  );
+}
+
+function GuestField({ icon: Icon, type = 'text', placeholder, value, onChange, autoComplete, full }) {
+  return (
+    <label className={`relative block ${full ? 'sm:col-span-2' : ''}`}>
+      <span className="sr-only">{placeholder}</span>
+      <Icon size={14} aria-hidden="true" className="absolute left-3.5 top-1/2 -translate-y-1/2 text-ink-500"/>
+      <input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        autoComplete={autoComplete}
+        className="w-full h-11 pl-10 pr-3 rounded-xl bg-white border border-ink-200 text-sm text-ink-950 placeholder:text-ink-500 outline-none focus:border-ink-950 transition"
+      />
+    </label>
   );
 }
 

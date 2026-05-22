@@ -72,12 +72,15 @@ export default function SEO() {
     setMeta('property', 'og:type', pathname === '/' ? 'website' : 'article');
     setMeta('property', 'og:site_name', SITE);
     setMeta('property', 'og:url', `https://spidermobiles.co.uk${pathname}`);
-    setMeta('property', 'og:image', 'https://spidermobiles.co.uk/og-image.svg');
+    setMeta('property', 'og:image', 'https://spidermobiles.co.uk/og-image.png');
+    setMeta('property', 'og:image:type', 'image/png');
+    setMeta('property', 'og:image:width', '1200');
+    setMeta('property', 'og:image:height', '630');
     setMeta('property', 'og:image:alt', 'Spider Mobiles Derby — fast, trusted phone repairs');
     setMeta('name', 'twitter:card', 'summary_large_image');
     setMeta('name', 'twitter:title', meta.title);
     setMeta('name', 'twitter:description', meta.description);
-    setMeta('name', 'twitter:image', 'https://spidermobiles.co.uk/og-image.svg');
+    setMeta('name', 'twitter:image', 'https://spidermobiles.co.uk/og-image.png');
     setMeta('name', 'theme-color', '#0EA5E9');
 
     let canonical = document.querySelector('link[rel="canonical"]');

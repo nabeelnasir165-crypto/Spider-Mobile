@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import InstantQuote from '../sections/InstantQuote';
+import FAQ from '../sections/FAQ';
 import FinalCTA from '../sections/FinalCTA';
 import { services } from '../data/repairs';
 import { Reveal, SectionHeader } from '../components/Section';
@@ -90,6 +91,7 @@ export default function Repairs() {
         </div>
       </section>
 
+      <FAQ />
       <FinalCTA />
     </>
   );

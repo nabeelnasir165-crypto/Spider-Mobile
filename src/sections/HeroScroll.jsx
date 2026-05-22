@@ -2,10 +2,19 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ChevronRight, Wrench, Search, Activity, ShieldCheck, Star } from 'lucide-react';
+import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
 
 const FRAME_COUNT = 113;
 const framePath = (i) =>
   `/hero-frames/ezgif-frame-${String(i).padStart(3, '0')}.jpg`;
+
+const DEFAULT_COPY = {
+  pill: 'Open today · Most repairs in 30 min',
+  headline_top: 'Fast. Trusted.',
+  headline_accent: 'Repairs.',
+  subheading: 'Derby’s most-trusted mobile repair specialists. Same-day fixes, premium refurbished phones and the accessories you actually need — all warranty-backed.',
+  ctaText: 'Book Repair',
+};
 
 export default function HeroScroll() {
   const containerRef = useRef(null);
@@ -15,6 +24,38 @@ export default function HeroScroll() {
   const rafRef = useRef(0);
   const [loaded, setLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [copy, setCopy] = useState(DEFAULT_COPY);
+
+  // Pull the CMS-edited hero copy on mount. If the CMS row hasn't been
+  // populated yet or Supabase is unreachable, we keep the DEFAULT_COPY above.
+  useEffect(() => {
+    if (!isSupabaseConfigured) return;
+    let cancelled = false;
+    (async () => {
+      try {
+        const { data, error } = await supabase
+          .from('cms_content')
+          .select('content')
+          .eq('section_key', 'homepage_hero')
+          .maybeSingle();
+        if (cancelled || error || !data?.content) return;
+        const c = data.content;
+        // Map both legacy `headline/subheading` and split `headline_top/accent`.
+        setCopy((prev) => ({
+          ...prev,
+          headline_top:    c.headline_top    || c.headline    || prev.headline_top,
+          headline_accent: c.headline_accent || prev.headline_accent,
+          subheading:      c.subheading      || prev.subheading,
+          ctaText:         c.ctaText         || prev.ctaText,
+          pill:            c.pill            || prev.pill,
+        }));
+      } catch (e) {
+        // Silent fallback — the homepage must never block on this.
+        console.warn('[hero] cms fetch skipped:', e?.message || e);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   // Preload frames in two waves:
   //   1. Fetch frame 1 eagerly. As soon as it paints, drop the splash so the
@@ -192,7 +233,7 @@ export default function HeroScroll() {
                 className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 backdrop-blur border border-white/15 text-white/90 text-xs font-medium mb-6"
               >
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Open today · Most repairs in 30 min
+                {copy.pill}
               </motion.span>
 
               <motion.h1
@@ -201,10 +242,12 @@ export default function HeroScroll() {
                 transition={{ delay: 0.35, duration: 0.8, ease: [0.22, 1, 0.36, 1] }}
                 className="text-display-xl font-bold text-white tracking-tight leading-[1.02] text-balance"
               >
-                Fast. Trusted.
-                <span className="block bg-gradient-to-r from-brand-light via-white to-brand-light bg-clip-text text-transparent">
-                  Repairs.
-                </span>
+                {copy.headline_top}
+                {copy.headline_accent && (
+                  <span className="block bg-gradient-to-r from-brand-light via-white to-brand-light bg-clip-text text-transparent">
+                    {copy.headline_accent}
+                  </span>
+                )}
               </motion.h1>
 
               <motion.p
@@ -213,8 +256,7 @@ export default function HeroScroll() {
                 transition={{ delay: 0.55, duration: 0.7 }}
                 className="mt-6 max-w-xl text-base sm:text-lg text-white/70 leading-relaxed"
               >
-                Derby&rsquo;s most-trusted mobile repair specialists. Same-day fixes, premium
-                refurbished phones and the accessories you actually need — all warranty-backed.
+                {copy.subheading}
               </motion.p>
 
               <motion.div
@@ -224,7 +266,7 @@ export default function HeroScroll() {
                 className="mt-9 flex flex-wrap items-center gap-3"
               >
                 <Link to="/book" className="btn-accent">
-                  <Wrench size={16} /> Book Repair
+                  <Wrench size={16} /> {copy.ctaText}
                 </Link>
                 <Link to="/repairs#quote" className="btn-ghost text-ink-950">
                   <Search size={16} /> Instant Quote

@@ -94,15 +94,19 @@ export default function Footer() {
               Derby&rsquo;s most-trusted mobile repair specialists. Fast, certified, and warranty-backed — for phones, tablets and accessories.
             </p>
             <div className="flex items-center gap-2">
-              {[InstagramIcon, FacebookIcon, TwitterIcon].map((Icon, i) => (
-                <a
+              {[
+                { Icon: InstagramIcon, label: 'Instagram (coming soon)' },
+                { Icon: FacebookIcon,  label: 'Facebook (coming soon)' },
+                { Icon: TwitterIcon,   label: 'X / Twitter (coming soon)' },
+              ].map(({ Icon, label }, i) => (
+                <span
                   key={i}
-                  href="#"
-                  className="w-9 h-9 rounded-full grid place-items-center bg-white/5 border border-white/10 hover:bg-white/10 transition"
-                  aria-label="social"
+                  title={label}
+                  aria-label={label}
+                  className="w-9 h-9 rounded-full grid place-items-center bg-white/5 border border-white/10 text-white/40 cursor-not-allowed"
                 >
-                  <Icon width={16} height={16} />
-                </a>
+                  <Icon width={16} height={16} aria-hidden="true" />
+                </span>
               ))}
             </div>
           </div>
