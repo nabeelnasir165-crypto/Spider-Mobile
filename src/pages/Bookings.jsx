@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { SkeletonRow } from '../components/Skeleton';
 import { Link } from 'react-router-dom';
 import { bookings as mockBookings } from '../data/admin';
 import { supabase, isSupabaseConfigured } from '../lib/supabaseClient';
@@ -232,9 +233,9 @@ const Bookings = () => {
               </thead>
               <tbody className="font-body-md text-body-md text-on-surface divide-y divide-outline-variant/50">
                 {loading ? (
-                  <tr>
-                    <td colSpan="6" className="py-xl text-center text-on-surface-variant">Loading bookings...</td>
-                  </tr>
+                  Array.from({ length: 4 }).map((_, i) => (
+                    <SkeletonRow key={i} cells={6} widths={['w-20', 'w-3/4', 'w-32', 'w-24', 'w-16', 'w-24']}/>
+                  ))
                 ) : filteredBookings.length === 0 ? (
                   <tr>
                     <td colSpan="6" className="py-xl text-center text-on-surface-variant">No bookings found matching your criteria.</td>

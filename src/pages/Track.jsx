@@ -129,8 +129,17 @@ export default function Track() {
               <div className="mt-12">
                 <h2 className="text-lg font-semibold text-ink-950 mb-4">Your recent bookings</h2>
                 {loadingMine ? (
-                  <div className="py-10 grid place-items-center text-ink-500">
-                    <Loader2 className="animate-spin" size={22}/>
+                  <div aria-busy="true" className="space-y-3">
+                    {Array.from({ length: 3 }).map((_, i) => (
+                      <div key={i} className="w-full p-5 rounded-2xl bg-white border border-ink-100 flex items-center gap-4">
+                        <div className="w-10 h-10 rounded-xl bg-ink-100 animate-pulse shrink-0"/>
+                        <div className="flex-1 space-y-2">
+                          <div className="h-2.5 w-20 rounded bg-ink-100 animate-pulse"/>
+                          <div className="h-3 w-1/2 rounded bg-ink-100 animate-pulse"/>
+                          <div className="h-2.5 w-1/3 rounded bg-ink-100 animate-pulse"/>
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 ) : myBookings.length === 0 ? (
                   <div className="p-8 rounded-2xl bg-ink-50 border border-dashed border-ink-200 text-center">
