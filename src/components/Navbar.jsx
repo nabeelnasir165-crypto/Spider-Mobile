@@ -1,8 +1,9 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { NavLink, Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Menu, X, Phone, ChevronRight, User, LogOut, Smartphone, Plus, ShieldCheck } from 'lucide-react';
+import { Menu, X, Phone, ChevronRight, User, LogOut, Smartphone, Plus, ShieldCheck, ShoppingBag } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
+import { useCart } from '../contexts/CartContext';
 
 const navItems = [
   { label: 'Repairs', to: '/repairs' },
@@ -108,6 +109,24 @@ function UserPill() {
   );
 }
 
+function CartButton({ compact }) {
+  const { count, openCart } = useCart();
+  return (
+    <button
+      onClick={openCart}
+      aria-label={count > 0 ? `Open cart, ${count} item${count === 1 ? '' : 's'}` : 'Open cart'}
+      className={`relative grid place-items-center ${compact ? 'w-10 h-10' : 'w-10 h-10'} rounded-full bg-white/80 backdrop-blur border border-ink-200 text-ink-950 hover:bg-white transition`}
+    >
+      <ShoppingBag size={18}/>
+      {count > 0 && (
+        <span aria-hidden="true" className="absolute -top-1 -right-1 min-w-[18px] h-[18px] px-1 rounded-full bg-brand-dark text-white text-[10px] font-bold grid place-items-center">
+          {count > 99 ? '99+' : count}
+        </span>
+      )}
+    </button>
+  );
+}
+
 function MenuLink({ to, onClick, icon: Icon, children }) {
   return (
     <Link to={to} onClick={onClick} className="block px-3 py-2.5 rounded-lg text-sm font-medium text-ink-800 hover:bg-ink-50 transition flex items-center gap-2.5">
@@ -122,6 +141,9 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const location = useLocation();
   const { user, profile, isAdmin, signOut } = useAuth();
+  const openerRef = useRef(null);
+  const drawerRef = useRef(null);
+  const closeBtnRef = useRef(null);
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 12);
@@ -134,6 +156,30 @@ export default function Navbar() {
   useEffect(() => {
     document.body.style.overflow = open ? 'hidden' : '';
     return () => { document.body.style.overflow = ''; };
+  }, [open]);
+
+  // Focus trap + Escape close for the mobile drawer (WCAG 2.1.2 / 2.4.3)
+  useEffect(() => {
+    if (!open) return;
+    const opener = openerRef.current;
+    closeBtnRef.current?.focus();
+    const onKey = (e) => {
+      if (e.key === 'Escape') { e.preventDefault(); setOpen(false); return; }
+      if (e.key !== 'Tab' || !drawerRef.current) return;
+      const focusables = drawerRef.current.querySelectorAll(
+        'a[href], button:not([disabled]), input, select, textarea, [tabindex]:not([tabindex="-1"])'
+      );
+      if (!focusables.length) return;
+      const first = focusables[0];
+      const last  = focusables[focusables.length - 1];
+      if (e.shiftKey && document.activeElement === first) { last.focus();  e.preventDefault(); }
+      else if (!e.shiftKey && document.activeElement === last) { first.focus(); e.preventDefault(); }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      opener?.focus();
+    };
   }, [open]);
 
   return (
@@ -177,16 +223,23 @@ export default function Navbar() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-2">
+            <CartButton />
             <UserPill />
           </div>
 
-          <button
-            onClick={() => setOpen(true)}
-            className="lg:hidden grid place-items-center w-10 h-10 rounded-full bg-white/80 backdrop-blur border border-ink-200 text-ink-950 hover:bg-white transition"
-            aria-label="Open menu"
-          >
-            <Menu size={20} />
-          </button>
+          <div className="lg:hidden flex items-center gap-2">
+            <CartButton compact />
+            <button
+              ref={openerRef}
+              onClick={() => setOpen(true)}
+              className="grid place-items-center w-10 h-10 rounded-full bg-white/80 backdrop-blur border border-ink-200 text-ink-950 hover:bg-white transition"
+              aria-label="Open menu"
+              aria-expanded={open}
+              aria-controls="mobile-drawer"
+            >
+              <Menu size={20} />
+            </button>
+          </div>
         </div>
       </motion.header>
 
@@ -195,6 +248,11 @@ export default function Navbar() {
           <motion.div className="lg:hidden fixed inset-0 z-[60]" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}>
             <motion.div className="absolute inset-0 bg-ink-950/60 backdrop-blur" onClick={() => setOpen(false)} />
             <motion.div
+              ref={drawerRef}
+              id="mobile-drawer"
+              role="dialog"
+              aria-modal="true"
+              aria-label="Main navigation"
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -203,7 +261,7 @@ export default function Navbar() {
             >
               <div className="flex items-center justify-between px-5 h-16 border-b border-ink-100">
                 <Logo />
-                <button onClick={() => setOpen(false)} className="grid place-items-center w-10 h-10 rounded-full bg-ink-50 text-ink-950 hover:bg-ink-100" aria-label="Close menu">
+                <button ref={closeBtnRef} onClick={() => setOpen(false)} className="grid place-items-center w-10 h-10 rounded-full bg-ink-50 text-ink-950 hover:bg-ink-100" aria-label="Close menu">
                   <X size={20} />
                 </button>
               </div>

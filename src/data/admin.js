@@ -44,34 +44,79 @@ export const bookings = [
   { id: 'b4', booking_ref: 'SM-2491', customer_name: 'Mark Davies',    customer_email: 'mark.d@example.com',   customer_phone: '+44 7700 900555', service_requested: 'Diagnostics',   requested_date: '2026-05-20T09:00:00Z', status: 'Converted', created_at: '2026-05-18T12:00:00Z' },
 ];
 
-// Device pricing by brand (used by /admin/pricing)
-export const devicePricing = [
-  // Apple
-  { id: 'pr-001', brand: 'Apple',   model: 'iPhone 15 Pro Max',  repair_type: 'Screen Replacement',  cost_price: 110, retail_price: 199 },
-  { id: 'pr-002', brand: 'Apple',   model: 'iPhone 15 Pro Max',  repair_type: 'Battery Replacement', cost_price:  35, retail_price:  79 },
-  { id: 'pr-003', brand: 'Apple',   model: 'iPhone 15 Pro Max',  repair_type: 'Back Glass',          cost_price:  45, retail_price:  99 },
-  { id: 'pr-004', brand: 'Apple',   model: 'iPhone 14',           repair_type: 'Screen Replacement',  cost_price:  70, retail_price: 139 },
-  { id: 'pr-005', brand: 'Apple',   model: 'iPhone 14',           repair_type: 'Battery Replacement', cost_price:  25, retail_price:  59 },
-  { id: 'pr-006', brand: 'Apple',   model: 'iPhone 13',           repair_type: 'Screen Replacement',  cost_price:  60, retail_price: 119 },
-  { id: 'pr-007', brand: 'Apple',   model: 'iPhone 13',           repair_type: 'Battery Replacement', cost_price:  22, retail_price:  55 },
-  { id: 'pr-008', brand: 'Apple',   model: 'iPhone 12',           repair_type: 'Screen Replacement',  cost_price:  50, retail_price:  99 },
-  // Samsung
-  { id: 'pr-101', brand: 'Samsung', model: 'Galaxy S24 Ultra',    repair_type: 'Screen Replacement',  cost_price: 110, retail_price: 199 },
-  { id: 'pr-102', brand: 'Samsung', model: 'Galaxy S24 Ultra',    repair_type: 'Battery Replacement', cost_price:  30, retail_price:  69 },
-  { id: 'pr-103', brand: 'Samsung', model: 'Galaxy S23',          repair_type: 'Screen Replacement',  cost_price:  90, retail_price: 165 },
-  { id: 'pr-104', brand: 'Samsung', model: 'Galaxy S22',          repair_type: 'Charging Port',       cost_price:  18, retail_price:  55 },
-  { id: 'pr-105', brand: 'Samsung', model: 'Galaxy A54',          repair_type: 'Screen Replacement',  cost_price:  55, retail_price: 109 },
-  // Google
-  { id: 'pr-201', brand: 'Google',  model: 'Pixel 8 Pro',          repair_type: 'Screen Replacement',  cost_price:  80, retail_price: 149 },
-  { id: 'pr-202', brand: 'Google',  model: 'Pixel 8',              repair_type: 'Camera Lens',         cost_price:  28, retail_price:  69 },
-  { id: 'pr-203', brand: 'Google',  model: 'Pixel 7',              repair_type: 'Battery Replacement', cost_price:  22, retail_price:  55 },
-  // Huawei
-  { id: 'pr-301', brand: 'Huawei',  model: 'P60 Pro',              repair_type: 'Screen Replacement',  cost_price:  70, retail_price: 139 },
-  { id: 'pr-302', brand: 'Huawei',  model: 'Mate 50',              repair_type: 'Battery Replacement', cost_price:  25, retail_price:  65 },
-  // Other / OnePlus
-  { id: 'pr-401', brand: 'Other',   model: 'OnePlus 11',           repair_type: 'Battery Replacement', cost_price:  24, retail_price:  55 },
-  { id: 'pr-402', brand: 'Other',   model: 'Xiaomi 14',            repair_type: 'Screen Replacement',  cost_price:  60, retail_price: 119 },
-];
+// ─── Device repair pricing grid (used by /admin/pricing) ───────────────────
+// Covers the top ~30 models in active service. Each model carries Screen /
+// Battery / Charging Port at minimum; Pro/Ultra trims also carry Back Glass.
+// Cost price ≈ part + labour; retail price = customer-facing quote.
+const buildPricing = () => {
+  // [brand, model, screen{cost,retail}, battery{cost,retail}, port{cost,retail}, backGlass?{cost,retail}]
+  const tiers = [
+    // ─── Apple ────────────────────────────────────────────────────────────
+    ['Apple', 'iPhone 16 Pro Max',  { c: 140, r: 249 }, { c: 45, r:  89 }, { c: 35, r:  79 }, { c: 60, r: 129 }],
+    ['Apple', 'iPhone 16 Pro',      { c: 130, r: 229 }, { c: 40, r:  85 }, { c: 32, r:  75 }, { c: 55, r: 119 }],
+    ['Apple', 'iPhone 16 Plus',     { c: 115, r: 209 }, { c: 38, r:  79 }, { c: 30, r:  69 }, null],
+    ['Apple', 'iPhone 16',          { c: 110, r: 199 }, { c: 35, r:  75 }, { c: 28, r:  65 }, null],
+    ['Apple', 'iPhone 15 Pro Max',  { c: 130, r: 229 }, { c: 40, r:  85 }, { c: 32, r:  75 }, { c: 55, r: 119 }],
+    ['Apple', 'iPhone 15 Pro',      { c: 115, r: 209 }, { c: 38, r:  79 }, { c: 30, r:  69 }, { c: 50, r: 109 }],
+    ['Apple', 'iPhone 15 Plus',     { c: 100, r: 189 }, { c: 35, r:  75 }, { c: 28, r:  65 }, null],
+    ['Apple', 'iPhone 15',          { c:  95, r: 179 }, { c: 32, r:  69 }, { c: 26, r:  59 }, null],
+    ['Apple', 'iPhone 14 Pro Max',  { c: 100, r: 189 }, { c: 35, r:  75 }, { c: 28, r:  65 }, { c: 45, r:  99 }],
+    ['Apple', 'iPhone 14 Pro',      { c:  90, r: 169 }, { c: 30, r:  69 }, { c: 26, r:  59 }, { c: 42, r:  95 }],
+    ['Apple', 'iPhone 14 Plus',     { c:  85, r: 159 }, { c: 28, r:  65 }, { c: 24, r:  55 }, null],
+    ['Apple', 'iPhone 14',          { c:  80, r: 149 }, { c: 25, r:  59 }, { c: 22, r:  55 }, null],
+    ['Apple', 'iPhone 13 Pro Max',  { c:  80, r: 149 }, { c: 26, r:  59 }, { c: 22, r:  55 }, { c: 40, r:  89 }],
+    ['Apple', 'iPhone 13 Pro',      { c:  75, r: 139 }, { c: 24, r:  55 }, { c: 22, r:  55 }, { c: 38, r:  85 }],
+    ['Apple', 'iPhone 13',          { c:  60, r: 119 }, { c: 22, r:  55 }, { c: 20, r:  49 }, null],
+    ['Apple', 'iPhone 13 mini',     { c:  60, r: 115 }, { c: 22, r:  55 }, { c: 20, r:  49 }, null],
+    ['Apple', 'iPhone 12 Pro Max',  { c:  70, r: 129 }, { c: 24, r:  55 }, { c: 22, r:  55 }, { c: 36, r:  79 }],
+    ['Apple', 'iPhone 12',          { c:  55, r: 109 }, { c: 22, r:  49 }, { c: 20, r:  45 }, null],
+    ['Apple', 'iPhone 11 Pro Max',  { c:  60, r: 115 }, { c: 22, r:  55 }, { c: 20, r:  49 }, null],
+    ['Apple', 'iPhone 11',          { c:  45, r:  99 }, { c: 20, r:  45 }, { c: 18, r:  45 }, null],
+    ['Apple', 'iPhone SE (2022)',   { c:  35, r:  69 }, { c: 18, r:  39 }, { c: 16, r:  39 }, null],
+    // ─── Samsung ──────────────────────────────────────────────────────────
+    ['Samsung', 'Galaxy S24 Ultra', { c: 130, r: 229 }, { c: 38, r:  79 }, { c: 28, r:  65 }, { c: 55, r: 119 }],
+    ['Samsung', 'Galaxy S24+',      { c: 100, r: 189 }, { c: 32, r:  69 }, { c: 25, r:  59 }, null],
+    ['Samsung', 'Galaxy S24',       { c:  90, r: 169 }, { c: 30, r:  65 }, { c: 24, r:  55 }, null],
+    ['Samsung', 'Galaxy S23 Ultra', { c: 110, r: 199 }, { c: 34, r:  75 }, { c: 26, r:  59 }, { c: 50, r: 109 }],
+    ['Samsung', 'Galaxy S23+',      { c:  90, r: 169 }, { c: 30, r:  65 }, { c: 24, r:  55 }, null],
+    ['Samsung', 'Galaxy S23',       { c:  80, r: 149 }, { c: 28, r:  59 }, { c: 22, r:  55 }, null],
+    ['Samsung', 'Galaxy S22',       { c:  70, r: 139 }, { c: 25, r:  55 }, { c: 20, r:  49 }, null],
+    ['Samsung', 'Galaxy S21',       { c:  60, r: 119 }, { c: 22, r:  49 }, { c: 18, r:  45 }, null],
+    ['Samsung', 'Galaxy Note 20 Ultra', { c: 85, r: 159 }, { c: 30, r:  65 }, { c: 24, r:  55 }, null],
+    ['Samsung', 'Galaxy A54 5G',    { c:  50, r:  99 }, { c: 20, r:  45 }, { c: 18, r:  39 }, null],
+    // ─── Google ───────────────────────────────────────────────────────────
+    ['Google', 'Pixel 9 Pro',       { c:  90, r: 169 }, { c: 30, r:  65 }, { c: 24, r:  55 }, null],
+    ['Google', 'Pixel 9',           { c:  80, r: 149 }, { c: 28, r:  59 }, { c: 22, r:  55 }, null],
+    ['Google', 'Pixel 8 Pro',       { c:  80, r: 149 }, { c: 28, r:  59 }, { c: 22, r:  55 }, null],
+    ['Google', 'Pixel 8',           { c:  65, r: 129 }, { c: 25, r:  55 }, { c: 20, r:  49 }, null],
+    ['Google', 'Pixel 7',           { c:  55, r: 109 }, { c: 22, r:  49 }, { c: 18, r:  45 }, null],
+    ['Google', 'Pixel 6',           { c:  45, r:  99 }, { c: 20, r:  45 }, { c: 18, r:  45 }, null],
+    // ─── OnePlus ──────────────────────────────────────────────────────────
+    ['Other', 'OnePlus 12',         { c:  70, r: 139 }, { c: 25, r:  55 }, { c: 20, r:  49 }, null],
+    ['Other', 'OnePlus 11',         { c:  60, r: 119 }, { c: 22, r:  49 }, { c: 18, r:  45 }, null],
+    // ─── Huawei ───────────────────────────────────────────────────────────
+    ['Huawei', 'P60 Pro',           { c:  70, r: 139 }, { c: 25, r:  55 }, { c: 20, r:  49 }, null],
+    ['Huawei', 'Mate 50',           { c:  60, r: 119 }, { c: 22, r:  49 }, { c: 18, r:  45 }, null],
+    // ─── Xiaomi ───────────────────────────────────────────────────────────
+    ['Other', 'Xiaomi 14 Pro',      { c:  65, r: 129 }, { c: 22, r:  49 }, { c: 18, r:  45 }, null],
+    ['Other', 'Redmi Note 13 Pro',  { c:  40, r:  79 }, { c: 18, r:  39 }, { c: 16, r:  39 }, null],
+  ];
+
+  const rows = [];
+  let i = 1;
+  const pad = (n) => String(n).padStart(3, '0');
+  for (const [brand, model, screen, battery, port, backGlass] of tiers) {
+    rows.push({ id: `pr-${pad(i++)}`, brand, model, repair_type: 'Screen Replacement',  cost_price: screen.c,  retail_price: screen.r  });
+    rows.push({ id: `pr-${pad(i++)}`, brand, model, repair_type: 'Battery Replacement', cost_price: battery.c, retail_price: battery.r });
+    rows.push({ id: `pr-${pad(i++)}`, brand, model, repair_type: 'Charging Port',       cost_price: port.c,    retail_price: port.r    });
+    if (backGlass) {
+      rows.push({ id: `pr-${pad(i++)}`, brand, model, repair_type: 'Back Glass',        cost_price: backGlass.c, retail_price: backGlass.r });
+    }
+  }
+  return rows;
+};
+
+export const devicePricing = buildPricing();
 
 // Backwards-compat alias used by older imports
 export const pricing = devicePricing;

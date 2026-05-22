@@ -115,7 +115,7 @@ export default function Track() {
 
             <AnimatePresence mode="wait">
               {error && (
-                <motion.div key="err" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-8 p-5 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-3">
+                <motion.div role="alert" aria-live="polite" key="err" initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} className="mt-8 p-5 rounded-2xl bg-red-50 border border-red-100 flex items-start gap-3">
                   <AlertCircle size={20} className="text-red-500 shrink-0 mt-0.5" />
                   <p className="text-sm text-red-700">{error}</p>
                 </motion.div>

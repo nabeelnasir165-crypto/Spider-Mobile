@@ -135,7 +135,7 @@ const CMS = () => {
               disabled={isSaving}
               className="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-xs cursor-pointer shadow-sm disabled:opacity-70"
             >
-              <span className="material-symbols-outlined text-[18px]">publish</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">publish</span>
               {isSaving ? 'Publishing...' : 'Publish Changes'}
             </button>
           </div>
@@ -154,7 +154,7 @@ const CMS = () => {
                   : 'border-transparent text-on-surface-variant hover:bg-surface-container-low hover:text-on-surface'
                 }`}
               >
-                <span className="material-symbols-outlined text-[18px]">{tab.icon}</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">{tab.icon}</span>
                 {tab.label}
               </button>
             ))}
@@ -198,13 +198,13 @@ const CMS = () => {
             {activeTab === 'faq' && (
               <div className="flex flex-col gap-md">
                 <button onClick={addFAQ} className="self-start px-md py-sm rounded border border-outline-variant text-primary font-label-md hover:bg-surface-container-low flex items-center gap-xs cursor-pointer shadow-sm">
-                  <span className="material-symbols-outlined text-[18px]">add</span> Add FAQ
+                  <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add</span> Add FAQ
                 </button>
                 <div className="border border-outline-variant rounded-lg overflow-hidden mt-sm max-w-[800px]">
                   {content.faqs.map((faq, index) => (
                     <div key={index} className={`p-md flex flex-col gap-sm relative group ${index !== 0 ? 'border-t border-outline-variant' : ''} ${index % 2 === 0 ? 'bg-surface-bright' : 'bg-surface'}`}>
                       <button onClick={() => removeFAQ(index)} className="absolute top-sm right-sm text-on-surface-variant hover:text-error opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
-                        <span className="material-symbols-outlined">delete</span>
+                        <span aria-hidden="true" className="material-symbols-outlined">delete</span>
                       </button>
                       <input 
                         type="text" 
@@ -266,7 +266,7 @@ const CMS = () => {
             {activeTab === 'contact' && (
               <div className="flex flex-col gap-lg max-w-[800px]">
                 <div className="flex flex-col gap-sm">
-                  <label className="font-label-md text-label-md text-on-surface-variant flex items-center gap-xs"><span className="material-symbols-outlined text-[16px]">call</span> Phone Number</label>
+                  <label className="font-label-md text-label-md text-on-surface-variant flex items-center gap-xs"><span aria-hidden="true" className="material-symbols-outlined text-[16px]">call</span> Phone Number</label>
                   <input 
                     type="text" 
                     className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none max-w-[400px]" 
@@ -275,7 +275,7 @@ const CMS = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-sm">
-                  <label className="font-label-md text-label-md text-on-surface-variant flex items-center gap-xs"><span className="material-symbols-outlined text-[16px]">mail</span> Email Address</label>
+                  <label className="font-label-md text-label-md text-on-surface-variant flex items-center gap-xs"><span aria-hidden="true" className="material-symbols-outlined text-[16px]">mail</span> Email Address</label>
                   <input 
                     type="text" 
                     className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none max-w-[400px]" 
@@ -284,7 +284,7 @@ const CMS = () => {
                   />
                 </div>
                 <div className="flex flex-col gap-sm">
-                  <label className="font-label-md text-label-md text-on-surface-variant flex items-center gap-xs"><span className="material-symbols-outlined text-[16px]">location_on</span> Physical Address</label>
+                  <label className="font-label-md text-label-md text-on-surface-variant flex items-center gap-xs"><span aria-hidden="true" className="material-symbols-outlined text-[16px]">location_on</span> Physical Address</label>
                   <textarea 
                     className="w-full bg-surface border border-outline-variant rounded-lg p-sm text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none max-w-[400px] resize-none" 
                     rows="3"
@@ -300,7 +300,7 @@ const CMS = () => {
                 <div className="flex items-center justify-between mb-sm">
                   <h2 className="font-title-lg text-title-lg text-on-surface">Parts Inventory</h2>
                   <button onClick={addInventory} className="px-md py-sm rounded border border-outline-variant text-primary font-label-md hover:bg-surface-container-low flex items-center gap-xs cursor-pointer shadow-sm">
-                    <span className="material-symbols-outlined text-[18px]">add</span> Add Part
+                    <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add</span> Add Part
                   </button>
                 </div>
                 <div className="border border-outline-variant rounded-lg overflow-x-auto w-full">
@@ -333,7 +333,7 @@ const CMS = () => {
                                 onChange={(e) => updateInventory(index, 'stock', parseInt(e.target.value) || 0)} 
                               />
                               {item.stock <= item.reorderLevel && (
-                                <span className="material-symbols-outlined text-[16px] text-error" title="Low Stock Warning">warning</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-error" title="Low Stock Warning">warning</span>
                               )}
                             </div>
                           </td>
@@ -347,7 +347,7 @@ const CMS = () => {
                           </td>
                           <td className="p-sm text-right">
                             <button onClick={() => removeInventory(index)} className="p-xs text-on-surface-variant hover:text-error transition-colors cursor-pointer rounded-full hover:bg-surface-container-low flex items-center justify-center">
-                              <span className="material-symbols-outlined text-[20px]">delete</span>
+                              <span aria-hidden="true" className="material-symbols-outlined text-[20px]">delete</span>
                             </button>
                           </td>
                         </tr>

@@ -4,7 +4,7 @@ import { Mail, Lock, Eye, EyeOff, AlertCircle, Loader2, RotateCcw, Check } from 
 import AuthCard from '../components/AuthCard';
 import SetupBanner from '../components/SetupBanner';
 import { useAuth } from '../contexts/AuthContext';
-import { friendlyAuthError } from './Signup';
+import { friendlyAuthError } from '../lib/authErrors';
 
 const IS_ADMIN_BUILD = import.meta.env.VITE_BUILD_TARGET === 'admin';
 
@@ -100,7 +100,7 @@ export default function Login() {
         />
 
         {error && (
-          <div className="p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
+          <div role="alert" aria-live="polite" className="p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
             <div className="flex items-start gap-2">
               <AlertCircle size={16} className="mt-0.5 shrink-0" />
               <div>
@@ -128,7 +128,7 @@ export default function Login() {
         )}
 
         {resent && (
-          <div className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-sm text-emerald-700 flex items-center gap-2">
+          <div role="status" aria-live="polite" className="p-3 rounded-xl bg-emerald-50 border border-emerald-100 text-sm text-emerald-700 flex items-center gap-2">
             <Check size={16}/> Confirmation email sent. Check your inbox.
           </div>
         )}
@@ -147,13 +147,26 @@ export default function Login() {
   );
 }
 
-export function FieldIcon({ icon: Icon, right, ...rest }) {
+// FieldIcon — input with leading icon + sr-only label (WCAG 3.3.2)
+//
+// `label` should be a short visible-to-screen-readers description. If not
+// passed, falls back to the visible placeholder so we never end up with an
+// unlabelled input.
+export function FieldIcon({ icon: Icon, right, label, ...rest }) {
+  const id = React.useId();
+  const labelText = label || rest.placeholder || rest.name;
   return (
     <div className="relative">
-      <Icon size={16} className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-400" />
+      <label htmlFor={id} className="sr-only">{labelText}</label>
+      <Icon
+        size={16}
+        aria-hidden="true"
+        className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-500"
+      />
       <input
+        id={id}
         {...rest}
-        className="w-full h-11 pl-11 pr-11 rounded-xl bg-white border border-ink-200 text-sm text-ink-950 placeholder:text-ink-400 outline-none focus:border-ink-950 transition"
+        className="w-full h-11 pl-11 pr-11 rounded-xl bg-white border border-ink-200 text-sm text-ink-950 placeholder:text-ink-500 outline-none focus:border-ink-950 transition"
       />
       {right && <div className="absolute right-2 top-1/2 -translate-y-1/2">{right}</div>}
     </div>

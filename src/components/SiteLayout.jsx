@@ -6,6 +6,8 @@ import Navbar from './Navbar';
 import Footer from './Footer';
 import SEO from './SEO';
 import CookieBanner from './CookieBanner';
+import CartDrawer from './CartDrawer';
+import WhatsAppButton from './WhatsAppButton';
 
 function ScrollToTop() {
   const { pathname, hash } = useLocation();
@@ -42,17 +44,21 @@ export default function SiteLayout() {
 
       <Footer />
       <CookieBanner />
+      <CartDrawer />
 
-      {/* Sticky mobile CTA */}
+      {/* Sticky mobile CTA — sits above the WhatsApp FAB so they stack neatly */}
       {!isHome && (
         <Link
           to="/book"
-          className="lg:hidden fixed bottom-5 right-5 z-40 h-12 px-5 rounded-full bg-brand text-white font-semibold text-sm shadow-glow flex items-center gap-2 active:scale-95 transition"
+          className="lg:hidden fixed bottom-[88px] right-5 z-40 h-12 px-5 rounded-full bg-brand-dark text-white font-semibold text-sm shadow-glow flex items-center gap-2 active:scale-95 transition"
         >
           <Wrench size={16} />
           Book Repair
         </Link>
       )}
+
+      {/* WhatsApp FAB — visible on every page */}
+      <WhatsAppButton />
     </div>
   );
 }

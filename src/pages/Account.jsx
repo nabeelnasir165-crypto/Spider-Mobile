@@ -89,7 +89,7 @@ export default function Account() {
                 <p className="text-xs mt-3">Loading your bookings…</p>
               </div>
             ) : loadError ? (
-              <div className="p-6 rounded-2xl bg-red-50 border border-red-100">
+              <div role="alert" aria-live="polite" className="p-6 rounded-2xl bg-red-50 border border-red-100">
                 <div className="flex items-start gap-3">
                   <AlertCircle size={18} className="text-red-600 shrink-0 mt-0.5"/>
                   <div>

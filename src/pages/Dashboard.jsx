@@ -74,7 +74,7 @@ const Dashboard = () => {
               <div key={index} className="bg-surface-container-lowest border border-outline-variant rounded-xl px-md py-5 flex flex-col relative overflow-hidden group shadow-sm">
                 <div className="flex justify-between items-start mb-sm">
                   <span className="font-label-md text-label-md text-on-surface-variant">{card.label}</span>
-                  <span className={`material-symbols-outlined text-${card.color} opacity-60`} data-icon={card.icon} style={{ fontSize: '22px' }}>{card.icon}</span>
+                  <span aria-hidden="true" className={`material-symbols-outlined text-${card.color} opacity-60`} data-icon={card.icon} style={{ fontSize: '22px' }}>{card.icon}</span>
                 </div>
                 <span className="text-[28px] font-bold leading-tight text-on-surface mt-auto">{card.value}</span>
                 <div className={`absolute bottom-0 left-0 w-full h-1 transform scale-x-0 group-hover:scale-x-100 transition-transform origin-left ${card.barColor || 'bg-primary'}`}></div>
@@ -85,7 +85,7 @@ const Dashboard = () => {
             <div className="p-md border-b border-outline-variant flex justify-between items-center bg-surface-bright">
               <h2 className="font-title-lg text-title-lg text-on-surface">Active Repairs</h2>
               <Link to="/admin/repairs" className="font-label-md text-label-md text-primary hover:underline flex items-center gap-xs">
-                View All <span className="material-symbols-outlined" data-icon="arrow_forward" style={{ fontSize: '16px' }}>arrow_forward</span>
+                View All <span aria-hidden="true" className="material-symbols-outlined" data-icon="arrow_forward" style={{ fontSize: '16px' }}>arrow_forward</span>
               </Link>
             </div>
             <div className="overflow-x-auto flex-1">
@@ -137,7 +137,7 @@ const Dashboard = () => {
         <div className="w-full xl:w-[320px] flex flex-col gap-lg">
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
             <div className="p-md border-b border-outline-variant bg-surface-bright flex items-center gap-sm">
-              <span className="material-symbols-outlined text-tertiary-container" data-icon="warning">warning</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-tertiary-container" data-icon="warning">warning</span>
               <h3 className="font-title-lg text-title-lg text-on-surface">Alerts</h3>
             </div>
             <div className="p-md flex flex-col gap-md bg-surface-container-lowest">
@@ -146,7 +146,7 @@ const Dashboard = () => {
                   <div className="relative w-full">
                     <Link to="/admin/repairs" className="flex items-start gap-md p-md rounded-xl bg-error-container border-2 border-error hover:opacity-90 transition-opacity cursor-pointer w-full shadow-sm pr-12">
                       <div className="bg-error w-10 h-10 rounded-full flex items-center justify-center shrink-0 shadow-sm mt-0.5">
-                        <span className="material-symbols-outlined text-on-error" style={{ fontSize: '24px' }}>error</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-on-error" style={{ fontSize: '24px' }}>error</span>
                       </div>
                       <div>
                         <h4 className="font-title-md text-title-md font-bold text-on-error-container">{metrics.overdueCount} Unpaid Completed {metrics.overdueCount === 1 ? 'Repair' : 'Repairs'}</h4>
@@ -161,13 +161,13 @@ const Dashboard = () => {
                       className="absolute top-2 right-2 w-8 h-8 flex items-center justify-center rounded-full text-on-error-container/70 hover:text-on-error-container hover:bg-error/10 transition-colors cursor-pointer"
                       aria-label="Dismiss alert"
                     >
-                      <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>close</span>
+                      <span aria-hidden="true" className="material-symbols-outlined" style={{ fontSize: '20px' }}>close</span>
                     </button>
                   </div>
                 )
               ) : (
                 <div className="flex items-start gap-sm p-sm rounded bg-success-container/20 border border-success-container">
-                  <span className="material-symbols-outlined text-success mt-0.5" data-icon="check_circle" style={{ fontSize: '18px' }}>check_circle</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-success mt-0.5" data-icon="check_circle" style={{ fontSize: '18px' }}>check_circle</span>
                   <div>
                     <h4 className="font-label-md text-label-md font-bold text-on-surface">No Overdue Payments</h4>
                     <p className="font-body-md text-body-md text-on-surface-variant text-[13px] mt-0.5">All completed repairs have been paid.</p>
@@ -178,20 +178,20 @@ const Dashboard = () => {
           </div>
           <div className="bg-surface-container-lowest border border-outline-variant rounded-lg overflow-hidden flex flex-col">
             <div className="p-md border-b border-outline-variant bg-surface-bright flex items-center gap-sm">
-              <span className="material-symbols-outlined text-primary" data-icon="bolt">bolt</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-primary" data-icon="bolt">bolt</span>
               <h3 className="font-title-lg text-title-lg text-on-surface">Quick Actions</h3>
             </div>
             <div className="p-md flex flex-col gap-sm bg-surface-container-lowest">
               <Link to="/admin/new-ticket" className="w-full flex items-center gap-sm justify-center bg-primary text-on-primary font-label-md text-label-md py-sm rounded-lg hover:shadow-md hover:opacity-90 transition-all cursor-pointer">
-                <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">add_circle</span>
                 New Repair Ticket
               </Link>
               <Link to="/admin/customers" className="w-full flex items-center gap-sm justify-center bg-surface text-on-surface font-label-md text-label-md py-sm rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer shadow-sm">
-                <span className="material-symbols-outlined text-[20px]">person_add</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">person_add</span>
                 Add Customer
               </Link>
               <Link to="/admin/repairs" className="w-full flex items-center gap-sm justify-center bg-surface text-on-surface font-label-md text-label-md py-sm rounded-lg border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer shadow-sm">
-                <span className="material-symbols-outlined text-[20px]">search</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">search</span>
                 Search Repairs
               </Link>
             </div>

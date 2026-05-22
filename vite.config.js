@@ -39,6 +39,25 @@ export default defineConfig(({ mode }) => {
         },
       },
     ],
-    build: { outDir },
+    build: {
+      outDir,
+      // Push the warning ceiling so we don't get noise on a single shared chunk.
+      chunkSizeWarningLimit: 700,
+      rollupOptions: {
+        output: {
+          // Long-cached vendor splits. Each chunk gets its own hash so a bump
+          // to one library doesn't bust the cache for the others. Vite 8 /
+          // Rolldown requires the function form.
+          manualChunks(id) {
+            if (!id.includes('node_modules')) return;
+            if (id.includes('framer-motion'))        return 'motion-vendor';
+            if (id.includes('lucide-react'))         return 'icons-vendor';
+            if (id.includes('@supabase'))            return 'supabase-vendor';
+            if (id.includes('react-router'))         return 'react-vendor';
+            if (id.includes('react-dom') || id.includes('/react/')) return 'react-vendor';
+          },
+        },
+      },
+    },
   };
 });

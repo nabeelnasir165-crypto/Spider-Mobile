@@ -5,6 +5,7 @@ import AuthCard from '../components/AuthCard';
 import SetupBanner from '../components/SetupBanner';
 import { FieldIcon, GoogleIcon } from './Login';
 import { useAuth } from '../contexts/AuthContext';
+import { friendlyAuthError } from '../lib/authErrors';
 
 // Lenient international validation: optional leading +, 7–15 digits.
 // Spaces, dashes and parens are allowed in the input — we strip them before save.
@@ -86,7 +87,7 @@ export default function Signup() {
         subtitle={`We've sent a confirmation link to ${email}. Click it to activate your account.`}
         altLink={{ label: 'Already confirmed?', cta: 'Sign in', to: '/login' }}
       >
-        <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-start gap-3">
+        <div role="status" aria-live="polite" className="p-5 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-start gap-3">
           <div className="w-9 h-9 rounded-full bg-emerald-500 text-white grid place-items-center shrink-0">
             <Check size={18}/>
           </div>
@@ -166,7 +167,7 @@ export default function Signup() {
         </div>
 
         {error && (
-          <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
+          <div role="alert" aria-live="polite" className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
             <AlertCircle size={16} className="mt-0.5 shrink-0" /> {error}
           </div>
         )}
@@ -186,26 +187,6 @@ export default function Signup() {
   );
 }
 
-export function friendlyAuthError(msg) {
-  if (!msg) return 'Something went wrong. Please try again.';
-  const s = msg.toLowerCase();
-  if (s.includes('invalid login') || s.includes('invalid credentials')) {
-    return "Wrong email or password. If you haven't created an account yet, sign up first.";
-  }
-  if (s.includes('email not confirmed')) {
-    return "Your email isn't confirmed yet — please check your inbox for the confirmation link.";
-  }
-  if (s.includes('user already registered') || s.includes('already been registered')) {
-    return 'An account with that email already exists. Try signing in instead.';
-  }
-  if (s.includes('password should be') || s.includes('password')) {
-    return msg;
-  }
-  if (s.includes('rate limit')) {
-    return 'Too many attempts. Please wait a minute and try again.';
-  }
-  if (s.includes('fetch') || s.includes('network')) {
-    return 'Could not reach the server. Check your Supabase URL/key in .env.local and try again.';
-  }
-  return msg;
-}
+// friendlyAuthError moved to src/lib/authErrors.js so Login and Signup can
+// share it without pulling each other's route chunk during code-splitting.
+export { friendlyAuthError } from '../lib/authErrors';

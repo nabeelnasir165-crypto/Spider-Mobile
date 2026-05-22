@@ -58,7 +58,7 @@ const Settings = () => {
   if (loading) {
     return (
       <main className="h-full overflow-y-auto p-md md:p-xl bg-background flex justify-center items-center">
-        <span className="material-symbols-outlined animate-spin text-primary" style={{ fontSize: '32px' }}>autorenew</span>
+        <span aria-hidden="true" className="material-symbols-outlined animate-spin text-primary" style={{ fontSize: '32px' }}>autorenew</span>
       </main>
     );
   }
@@ -137,7 +137,7 @@ const Settings = () => {
             >
               {isSaving ? (
                 <>
-                  <span className="material-symbols-outlined animate-spin" style={{ fontSize: '18px' }}>autorenew</span>
+                  <span aria-hidden="true" className="material-symbols-outlined animate-spin" style={{ fontSize: '18px' }}>autorenew</span>
                   Saving...
                 </>
               ) : 'Save Changes'}

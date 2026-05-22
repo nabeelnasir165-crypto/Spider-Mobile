@@ -101,7 +101,7 @@ const Pricing = () => {
           </div>
           <div className="flex gap-sm">
             <button onClick={addNewModel} className="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-xs cursor-pointer shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">add</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add</span>
               Add Device Model
             </button>
           </div>
@@ -129,7 +129,7 @@ const Pricing = () => {
           <div className="md:col-span-9 lg:col-span-10 flex flex-col gap-lg">
             {loading ? (
               <div className="flex justify-center items-center py-xl">
-                <span className="material-symbols-outlined animate-spin text-primary" style={{ fontSize: '32px' }}>autorenew</span>
+                <span aria-hidden="true" className="material-symbols-outlined animate-spin text-primary" style={{ fontSize: '32px' }}>autorenew</span>
               </div>
             ) : models.length === 0 ? (
               <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-xl text-center shadow-sm">
@@ -143,7 +143,7 @@ const Pricing = () => {
                     <h3 className="font-title-lg text-title-lg text-on-surface">{model}</h3>
                     <div className="flex gap-xs">
                       <button onClick={() => addModelService(model)} className="p-xs rounded text-primary hover:bg-primary-container/20 transition-colors cursor-pointer" title="Add Service">
-                        <span className="material-symbols-outlined text-[20px]">add_circle</span>
+                        <span aria-hidden="true" className="material-symbols-outlined text-[20px]">add_circle</span>
                       </button>
                     </div>
                   </div>
@@ -179,7 +179,7 @@ const Pricing = () => {
                             </td>
                             <td className="py-sm px-md text-right">
                               <button onClick={() => deleteService(item.id)} className="text-on-surface-variant hover:text-error p-xs cursor-pointer transition-colors">
-                                <span className="material-symbols-outlined text-[18px]">delete</span>
+                                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">delete</span>
                               </button>
                             </td>
                           </tr>

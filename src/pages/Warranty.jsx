@@ -76,7 +76,7 @@ const Warranty = () => {
           </div>
           <div className="flex gap-sm">
             <Link to="/admin/new-ticket" className="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-xs cursor-pointer shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">gavel</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">gavel</span>
               File a Claim
             </Link>
           </div>
@@ -85,7 +85,7 @@ const Warranty = () => {
         <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm flex flex-col">
           <div className="p-md border-b border-outline-variant flex flex-wrap gap-md items-center bg-surface-bright rounded-t-xl">
             <div className="relative flex-1 min-w-[200px]">
-              <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+              <span aria-hidden="true" className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
               <input 
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}

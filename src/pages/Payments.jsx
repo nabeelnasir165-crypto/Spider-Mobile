@@ -85,7 +85,7 @@ const Payments = () => {
           </div>
           <div className="flex gap-sm">
             <Link to="/admin/new-ticket" className="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-xs cursor-pointer shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">receipt_long</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">receipt_long</span>
               Create Ticket / Invoice
             </Link>
           </div>

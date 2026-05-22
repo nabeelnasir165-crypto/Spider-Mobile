@@ -340,7 +340,7 @@ const NewRepairTicket = () => {
       {/* Banner shown when admin came here via "Convert to Ticket" from a booking */}
       {fromBooking && (
         <div className="mb-lg bg-primary-container/15 border border-primary/30 rounded-lg p-md flex items-start gap-sm">
-          <span className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>auto_fix_high</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-primary" style={{ fontSize: '22px' }}>auto_fix_high</span>
           <div className="flex-1">
             <p className="font-title-lg text-title-lg text-on-surface text-[14px]">
               Pre-filled from booking <span className="font-code text-primary">{fromBooking.booking_ref}</span>
@@ -387,7 +387,7 @@ const NewRepairTicket = () => {
           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
             <div className="flex items-center justify-between mb-md border-b border-surface-container-high pb-sm">
               <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
-                <span className="material-symbols-outlined text-primary">person</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-primary">person</span>
                 Customer Details
               </h2>
               <button className="text-primary font-label-md text-label-md hover:underline cursor-pointer">Create New</button>
@@ -395,7 +395,7 @@ const NewRepairTicket = () => {
             
             {!selectedCustomer ? (
               <div className="relative w-full mb-md">
-                <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <span aria-hidden="true" className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
                 <input 
                   className="w-full bg-surface border border-outline-variant rounded-lg py-sm pl-xl pr-md text-body-md font-body-md focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 transition-all" 
                   placeholder="Search by name, phone, or email..." 
@@ -443,7 +443,7 @@ const NewRepairTicket = () => {
                   </div>
                 </div>
                 <button onClick={() => setSelectedCustomer(null)} className="text-on-surface-variant hover:text-error transition-colors p-sm cursor-pointer" title="Clear selection">
-                  <span className="material-symbols-outlined">close</span>
+                  <span aria-hidden="true" className="material-symbols-outlined">close</span>
                 </button>
               </div>
             )}
@@ -453,7 +453,7 @@ const NewRepairTicket = () => {
           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
             <div className="flex items-center justify-between mb-md border-b border-surface-container-high pb-sm">
               <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
-                <span className="material-symbols-outlined text-primary">smartphone</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-primary">smartphone</span>
                 Device Information
               </h2>
             </div>
@@ -510,7 +510,7 @@ const NewRepairTicket = () => {
           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
             <div className="flex items-center justify-between mb-md border-b border-surface-container-high pb-sm">
               <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
-                <span className="material-symbols-outlined text-primary">bug_report</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-primary">bug_report</span>
                 Reported Issues
               </h2>
             </div>
@@ -531,7 +531,7 @@ const NewRepairTicket = () => {
                     checked={reportedIssues.includes(issue.id)}
                     onChange={() => toggleIssue(issue.id)}
                   />
-                  <span className={`material-symbols-outlined mb-xs ${reportedIssues.includes(issue.id) ? 'text-primary' : 'text-on-surface-variant'}`}>{issue.icon}</span>
+                  <span aria-hidden="true" className={`material-symbols-outlined mb-xs ${reportedIssues.includes(issue.id) ? 'text-primary' : 'text-on-surface-variant'}`}>{issue.icon}</span>
                   <span className={`font-label-md text-label-md text-center ${reportedIssues.includes(issue.id) ? 'text-primary font-bold' : ''}`}>{issue.id}</span>
                 </label>
               ))}
@@ -555,7 +555,7 @@ const NewRepairTicket = () => {
           <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm">
             <div className="mb-md border-b border-surface-container-high pb-sm">
               <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
-                <span className="material-symbols-outlined text-primary">fact_check</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-primary">fact_check</span>
                 Condition Checklist
               </h2>
             </div>
@@ -614,7 +614,7 @@ const NewRepairTicket = () => {
                 disabled={loading}
                 className="w-full bg-primary text-on-primary font-title-lg text-title-lg rounded-lg py-md px-lg flex items-center justify-center gap-sm hover:bg-on-primary-fixed-variant transition-colors shadow-sm cursor-pointer disabled:opacity-70"
               >
-                <span className="material-symbols-outlined">save</span>
+                <span aria-hidden="true" className="material-symbols-outlined">save</span>
                 {loading ? 'Saving...' : 'Create Ticket'}
               </button>
             </div>

@@ -29,7 +29,7 @@ export default function ForgotPassword() {
       altLink={{ label: 'Remembered it?', cta: 'Back to sign in', to: '/login' }}
     >
       {done ? (
-        <div className="p-5 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-start gap-3">
+        <div role="status" aria-live="polite" className="p-5 rounded-2xl bg-emerald-50 border border-emerald-100 flex items-start gap-3">
           <div className="w-9 h-9 rounded-full bg-emerald-500 text-white grid place-items-center shrink-0">
             <Check size={18}/>
           </div>
@@ -39,7 +39,7 @@ export default function ForgotPassword() {
         <form onSubmit={submit} className="space-y-4" noValidate>
           <FieldIcon icon={Mail} type="email" autoComplete="email" placeholder="Email" value={email} onChange={(e) => setEmail(e.target.value)} required />
           {error && (
-            <div className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
+            <div role="alert" aria-live="polite" className="flex items-start gap-2 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">
               <AlertCircle size={16} className="mt-0.5 shrink-0"/> {error}
             </div>
           )}

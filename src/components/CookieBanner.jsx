@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Link } from 'react-router-dom';
 import { Cookie, X } from 'lucide-react';
@@ -7,6 +7,7 @@ const KEY = 'sm_cookie_consent';
 
 export default function CookieBanner() {
   const [visible, setVisible] = useState(false);
+  const acceptRef = useRef(null);
 
   useEffect(() => {
     const t = setTimeout(() => {
@@ -23,6 +24,16 @@ export default function CookieBanner() {
     localStorage.setItem(KEY, 'declined');
     setVisible(false);
   };
+
+  // Esc dismisses the banner (treated as decline). Move focus to "Accept"
+  // when it appears so keyboard users can act on it immediately (WCAG 2.1.2).
+  useEffect(() => {
+    if (!visible) return;
+    acceptRef.current?.focus();
+    const onKey = (e) => { if (e.key === 'Escape') { e.preventDefault(); decline(); } };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [visible]);
 
   return (
     <AnimatePresence>
@@ -61,7 +72,7 @@ export default function CookieBanner() {
               <button onClick={decline} className="flex-1 h-10 rounded-full border border-white/20 text-sm font-medium hover:bg-white/10 transition">
                 Decline
               </button>
-              <button onClick={accept} className="flex-1 h-10 rounded-full bg-brand hover:bg-brand-dark text-sm font-semibold transition">
+              <button ref={acceptRef} onClick={accept} className="flex-1 h-10 rounded-full bg-brand-dark hover:bg-brand text-sm font-semibold text-white transition">
                 Accept
               </button>
             </div>

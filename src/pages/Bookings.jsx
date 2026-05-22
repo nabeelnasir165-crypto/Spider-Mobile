@@ -107,7 +107,7 @@ const Bookings = () => {
                 className="px-md py-sm rounded-lg border border-outline-variant text-on-surface font-label-md text-label-md bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex items-center gap-xs cursor-pointer"
                 onClick={() => setIsCalendarOpen(!isCalendarOpen)}
               >
-                <span className="material-symbols-outlined text-[18px]">calendar_month</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">calendar_month</span>
                 Calendar View
               </button>
 
@@ -186,7 +186,7 @@ const Bookings = () => {
                 }}
                 className="px-md py-sm rounded-lg border border-outline-variant text-on-surface font-label-md text-label-md bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex items-center gap-xs cursor-pointer"
               >
-                <span className="material-symbols-outlined text-[18px]">download</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">download</span>
                 Export CSV
               </button>
             </div>
@@ -195,7 +195,7 @@ const Bookings = () => {
         <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm flex flex-col">
           <div className="p-md border-b border-outline-variant flex flex-wrap gap-md items-center bg-surface-bright rounded-t-xl">
             <div className="relative flex-1 min-w-[200px]">
-              <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+              <span aria-hidden="true" className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
               <input 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
@@ -257,7 +257,7 @@ const Bookings = () => {
                       <td className="py-md px-md text-right">
                         {row.status?.toLowerCase() !== 'converted' ? (
                           <Link to="/admin/new-ticket" state={{ fromBooking: row }} className="inline-flex items-center gap-xs px-3 py-1.5 bg-primary text-on-primary rounded font-label-md text-label-md hover:bg-primary/90 transition-colors cursor-pointer shadow-sm">
-                            <span className="material-symbols-outlined text-[16px]">receipt_long</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[16px]">receipt_long</span>
                             Convert to Ticket
                           </Link>
                         ) : (

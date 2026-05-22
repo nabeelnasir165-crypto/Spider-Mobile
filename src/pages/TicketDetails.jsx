@@ -114,7 +114,7 @@ const TicketDetails = () => {
   if (loading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <span className="material-symbols-outlined animate-spin text-[40px] text-primary">sync</span>
+        <span aria-hidden="true" className="material-symbols-outlined animate-spin text-[40px] text-primary">sync</span>
       </div>
     );
   }
@@ -133,7 +133,7 @@ const TicketDetails = () => {
       {/* Header Section */}
       <header className="mb-lg">
         <Link to="/admin/repairs" className="inline-flex items-center gap-sm text-on-surface-variant hover:text-primary transition-colors mb-md font-label-md text-label-md">
-          <span className="material-symbols-outlined text-[16px]">arrow_back</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-[16px]">arrow_back</span>
           Back to Repairs
         </Link>
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-md">
@@ -164,7 +164,7 @@ const TicketDetails = () => {
             <div className="bg-surface border border-outline-variant rounded-lg p-md">
               <div className="flex items-center justify-between border-b border-outline-variant pb-sm mb-sm">
                 <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
-                  <span className="material-symbols-outlined text-on-surface-variant text-[20px]">person</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-on-surface-variant text-[20px]">person</span>
                   Customer Details
                 </h2>
               </div>
@@ -184,7 +184,7 @@ const TicketDetails = () => {
             <div className="bg-surface border border-outline-variant rounded-lg p-md">
               <div className="flex items-center justify-between border-b border-outline-variant pb-sm mb-sm">
                 <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
-                  <span className="material-symbols-outlined text-on-surface-variant text-[20px]">smartphone</span>
+                  <span aria-hidden="true" className="material-symbols-outlined text-on-surface-variant text-[20px]">smartphone</span>
                   Device Details
                 </h2>
               </div>
@@ -232,7 +232,7 @@ const TicketDetails = () => {
           {/* Parts Consumption Log */}
           <section className="bg-surface border border-outline-variant rounded-lg p-md lg:p-lg">
             <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-sm mb-md">
-              <span className="material-symbols-outlined text-[20px] text-on-surface-variant">build</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[20px] text-on-surface-variant">build</span>
               Parts Consumed
             </h2>
             <div className="flex flex-col gap-md">
@@ -263,7 +263,7 @@ const TicketDetails = () => {
           {/* Technician Notes Panel */}
           <section className="bg-surface border border-outline-variant rounded-lg p-md lg:p-lg flex flex-col gap-md">
             <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-sm">
-              <span className="material-symbols-outlined text-[20px] text-on-surface-variant">comment</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[20px] text-on-surface-variant">comment</span>
               Technician Notes
             </h2>
             <div className="flex flex-col gap-sm">
@@ -305,15 +305,15 @@ const TicketDetails = () => {
           <div className="bg-surface border border-outline-variant rounded-lg p-md flex flex-col gap-sm">
             <h2 className="font-title-lg text-title-lg text-on-surface mb-xs border-b border-outline-variant pb-sm">Quick Actions</h2>
             <button onClick={() => { setSelectedStatus(ticket.status || 'Booked'); setIsStatusModalOpen(true); }} className="w-full flex items-center gap-sm justify-center bg-surface-container text-on-surface font-label-md text-label-md py-sm rounded border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer">
-              <span className="material-symbols-outlined text-[18px]">update</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">update</span>
               Update Status
             </button>
             <button onClick={() => alert('Image upload feature coming soon!')} className="w-full flex items-center gap-sm justify-center bg-surface-container text-on-surface font-label-md text-label-md py-sm rounded border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer">
-              <span className="material-symbols-outlined text-[18px]">add_photo_alternate</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">add_photo_alternate</span>
               Upload Image
             </button>
             <button onClick={() => window.print()} className="w-full flex items-center gap-sm justify-center bg-surface-container text-on-surface font-label-md text-label-md py-sm rounded border border-outline-variant hover:bg-surface-container-high transition-colors cursor-pointer">
-              <span className="material-symbols-outlined text-[18px]">print</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">print</span>
               Print Job Sheet
             </button>
           </div>
@@ -338,7 +338,7 @@ const TicketDetails = () => {
             </div>
             {ticket.payment_status?.toLowerCase() !== 'paid' && (
               <button onClick={handleMarkAsPaid} className="w-full bg-primary text-on-primary font-label-md text-label-md py-sm rounded hover:bg-on-primary-fixed-variant transition-colors flex items-center justify-center gap-sm cursor-pointer">
-                <span className="material-symbols-outlined text-[18px]">payments</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px]">payments</span>
                 Mark as Paid
               </button>
             )}
@@ -347,7 +347,7 @@ const TicketDetails = () => {
           {/* Delivery & Dispatch Tracking */}
           <div className="bg-surface border border-outline-variant rounded-lg p-md">
             <div className="flex items-center justify-between border-b border-outline-variant pb-sm mb-md">
-              <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-xs"><span className="material-symbols-outlined text-[18px]">local_shipping</span> Delivery Tracking</h2>
+              <h2 className="font-title-lg text-title-lg text-on-surface flex items-center gap-xs"><span aria-hidden="true" className="material-symbols-outlined text-[18px]">local_shipping</span> Delivery Tracking</h2>
             </div>
             <div className="flex flex-col gap-sm">
               <div>
@@ -386,7 +386,7 @@ const TicketDetails = () => {
           {/* Warranty Status */}
           <div className="bg-surface border border-outline-variant rounded-lg p-md flex items-start gap-md">
             <div className="w-10 h-10 rounded-full bg-secondary-fixed flex items-center justify-center shrink-0">
-              <span className="material-symbols-outlined text-on-secondary-fixed">verified</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-on-secondary-fixed">verified</span>
             </div>
             <div>
               <h3 className="font-label-md text-label-md font-bold text-on-surface mb-xs">Warranty Protection</h3>
@@ -405,7 +405,7 @@ const TicketDetails = () => {
             <div className="flex items-center justify-between mb-md">
               <h2 className="font-title-lg text-title-lg text-on-surface">Update Ticket Status</h2>
               <button onClick={() => setIsStatusModalOpen(false)} className="text-on-surface-variant hover:text-on-surface cursor-pointer">
-                <span className="material-symbols-outlined">close</span>
+                <span aria-hidden="true" className="material-symbols-outlined">close</span>
               </button>
             </div>
             

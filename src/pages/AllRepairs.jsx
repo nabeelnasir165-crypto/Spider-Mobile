@@ -152,7 +152,7 @@ const AllRepairs = () => {
               onClick={handleExportCSV}
               className="px-md py-sm rounded-lg border border-outline-variant text-primary font-label-md text-label-md bg-surface-container-lowest hover:bg-surface-container-low transition-colors flex items-center gap-xs cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[18px]">download</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">download</span>
               Export CSV
             </button>
           </div>
@@ -161,7 +161,7 @@ const AllRepairs = () => {
         <div className="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm flex flex-col">
           <div className="p-md border-b border-outline-variant flex flex-wrap gap-md items-center bg-surface-bright rounded-t-xl">
             <div className="relative flex-1 min-w-[200px]">
-              <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+              <span aria-hidden="true" className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
               <input 
                 className="w-full h-10 pl-xl pr-md rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" 
                 placeholder="Search by Ticket ID or Customer..." 
@@ -230,7 +230,7 @@ const AllRepairs = () => {
                 {loading ? (
                   <tr>
                     <td colSpan="7" className="text-center py-xl text-on-surface-variant">
-                      <span className="material-symbols-outlined animate-spin text-[32px]">sync</span>
+                      <span aria-hidden="true" className="material-symbols-outlined animate-spin text-[32px]">sync</span>
                     </td>
                   </tr>
                 ) : filteredTickets.length === 0 ? (
@@ -269,10 +269,10 @@ const AllRepairs = () => {
                       <td className="py-md px-md text-right">
                         <div className="flex items-center justify-end gap-xs opacity-0 group-hover:opacity-100 transition-opacity">
                           <Link to={`/ticket/${row.ticket_ref}`} className="p-xs rounded text-primary hover:bg-primary-container/20 transition-colors" title="View Details">
-                            <span className="material-symbols-outlined text-[20px]">visibility</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">visibility</span>
                           </Link>
                           <Link to={`/ticket/${row.ticket_ref}`} className="p-xs rounded text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer" title="Edit">
-                            <span className="material-symbols-outlined text-[20px]">edit</span>
+                            <span aria-hidden="true" className="material-symbols-outlined text-[20px]">edit</span>
                           </Link>
                         </div>
                       </td>
@@ -286,10 +286,10 @@ const AllRepairs = () => {
             <span className="font-label-md text-label-md text-on-surface-variant px-sm">Showing {filteredTickets.length} entries</span>
             <div className="flex gap-xs">
               <button className="p-xs rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors disabled:opacity-50 cursor-pointer" disabled>
-                <span className="material-symbols-outlined text-[20px]">chevron_left</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">chevron_left</span>
               </button>
               <button className="p-xs rounded border border-outline-variant text-on-surface-variant hover:bg-surface-container-low transition-colors disabled:opacity-50 cursor-pointer" disabled>
-                <span className="material-symbols-outlined text-[20px]">chevron_right</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[20px]">chevron_right</span>
               </button>
             </div>
           </div>

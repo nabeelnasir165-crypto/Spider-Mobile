@@ -16,24 +16,40 @@ export default function HeroScroll() {
   const [loaded, setLoaded] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  // Preload frames
+  // Preload frames in two waves:
+  //   1. Fetch frame 1 eagerly. As soon as it paints, drop the splash so the
+  //      page becomes interactive (~50 KB instead of waiting for ~4.9 MB).
+  //   2. After the first paint, kick off the remaining 112 frames at low
+  //      priority so the scroll animation is ready by the time the user
+  //      reaches it, without blocking initial render.
   useEffect(() => {
-    let loadedCount = 0;
-    const imgs = [];
-    for (let i = 1; i <= FRAME_COUNT; i++) {
-      const img = new Image();
-      img.src = framePath(i);
-      img.onload = () => {
-        loadedCount += 1;
-        if (loadedCount === FRAME_COUNT) setLoaded(true);
-        // First-frame is the most important — render as soon as it's ready
-        if (i === 1) drawFrame(0);
-      };
-      imgs.push(img);
-    }
+    const imgs = new Array(FRAME_COUNT);
     imagesRef.current = imgs;
-    // Fallback: even if some frames stall, show the section after 3s
-    const timer = setTimeout(() => setLoaded(true), 3000);
+
+    const first = new Image();
+    first.fetchPriority = 'high';
+    first.src = framePath(1);
+    first.onload = () => {
+      imgs[0] = first;
+      drawFrame(0);
+      setLoaded(true);
+      // Queue the rest after the browser has rendered the splash transition
+      requestIdleCallback?.(loadRest) ?? setTimeout(loadRest, 0);
+    };
+    imgs[0] = first;
+
+    const loadRest = () => {
+      for (let i = 2; i <= FRAME_COUNT; i++) {
+        const img = new Image();
+        img.fetchPriority = 'low';
+        img.loading = 'lazy';
+        img.src = framePath(i);
+        imgs[i - 1] = img;
+      }
+    };
+
+    // Hard timeout fallback in case frame 1 stalls (e.g. flaky network)
+    const timer = setTimeout(() => setLoaded(true), 1500);
     return () => clearTimeout(timer);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

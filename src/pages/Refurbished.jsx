@@ -1,9 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldCheck, Sparkles, Filter, X, Check } from 'lucide-react';
+import { ShieldCheck, Sparkles, Filter, X, Check, ShoppingBag } from 'lucide-react';
 import PageHeader from '../components/PageHeader';
 import { phones, conditions } from '../data/products';
 import { Reveal } from '../components/Section';
+import { useCart, phoneToCartItem } from '../contexts/CartContext';
 
 const PRICE_BANDS = [
   { id: 'any', label: 'Any price', test: () => true },
@@ -124,6 +125,8 @@ function FilterPill({ active, onClick, children }) {
 }
 
 function ProductCard({ p }) {
+  const { addItem } = useCart();
+  const buy = () => addItem(phoneToCartItem(p));
   return (
     <div id={p.id} className="group rounded-2xl bg-white border border-ink-100 overflow-hidden hover:shadow-soft-lg transition">
       <div className="relative aspect-[4/5] overflow-hidden">
@@ -145,14 +148,21 @@ function ProductCard({ p }) {
       <div className="p-5">
         <p className="text-xs uppercase tracking-wider text-ink-500 mb-1">{p.brand}</p>
         <h3 className="text-base font-semibold text-ink-950 leading-tight">{p.name}</h3>
-        <p className="text-xs text-ink-500 mb-3">{p.color}</p>
+        <p className="text-xs text-ink-500 mb-2">{p.color}</p>
+        {(p.storage || p.display || p.chip) && (
+          <ul className="text-[11px] text-ink-600 leading-snug mb-3 space-y-0.5">
+            {p.storage && <li><span className="text-ink-400">Storage:</span> {p.storage}</li>}
+            {p.display && <li><span className="text-ink-400">Display:</span> {p.display}</li>}
+            {p.chip    && <li><span className="text-ink-400">Chip:</span> {p.chip}</li>}
+          </ul>
+        )}
         <div className="flex items-end justify-between">
           <div>
             <span className="text-2xl font-bold text-ink-950">£{p.price}</span>
             <span className="ml-2 text-sm text-ink-400 line-through">£{p.rrp}</span>
           </div>
-          <button className="h-9 px-4 rounded-full bg-ink-950 text-white text-xs font-semibold hover:bg-ink-800 transition">
-            Buy
+          <button onClick={buy} aria-label={`Add ${p.name} to bag`} className="h-9 px-4 rounded-full bg-ink-950 text-white text-xs font-semibold hover:bg-ink-800 transition inline-flex items-center gap-1.5">
+            <ShoppingBag size={12}/> Add to bag
           </button>
         </div>
       </div>

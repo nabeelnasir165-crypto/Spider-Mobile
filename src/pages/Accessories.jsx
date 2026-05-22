@@ -3,11 +3,13 @@ import { useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import PageHeader from '../components/PageHeader';
 import { accessories, accessoryCategories } from '../data/products';
+import { useCart, accessoryToCartItem } from '../contexts/CartContext';
 
 export default function Accessories() {
   const [params, setParams] = useSearchParams();
   const initial = params.get('category') || 'all';
   const [active, setActive] = useState(initial);
+  const { addItem } = useCart();
 
   useEffect(() => {
     if (active === 'all') {
@@ -73,7 +75,11 @@ export default function Accessories() {
                     <h3 className="text-sm font-semibold text-ink-950 leading-tight mb-2 line-clamp-2">{a.name}</h3>
                     <div className="flex items-center justify-between">
                       <span className="text-base font-bold text-ink-950">£{a.price}</span>
-                      <button className="h-8 px-3 rounded-full bg-ink-950 text-white text-xs font-semibold hover:bg-ink-800 transition">
+                      <button
+                        onClick={() => addItem(accessoryToCartItem(a))}
+                        aria-label={`Add ${a.name} to bag`}
+                        className="h-8 px-3 rounded-full bg-ink-950 text-white text-xs font-semibold hover:bg-ink-800 transition"
+                      >
                         Add
                       </button>
                     </div>

@@ -61,7 +61,7 @@ const Staff = () => {
           </div>
           <div className="flex gap-sm">
             <button onClick={handleAddStaff} className="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-xs cursor-pointer shadow-sm">
-              <span className="material-symbols-outlined text-[18px]">person_add</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">person_add</span>
               Add Staff Member
             </button>
           </div>
@@ -69,7 +69,7 @@ const Staff = () => {
 
         {loading ? (
           <div className="flex justify-center items-center h-48">
-            <span className="material-symbols-outlined animate-spin text-primary" style={{ fontSize: '32px' }}>autorenew</span>
+            <span aria-hidden="true" className="material-symbols-outlined animate-spin text-primary" style={{ fontSize: '32px' }}>autorenew</span>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-md">
@@ -81,7 +81,7 @@ const Staff = () => {
                 <div>
                   <h3 className="font-title-lg font-bold text-on-surface flex items-center justify-center gap-xs">
                     {staff.full_name}
-                    {!staff.is_active && <span className="material-symbols-outlined text-error text-[16px]" title="Inactive">person_off</span>}
+                    {!staff.is_active && <span aria-hidden="true" className="material-symbols-outlined text-error text-[16px]" title="Inactive">person_off</span>}
                   </h3>
                   <p className="font-label-md text-primary font-medium">{staff.role}</p>
                 </div>

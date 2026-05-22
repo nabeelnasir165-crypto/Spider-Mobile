@@ -125,11 +125,11 @@ const CustomerDatabase = () => {
               onClick={() => { setIsAddingCustomer(true); setSelectedCustomer(null); }}
               className="px-md py-sm rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-opacity flex items-center gap-xs shadow-sm cursor-pointer"
             >
-              <span className="material-symbols-outlined text-[18px]">person_add</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">person_add</span>
               Add Customer
             </button>
             <button className="px-md py-sm rounded-lg border border-outline-variant text-on-surface font-label-md text-label-md hover:bg-surface-container-low transition-colors flex items-center gap-xs cursor-pointer">
-              <span className="material-symbols-outlined text-[18px]">download</span>
+              <span aria-hidden="true" className="material-symbols-outlined text-[18px]">download</span>
               Export
             </button>
           </div>
@@ -142,7 +142,7 @@ const CustomerDatabase = () => {
           <div className="lg:col-span-4 bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm flex flex-col h-[calc(100vh-200px)]">
             <div className="p-md border-b border-outline-variant bg-surface-bright rounded-t-xl">
               <div className="relative">
-                <span className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                <span aria-hidden="true" className="material-symbols-outlined absolute left-sm top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
                 <input 
                   className="w-full h-10 pl-xl pr-md rounded-lg border border-outline-variant bg-surface-container-lowest text-body-md font-body-md focus:border-primary focus:ring-2 focus:ring-primary/20 outline-none" 
                   placeholder="Search customers..." 
@@ -156,7 +156,7 @@ const CustomerDatabase = () => {
             <div className="flex-1 overflow-y-auto">
               {loading ? (
                 <div className="p-lg flex justify-center text-on-surface-variant">
-                  <span className="material-symbols-outlined animate-spin text-[32px]">sync</span>
+                  <span aria-hidden="true" className="material-symbols-outlined animate-spin text-[32px]">sync</span>
                 </div>
               ) : filteredCustomers.length === 0 ? (
                 <div className="p-lg text-center text-on-surface-variant">
@@ -191,11 +191,11 @@ const CustomerDatabase = () => {
               <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-lg shadow-sm flex flex-col gap-md">
                 <div className="border-b border-outline-variant pb-md flex justify-between items-center">
                   <h2 className="font-headline-md font-bold text-on-surface flex items-center gap-sm">
-                    <span className="material-symbols-outlined text-primary">person_add</span>
+                    <span aria-hidden="true" className="material-symbols-outlined text-primary">person_add</span>
                     Create New Customer
                   </h2>
                   <button onClick={() => setIsAddingCustomer(false)} className="text-on-surface-variant hover:text-error transition-colors p-sm cursor-pointer">
-                    <span className="material-symbols-outlined">close</span>
+                    <span aria-hidden="true" className="material-symbols-outlined">close</span>
                   </button>
                 </div>
                 
@@ -290,12 +290,12 @@ const CustomerDatabase = () => {
                       <h2 className="font-headline-md text-headline-md font-bold text-on-surface mb-xs flex items-center gap-sm">
                         {selectedCustomer.full_name}
                         {selectedCustomer.is_business_account && (
-                          <span className="material-symbols-outlined text-tertiary text-[20px]" title="Business Account">domain</span>
+                          <span aria-hidden="true" className="material-symbols-outlined text-tertiary text-[20px]" title="Business Account">domain</span>
                         )}
                       </h2>
                       <div className="flex items-center gap-md text-on-surface-variant font-body-md">
-                        <span className="flex items-center gap-xs"><span className="material-symbols-outlined text-[16px]">mail</span> {selectedCustomer.email || 'N/A'}</span>
-                        <span className="flex items-center gap-xs"><span className="material-symbols-outlined text-[16px]">call</span> {selectedCustomer.phone || 'N/A'}</span>
+                        <span className="flex items-center gap-xs"><span aria-hidden="true" className="material-symbols-outlined text-[16px]">mail</span> {selectedCustomer.email || 'N/A'}</span>
+                        <span className="flex items-center gap-xs"><span aria-hidden="true" className="material-symbols-outlined text-[16px]">call</span> {selectedCustomer.phone || 'N/A'}</span>
                       </div>
                     </div>
                   </div>
@@ -351,7 +351,7 @@ const CustomerDatabase = () => {
               </>
             ) : (
               <div className="bg-surface-container-lowest border border-outline-variant rounded-xl p-xl shadow-sm flex flex-col items-center justify-center text-center h-full text-on-surface-variant">
-                <span className="material-symbols-outlined text-[64px] mb-md opacity-20">person_search</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[64px] mb-md opacity-20">person_search</span>
                 <h2 className="font-title-lg font-bold text-on-surface mb-xs">No Customer Selected</h2>
                 <p className="font-body-md">Select a customer from the list on the left to view their profile, history, and details.</p>
                 <button 

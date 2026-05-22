@@ -163,7 +163,7 @@ export default function Book() {
               {step === 1 && (
                 <Step key="model">
                   <h3 className="text-lg font-semibold mb-5">Choose your {brand?.name} model</h3>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-[60vh] overflow-y-auto pr-1">
                     {(models[brand?.id] || []).map((m) => (
                       <button
                         key={m.id}
@@ -176,6 +176,11 @@ export default function Book() {
                         <ChevronRight size={16} className="text-ink-400"/>
                       </button>
                     ))}
+                  </div>
+                  <div className="mt-5">
+                    <button onClick={back} className="btn-outline">
+                      <ChevronLeft size={16}/> Back
+                    </button>
                   </div>
                 </Step>
               )}
@@ -277,7 +282,7 @@ export default function Book() {
                   </div>
 
                   {error && (
-                    <div className="mt-4 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">{error}</div>
+                    <div role="alert" aria-live="polite" className="mt-4 p-3 rounded-xl bg-red-50 border border-red-100 text-sm text-red-700">{error}</div>
                   )}
 
                   <div className="mt-7 flex justify-between">
