@@ -20,6 +20,14 @@ function ScrollToTop() {
 export default function SiteLayout() {
   const location = useLocation();
   const isHome = location.pathname === '/';
+  // Hide the floating "Book Repair" CTA on pages where there's already a
+  // primary action (booking form, cart, checkout, order confirmation) so it
+  // doesn't obscure the form CTA on mobile.
+  const hideBookCta = isHome
+    || location.pathname.startsWith('/book')
+    || location.pathname.startsWith('/cart')
+    || location.pathname.startsWith('/checkout')
+    || location.pathname.startsWith('/order');
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -46,8 +54,10 @@ export default function SiteLayout() {
       <CookieBanner />
       <CartDrawer />
 
-      {/* Sticky mobile CTA — sits above the WhatsApp FAB so they stack neatly */}
-      {!isHome && (
+      {/* Sticky mobile CTA — sits above the WhatsApp FAB so they stack neatly.
+          Hidden on pages with their own primary action (book/cart/checkout/order)
+          so it doesn't cover the form submit button. */}
+      {!hideBookCta && (
         <Link
           to="/book"
           className="lg:hidden fixed bottom-[88px] right-5 z-40 h-12 px-5 rounded-full bg-brand-dark text-white font-semibold text-sm shadow-glow flex items-center gap-2 active:scale-95 transition"

@@ -1,15 +1,15 @@
-// Curated stock photos, grouped by device family. Every URL below is
-// validated against images.unsplash.com so the catalogue never shows a
-// broken image.
+// Curated phone photos bundled in public/products/ — local-first so the
+// catalogue is bulletproof for client demos (no third-party CDN dependency).
 const IMG = {
-  appleProDark:    'https://images.unsplash.com/photo-1696446702183-be4cca6ad9c0?auto=format&fit=crop&w=900&q=80',
-  appleMidnight:   'https://images.unsplash.com/photo-1678685888221-cda773a3dcdb?auto=format&fit=crop&w=900&q=80',
-  appleStarlight:  'https://images.unsplash.com/photo-1632661674596-df8be070a5c5?auto=format&fit=crop&w=900&q=80',
-  appleBlue:       'https://images.unsplash.com/photo-1603891128711-11b4b03bb138?auto=format&fit=crop&w=900&q=80',
-  galaxyUltra:     'https://images.unsplash.com/photo-1707421774870-aa12ee0c1e9b?auto=format&fit=crop&w=900&q=80',
-  galaxyBlack:     'https://images.unsplash.com/photo-1675953935267-e039e1e6c6a3?auto=format&fit=crop&w=900&q=80',
-  pixel:           'https://images.unsplash.com/photo-1696446702205-08fa3b6dbb05?auto=format&fit=crop&w=900&q=80',
-  oneplus:         'https://images.unsplash.com/photo-1604671801908-6f0c6a092c05?auto=format&fit=crop&w=900&q=80',
+  appleProDark:    '/products/apple-pro.jpg',
+  appleMidnight:   '/products/apple-dark.jpg',
+  appleStarlight:  '/products/apple-light.jpg',
+  appleBlue:       '/products/apple-color.jpg',
+  galaxyUltra:     '/products/samsung.jpg',
+  galaxyBlack:     '/products/samsung-alt.jpg',
+  pixel:           '/products/google-pixel.jpg',
+  oneplus:         '/products/oneplus.jpg',
+  huawei:          '/products/huawei.jpg',
 };
 
 export const phones = [
@@ -46,49 +46,61 @@ export const phones = [
   { id: 'oneplus-11-256', brand: 'OnePlus', name: 'OnePlus 11 256GB', color: 'Eternal Green', storage: '256GB', display: '6.7" LTPO AMOLED 120Hz',  chip: 'Snapdragon 8 Gen 2', condition: 'Very Good', warranty: 12, price: 389, rrp: 729, image: IMG.oneplus, accent: '#1c2c25' },
 
   // ─── Huawei ──────────────────────────────────────────────────────────────
-  { id: 'huawei-p60-pro-256', brand: 'Huawei', name: 'Huawei P60 Pro 256GB', color: 'Rococo Pearl', storage: '256GB', display: '6.67" LTPO OLED 120Hz', chip: 'Snapdragon 8+ Gen 1', condition: 'Good', warranty: 12, price: 439, rrp: 799, image: IMG.galaxyBlack, accent: '#dfd6c8' },
+  { id: 'huawei-p60-pro-256', brand: 'Huawei', name: 'Huawei P60 Pro 256GB', color: 'Rococo Pearl', storage: '256GB', display: '6.67" LTPO OLED 120Hz', chip: 'Snapdragon 8+ Gen 1', condition: 'Good', warranty: 12, price: 439, rrp: 799, image: IMG.huawei, accent: '#dfd6c8' },
 ];
 
 export const conditions = ['Excellent', 'Very Good', 'Good'];
 
-// ─── Accessory categories (with verified image URLs) ──────────────────────
+// ─── Accessory images (bundled in public/accessories/) ───────────────────
+const A = {
+  case:     '/accessories/case.jpg',
+  charger:  '/accessories/charger.jpg',
+  screen:   '/accessories/screen-protector.jpg',
+  power:    '/accessories/power-bank.jpg',
+  audio:    '/accessories/audio.jpg',
+  cable:    '/accessories/cable.jpg',
+  magsafe:  '/accessories/wireless-pad.jpg',
+  headset:  '/accessories/headphones.jpg',
+  lightning:'/accessories/lightning.jpg',
+};
+
 export const accessoryCategories = [
-  { id: 'cases',             name: 'Cases & Covers',     desc: 'Premium impact protection without the bulk.',         image: 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=900&q=80', accent: 'from-sky-500/30 to-sky-700/10' },
-  { id: 'chargers',          name: 'Chargers',           desc: 'Fast, certified USB-C and MagSafe-compatible.',       image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=900&q=80', accent: 'from-emerald-500/30 to-emerald-700/10' },
-  { id: 'screen-protectors', name: 'Screen Protectors',  desc: 'Tempered glass and privacy films, fitted free.',      image: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?auto=format&fit=crop&w=900&q=80', accent: 'from-amber-500/30 to-amber-700/10' },
-  { id: 'power-banks',       name: 'Power Banks',        desc: 'Pocket-sized 10–20K mAh with PD output.',             image: 'https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?auto=format&fit=crop&w=900&q=80', accent: 'from-violet-500/30 to-violet-700/10' },
-  { id: 'audio',             name: 'Audio Devices',      desc: 'Earbuds, headphones and portable speakers.',          image: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=900&q=80', accent: 'from-rose-500/30 to-rose-700/10' },
-  { id: 'cables',            name: 'Cables & Adapters',  desc: 'Braided, MFi-certified, lifetime tested.',            image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=900&q=80', accent: 'from-cyan-500/30 to-cyan-700/10' },
+  { id: 'cases',             name: 'Cases & Covers',     desc: 'Premium impact protection without the bulk.',   image: A.case,    accent: 'from-sky-500/30 to-sky-700/10' },
+  { id: 'chargers',          name: 'Chargers',           desc: 'Fast, certified USB-C and MagSafe-compatible.', image: A.charger, accent: 'from-emerald-500/30 to-emerald-700/10' },
+  { id: 'screen-protectors', name: 'Screen Protectors',  desc: 'Tempered glass and privacy films, fitted free.',image: A.screen,  accent: 'from-amber-500/30 to-amber-700/10' },
+  { id: 'power-banks',       name: 'Power Banks',        desc: 'Pocket-sized 10–20K mAh with PD output.',       image: A.power,   accent: 'from-violet-500/30 to-violet-700/10' },
+  { id: 'audio',             name: 'Audio Devices',      desc: 'Earbuds, headphones and portable speakers.',    image: A.audio,   accent: 'from-rose-500/30 to-rose-700/10' },
+  { id: 'cables',            name: 'Cables & Adapters',  desc: 'Braided, MFi-certified, lifetime tested.',      image: A.cable,   accent: 'from-cyan-500/30 to-cyan-700/10' },
 ];
 
 export const accessories = [
   // ─── Cases ─────────────────────────────────────────────────────────────
-  { id: 'a1',  category: 'cases',             name: 'MagSafe Clear Case',         forModel: 'iPhone 15 Pro',     price: 19.99, image: 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a2',  category: 'cases',             name: 'Premium Leather Folio',      forModel: 'iPhone 14 / 15',    price: 34.99, image: 'https://images.unsplash.com/photo-1592890278566-fe97e3ad6961?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a13', category: 'cases',             name: 'Silicone Bumper Case',       forModel: 'iPhone 16 Pro',     price: 24.99, image: 'https://images.unsplash.com/photo-1601784551446-20c9e07cdbdb?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a14', category: 'cases',             name: 'Rugged Armor Case',          forModel: 'Galaxy S24 Ultra',  price: 27.99, image: 'https://images.unsplash.com/photo-1592890278566-fe97e3ad6961?auto=format&fit=crop&w=600&q=80' },
+  { id: 'a1',  category: 'cases',             name: 'MagSafe Clear Case',         forModel: 'iPhone 15 Pro',                  price: 19.99, image: A.case },
+  { id: 'a2',  category: 'cases',             name: 'Premium Leather Folio',      forModel: 'iPhone 14 / 15',                 price: 34.99, image: A.case },
+  { id: 'a13', category: 'cases',             name: 'Silicone Bumper Case',       forModel: 'iPhone 16 Pro',                  price: 24.99, image: A.case },
+  { id: 'a14', category: 'cases',             name: 'Rugged Armor Case',          forModel: 'Galaxy S24 Ultra',               price: 27.99, image: A.case },
 
   // ─── Chargers ──────────────────────────────────────────────────────────
-  { id: 'a3',  category: 'chargers',          name: '30W USB-C Adapter',          forModel: 'Universal',         price: 24.99, image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a4',  category: 'chargers',          name: 'MagSafe Wireless Pad 15W',   forModel: 'iPhone 12 / 13 / 14 / 15 / 16', price: 29.99, image: 'https://images.unsplash.com/photo-1610792516775-01de03eae630?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a15', category: 'chargers',          name: 'Dual USB-C 65W Adapter',     forModel: 'Universal',         price: 39.99, image: 'https://images.unsplash.com/photo-1583863788434-e58a36330cf0?auto=format&fit=crop&w=600&q=80' },
+  { id: 'a3',  category: 'chargers',          name: '30W USB-C Adapter',          forModel: 'Universal',                      price: 24.99, image: A.charger },
+  { id: 'a4',  category: 'chargers',          name: 'MagSafe Wireless Pad 15W',   forModel: 'iPhone 12 / 13 / 14 / 15 / 16',  price: 29.99, image: A.magsafe },
+  { id: 'a15', category: 'chargers',          name: 'Dual USB-C 65W Adapter',     forModel: 'Universal',                      price: 39.99, image: A.charger },
 
   // ─── Screen Protectors ─────────────────────────────────────────────────
-  { id: 'a5',  category: 'screen-protectors', name: 'Tempered Glass 9H',          forModel: 'iPhone 15 series',  price: 12.99, image: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a6',  category: 'screen-protectors', name: 'Privacy Tempered Glass',     forModel: 'Galaxy S24',        price: 14.99, image: 'https://images.unsplash.com/photo-1606127195512-f8a47ce19a99?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a16', category: 'screen-protectors', name: 'Anti-Glare Matte Film',      forModel: 'Pixel 8 / 9',       price:  9.99, image: 'https://images.unsplash.com/photo-1565849904461-04a58ad377e0?auto=format&fit=crop&w=600&q=80' },
+  { id: 'a5',  category: 'screen-protectors', name: 'Tempered Glass 9H',          forModel: 'iPhone 15 series',               price: 12.99, image: A.screen },
+  { id: 'a6',  category: 'screen-protectors', name: 'Privacy Tempered Glass',     forModel: 'Galaxy S24',                     price: 14.99, image: A.screen },
+  { id: 'a16', category: 'screen-protectors', name: 'Anti-Glare Matte Film',      forModel: 'Pixel 8 / 9',                    price:  9.99, image: A.screen },
 
   // ─── Power Banks ───────────────────────────────────────────────────────
-  { id: 'a7',  category: 'power-banks',       name: '20K mAh PD Power Bank',      forModel: 'Universal',         price: 39.99, image: 'https://images.unsplash.com/photo-1609692814858-f7cd2f0afa4f?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a8',  category: 'power-banks',       name: '10K mAh Magnetic Pack',      forModel: 'iPhone 12 / 13 / 14 / 15 / 16', price: 29.99, image: 'https://images.unsplash.com/photo-1606227036304-19d5fe8b69dc?auto=format&fit=crop&w=600&q=80' },
+  { id: 'a7',  category: 'power-banks',       name: '20K mAh PD Power Bank',      forModel: 'Universal',                      price: 39.99, image: A.power },
+  { id: 'a8',  category: 'power-banks',       name: '10K mAh Magnetic Pack',      forModel: 'iPhone 12 / 13 / 14 / 15 / 16',  price: 29.99, image: A.power },
 
   // ─── Audio ─────────────────────────────────────────────────────────────
-  { id: 'a9',  category: 'audio',             name: 'Wireless Earbuds Pro',       forModel: 'Universal',         price: 49.99, image: 'https://images.unsplash.com/photo-1606220588913-b3aacb4d2f46?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a10', category: 'audio',             name: 'Over-Ear Headphones',        forModel: 'Universal',         price: 79.99, image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?auto=format&fit=crop&w=600&q=80' },
+  { id: 'a9',  category: 'audio',             name: 'Wireless Earbuds Pro',       forModel: 'Universal',                      price: 49.99, image: A.audio },
+  { id: 'a10', category: 'audio',             name: 'Over-Ear Headphones',        forModel: 'Universal',                      price: 79.99, image: A.headset },
 
   // ─── Cables ────────────────────────────────────────────────────────────
-  { id: 'a11', category: 'cables',            name: 'Braided USB-C → USB-C 2m',   forModel: 'Universal',         price:  9.99, image: 'https://images.unsplash.com/photo-1612817288484-6f916006741a?auto=format&fit=crop&w=600&q=80' },
-  { id: 'a12', category: 'cables',            name: 'Lightning MFi 1m',           forModel: 'iPhone (pre-USB-C)',price: 14.99, image: 'https://images.unsplash.com/photo-1583394838336-acd977736f90?auto=format&fit=crop&w=600&q=80' },
+  { id: 'a11', category: 'cables',            name: 'Braided USB-C → USB-C 2m',   forModel: 'Universal',                      price:  9.99, image: A.cable },
+  { id: 'a12', category: 'cables',            name: 'Lightning MFi 1m',           forModel: 'iPhone (pre-USB-C)',             price: 14.99, image: A.lightning },
 ];
 
 export const reviews = [

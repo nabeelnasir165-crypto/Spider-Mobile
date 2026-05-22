@@ -52,6 +52,9 @@ export default function Checkout() {
   // Submission
   const [busy,  setBusy]  = useState(false);
   const [error, setError] = useState('');
+  // `submitted` flips at the start of placeOrder so the empty-cart redirect
+  // below doesn't fire when we intentionally clear the cart on success.
+  const [submitted, setSubmitted] = useState(false);
 
   // Auto-fill from authed user when it loads
   useEffect(() => {
@@ -61,8 +64,10 @@ export default function Checkout() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile?.full_name, profile?.phone, user?.email]);
 
-  // Bounce back to /cart if there's nothing to check out
-  useEffect(() => { if (items.length === 0) navigate('/cart', { replace: true }); }, [items.length, navigate]);
+  // Bounce back to /cart if there's nothing to check out (skip during/after submit)
+  useEffect(() => {
+    if (items.length === 0 && !submitted) navigate('/cart', { replace: true });
+  }, [items.length, submitted, navigate]);
 
   const selectedDelivery = DELIVERY_OPTIONS.find((d) => d.id === delivery) || DELIVERY_OPTIONS[0];
   const deliveryFee = selectedDelivery.freeOver && subtotal >= selectedDelivery.freeOver ? 0 : selectedDelivery.fee;
@@ -113,6 +118,7 @@ export default function Checkout() {
   const placeOrder = async () => {
     setBusy(true);
     setError('');
+    setSubmitted(true);
     const order = buildOrder();
 
     // Save locally so the customer can see it on the confirmation page
